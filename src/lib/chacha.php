@@ -81,18 +81,13 @@ class ChaCha20Block {
         return $value;
     }
 
-
     /**
      * does a bitwise XOR between the arguments
      *
      * @return uint32    an integer capped at INT_BIT_MASK bits
      */
     protected function xor($a, $b) {
-        printf("A) 0x%08x\t%s\t%d\n", $a, str_pad(decbin($a), 32, '0', STR_PAD_LEFT), $a);
-        printf("B) 0x%08x\t%s\t%d\n", $b, str_pad(decbin($b), 32, '0', STR_PAD_LEFT), $b);
-        $x = $a ^ $b;
-        printf("X) 0x%08x\t%s\t%d\n", $x, str_pad(decbin($x), 32, '0', STR_PAD_LEFT), $x);
-        return $x;
+        return $a ^ $b;
     }
 
     /**
@@ -213,7 +208,7 @@ class ChaCha20Block {
      * display internal state in matrix form
      */
     public function __toString() {
-        return vsprintf("00:0x%08x\t01:0x%08x\t02:0x%08x\t03:0x%08x\n04:0x%08x\t05:0x%08x\t06:0x%08x\t07:0x%08x\n08:0x%08x\t09:0x%08x\t10:0x%08x\t11:0x%08x\n12:0x%08x\t13:0x%08x\t14:0x%08x\t15:0x%08x\n", $this->initial_state);
+        return vsprintf("00:0x%08x\t01:0x%08x\t02:0x%08x\t03:0x%08x\n04:0x%08x\t05:0x%08x\t06:0x%08x\t07:0x%08x\n08:0x%08x\t09:0x%08x\t10:0x%08x\t11:0x%08x\n12:0x%08x\t13:0x%08x\t14:0x%08x\t15:0x%08x\n", $this->final_state);
     }
 
     /**
@@ -283,5 +278,6 @@ class ChaCha20Block {
         $this->set_const(1, self::CONSTANT_VALUE_1);
         $this->set_const(2, self::CONSTANT_VALUE_2);
         $this->set_const(3, self::CONSTANT_VALUE_3);
+        $this->final_state = $this->initial_state;
     }
 }

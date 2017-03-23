@@ -11,9 +11,9 @@
         }
     ],
     "autoload": {
-        "psr-0": {
-            "WRS": "src/",
-            "WRS\\Tests": "tests/"
+        "psr-4": {
+            "WRS\\": "src/",
+            "WRS\\Tests\\": "tests/"
         }
     },
     "require": {}

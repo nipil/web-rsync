@@ -1,4 +1,4 @@
-<?php
+<?php namespace WRS;
 
 /**
  * Calculates ChaCha20 blocks based on a given (key, nonce, ctr) set

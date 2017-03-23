@@ -1,0 +1,20 @@
+{
+    "name": "nipil/web-rsync",
+    "description": "rsync-like tool, working over http",
+    "require-dev": {
+        "phpunit/phpunit": "^6.0"
+    },
+    "authors": [
+        {
+            "name": "nipil",
+            "email": "nipil@users.noreply.github.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "WRS": "src/",
+            "WRS\\Tests": "tests/"
+        }
+    },
+    "require": {}
+}

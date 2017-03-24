@@ -227,21 +227,18 @@ class ChaCha20Block {
     }
 
     /**
-     * display FINAL state in matrix form
+     * apply a quarter-round to a state
+     *
+     * @param int    $state      enum defining which state to return
      */
-    public function __toString() : string {
-        return vsprintf("00:0x%08x\t01:0x%08x\t02:0x%08x\t03:0x%08x\n04:0x%08x\t05:0x%08x\t06:0x%08x\t07:0x%08x\n08:0x%08x\t09:0x%08x\t10:0x%08x\t11:0x%08x\n12:0x%08x\t13:0x%08x\t14:0x%08x\t15:0x%08x\n", $this->final_state);
+    public function do_quarter_round(int $i_a, int $i_b, int $i_c, int $i_d, array &$state) /* add ': void' in php 7.1 */ {
+        self::quarter_round($state[$i_a], $state[$i_b], $state[$i_c], $state[$i_d]);
     }
 
     /**
      * apply a quarter-round to FINAL al-state
      */
-    public function do_quarter_round(int $i_a, int $i_b, int $i_c, int $i_d) /* add ': void' in php 7.1 */ {
-        // fetch required uint32's
-        $a = $this->final_state[$i_a];
-        $b = $this->final_state[$i_b];
-        $c = $this->final_state[$i_c];
-        $d = $this->final_state[$i_d];
+    public static function quarter_round(int &$a, int &$b, int &$c, int &$d) /* add ': void' in php 7.1 */ {
         // do the quarter round
         $a = self::add_cap($a, $b);  // a += b;
         $d = self::xor($d, $a);      // d ^= a;
@@ -255,11 +252,6 @@ class ChaCha20Block {
         $c = self::add_cap($c, $d);  // c += d;
         $b = self::xor($b, $c);      // b ^= c;
         $b = self::rot_left($b, 7);  // b <<<= 7;
-        // stores modified uint32's
-        $this->final_state[$i_a] = $a;
-        $this->final_state[$i_b] = $b;
-        $this->final_state[$i_c] = $c;
-        $this->final_state[$i_d] = $d;
     }
 
     /**
@@ -272,25 +264,25 @@ class ChaCha20Block {
         $this->set_const_index_value(2, self::CONSTANT_VALUE_2);
         $this->set_const_index_value(3, self::CONSTANT_VALUE_3);
         // start from the initial state
-        $this->final_state = $this->initial_state;
+        $this->intermediary_state = $this->initial_state;
         // compute full rounds
         for ($i=0; $i<self::FULL_QUARTER_ROUND_ITERATIONS; $i++) {
             // column rounds
-            $this->do_quarter_round(0, 4, 8,12); // 1st column
-            $this->do_quarter_round(1, 5, 9,13); // 2nd column
-            $this->do_quarter_round(2, 6,10,14); // 3rd column
-            $this->do_quarter_round(3, 7,11,15); // 4th column
+            $this->do_quarter_round(0, 4,  8, 12, $this->intermediary_state); // 1st column
+            $this->do_quarter_round(1, 5,  9, 13, $this->intermediary_state); // 2nd column
+            $this->do_quarter_round(2, 6, 10, 14, $this->intermediary_state); // 3rd column
+            $this->do_quarter_round(3, 7, 11, 15, $this->intermediary_state); // 4th column
             // diagonal rounds
-            $this->do_quarter_round(0, 5,10,15); // 1st diagonal
-            $this->do_quarter_round(1, 6,11,12); // 2nd diagonal
-            $this->do_quarter_round(2, 7, 8,13); // 3rd diagonal
-            $this->do_quarter_round(3, 4, 9,14); // 4th diagonal
+            $this->do_quarter_round(0, 5, 10, 15, $this->intermediary_state); // 1st diagonal
+            $this->do_quarter_round(1, 6, 11, 12, $this->intermediary_state); // 2nd diagonal
+            $this->do_quarter_round(2, 7,  8, 13, $this->intermediary_state); // 3rd diagonal
+            $this->do_quarter_round(3, 4,  9, 14, $this->intermediary_state); // 4th diagonal
         }
-        // snapshot the intermediary state
-        $this->intermediary_state = $this->final_state;
         // add the initial state to the final state
         for ($i=0; $i<self::STATE_ARRAY_LENGTH; $i++) {
-            $this->final_state[$i] = self::add_cap($this->final_state[$i], $this->initial_state[$i]);
+            $this->final_state[$i] = self::add_cap(
+                $this->intermediary_state[$i],
+                $this->initial_state[$i]);
         }
     }
 

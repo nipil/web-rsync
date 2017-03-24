@@ -36,7 +36,7 @@ class ChaCha20Block {
      * Enum for state selection
      */
     const STATE_INTERNAL = 0;
-    const STATE_PRE_FINAL = 1;
+    const STATE_INTERMEDIATE = 1;
     const STATE_FINAL = 2;
 
     /**
@@ -301,7 +301,7 @@ class ChaCha20Block {
         switch ($state) {
             case self::STATE_INTERNAL:
                 return $this->initial_state;
-            case self::STATE_PRE_FINAL:
+            case self::STATE_INTERMEDIATE:
                 return $this->intermediary_state;
             case self::STATE_FINAL:
                 return $this->final_state;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use WRS\ChaCha20Block;
+use WRS\ChaCha20Exception;
 
 /**
  * @covers ChaCha20BlockTest
@@ -166,14 +167,79 @@ final class ChaCha20BlockTest extends TestCase
             bin2hex($c->serialize_state(ChaCha20Block::STATE_FINAL)),
             "serialize failed");
     }
-}
 
-// Exceptions
-// self::rot_left(0, -1);
-// $this->set_const_index_value(-1, 0);
-// $this->set_key_index_value(-1, 0);
-// $this->set_nonce_index_value(-1, 0);
-// $this->bin_to_internal("toolong", "", 0, 0);
-// $this->bin_to_internal("", "", -1, 0);
-// $this->bin_to_internal("", "", 0, -1);
-// $this->bin_to_internal("12345678901234567890123456789012", "", 0, 10*self::STATE_ARRAY_LENGTH);
+    /**
+     * @expectedException WRS\ChaCha20Exception
+     */
+    public function testExceptionRotate() /* add ': void' in php 7.1 */
+    {
+        ChaCha20Block::rot_left(0, -1);
+    }
+
+    /**
+     * @expectedException WRS\ChaCha20Exception
+     */
+    public function testExceptionSetConstIndexValue() /* add ': void' in php 7.1 */
+    {
+        $c = new ChaCha20Block();
+        $c->set_const_index_value(-1, 0);
+    }
+
+    /**
+     * @expectedException WRS\ChaCha20Exception
+     */
+    public function testExceptionSetKeyIndexValue() /* add ': void' in php 7.1 */
+    {
+        $c = new ChaCha20Block();
+        $c->set_key_index_value(-1, 0);
+    }
+
+    /**
+     * @expectedException WRS\ChaCha20Exception
+     */
+    public function testExceptionSetNonceIndexValue() /* add ': void' in php 7.1 */
+    {
+        $c = new ChaCha20Block();
+        $c->set_nonce_index_value(-1, 0);
+    }
+
+    /**
+     * @expectedException WRS\ChaCha20Exception
+     */
+    public function testExceptionBinToInternalTooLong() /* add ': void' in php 7.1 */
+    {
+        $c = new ChaCha20Block();
+        $c->bin_to_initial("toolong", "test", 0, 0);
+    }
+
+    /**
+     * @expectedException WRS\ChaCha20Exception
+     */
+    public function testExceptionBinToInternalInvalidIndex() /* add ': void' in php 7.1 */
+    {
+        $c = new ChaCha20Block();
+        $c->bin_to_initial("", "test", -1, 0);
+    }
+
+    /**
+     * @expectedException WRS\ChaCha20Exception
+     */
+    public function testExceptionBinToInternalInvalidLength() /* add ': void' in php 7.1 */
+    {
+        $c = new ChaCha20Block();
+        $c->bin_to_initial("", "test", 0, -1);
+    }
+
+    /**
+     * @expectedException WRS\ChaCha20Exception
+     */
+    public function testExceptionBinToInternalTotalTooLong() /* add ': void' in php 7.1 */
+    {
+        $c = new ChaCha20Block();
+        $c->bin_to_initial(
+            "12345678901234567890123456789012",
+            "test",
+            0,
+            ChaCha20Block::STATE_ARRAY_LENGTH + 1);
+    }
+}

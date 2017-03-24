@@ -98,6 +98,24 @@ final class ChaCha20BlockTest extends TestCase
     // __construct(string $key=NULL, string $nonce=NULL, string $ctr=NULL)
     public function testConstructor() /* add ': void' in php 7.1 */
     {
+        $c = new ChaCha20Block();
+        $c->set_key(hex2bin("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"));
+        $c->set_nonce(hex2bin("000000090000004a00000000"));
+        $c->set_counter(1);
+        $c->compute_block();
+        $final = $c->get_state(ChaCha20Block::STATE_FINAL);
+        echo $c;
+        echo $final;
         $this->assertTrue(TRUE);
     }
 }
+
+// Exceptions
+// self::rot_left(0, -1);
+// $this->set_const_index_value(-1, 0);
+// $this->set_key_index_value(-1, 0);
+// $this->set_nonce_index_value(-1, 0);
+// $this->bin_to_internal("toolong", "", 0, 0);
+// $this->bin_to_internal("", "", -1, 0);
+// $this->bin_to_internal("", "", 0, -1);
+// $this->bin_to_internal("12345678901234567890123456789012", "", 0, 10*self::STATE_ARRAY_LENGTH);

@@ -109,7 +109,7 @@ class ChaCha20Block {
      * @param int       $index      index in const range
      * @param uint32    $value      value to store
      */
-    public function set_const(int $index, int $value) /* add ': void' in php 7.1 */ {
+    public function set_const_index_value(int $index, int $value) /* add ': void' in php 7.1 */ {
         if ($index < 0 or $index >= self::STATE_CONST_LENGTH) {
             throw new ChaCha20Exception(sprintf("Const index %d is outstide range [0..%d[", $index, self::STATE_CONST_LENGTH.'['));
         }
@@ -122,7 +122,7 @@ class ChaCha20Block {
      * @param int       $index      index in key range
      * @param uint32    $value      value to store
      */
-    public function set_key_index_uint32(int $index, int $value) /* add ': void' in php 7.1 */ {
+    public function set_key_index_value(int $index, int $value) /* add ': void' in php 7.1 */ {
         if ($index < 0 or $index >= self::STATE_KEY_LENGTH) {
             throw new ChaCha20Exception(sprintf("Key index %d is outstide range [0..%d[", $index, self::STATE_KEY_LENGTH.'['));
         }
@@ -135,7 +135,7 @@ class ChaCha20Block {
      * @param int       $index      index in nonce range
      * @param uint32    $value      value to store
      */
-    public function set_nonce_index_uint32(int $index, int $value) /* add ': void' in php 7.1 */ {
+    public function set_nonce_index_value(int $index, int $value) /* add ': void' in php 7.1 */ {
         if ($index < 0 or $index >= self::STATE_NONCE_LENGTH) {
             throw new ChaCha20Exception(sprintf("Nonce index %d is outstide range [0..%d[", $index, self::STATE_NONCE_LENGTH.'['));
         }
@@ -284,10 +284,10 @@ class ChaCha20Block {
     public function __construct(string $key=NULL, string $nonce=NULL, string $ctr=NULL) {
         // initialize
         $this->initial_state = array_fill(0, self::STATE_ARRAY_LENGTH, 0x00000000);
-        $this->set_const(0, self::CONSTANT_VALUE_0);
-        $this->set_const(1, self::CONSTANT_VALUE_1);
-        $this->set_const(2, self::CONSTANT_VALUE_2);
-        $this->set_const(3, self::CONSTANT_VALUE_3);
+        $this->set_const_index_value(0, self::CONSTANT_VALUE_0);
+        $this->set_const_index_value(1, self::CONSTANT_VALUE_1);
+        $this->set_const_index_value(2, self::CONSTANT_VALUE_2);
+        $this->set_const_index_value(3, self::CONSTANT_VALUE_3);
         $this->final_state = $this->initial_state;
     }
 }

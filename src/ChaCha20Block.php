@@ -58,7 +58,7 @@ class ChaCha20Block {
      *
      * @return uint32    an integer capped at INT_BIT_MASK bits
      */
-    protected function cap($value) {
+    public static function cap($value) {
         return $value & self::INT_BIT_MASK;
     }
 
@@ -70,13 +70,13 @@ class ChaCha20Block {
      *
      * @return uint32   $value rotated $nbits to the left
      */
-    protected function rot_left($value, $left) {
+    public static function rot_left($value, $left) {
         if ($left < 0 or $left >= self::INT_BIT_LENGTH) {
-            throw new Exception(sprintf("Left bitwise-rotation %d is outstide range [0..%d[", $left, self::INT_BIT_LENGTH));
+            throw new ChaCha20Exception(sprintf("Left bitwise-rotation %d is outstide range [0..%d[", $left, self::INT_BIT_LENGTH));
         }
         $first = $value;
-        $lp = $this->cap($value << $left);
-        $rp = $this->cap($value >> (self::INT_BIT_LENGTH - $left));
+        $lp = self::cap($value << $left);
+        $rp = self::cap($value >> (self::INT_BIT_LENGTH - $left));
         $value = $lp | $rp;
         return $value;
     }
@@ -86,7 +86,7 @@ class ChaCha20Block {
      *
      * @return uint32    an integer capped at INT_BIT_MASK bits
      */
-    protected function xor($a, $b) {
+    public static function xor($a, $b) {
         return $a ^ $b;
     }
 
@@ -95,51 +95,51 @@ class ChaCha20Block {
      *
      * @return uint32    an integer capped at INT_BIT_MASK bits
      */
-    protected function add_cap($a, $b) {
-        return $this->cap($a + $b);
+    public static function add_cap($a, $b) {
+        return self::cap($a + $b);
     }
 
     /**
-     * initialize internal "const" values one by one
+     * initialize initial state's "const" values one by one
      *
      * @param int       $index      index in const range
      * @param uint32    $value      value to store
      */
-    private function set_const($index, $value) {
+    public function set_const($index, $value) {
         if ($index < 0 or $index >= self::STATE_CONST_LENGTH) {
-            throw new Exception(sprintf("Const index %d is outstide range [0..%d[", $index, self::STATE_CONST_LENGTH.'['));
+            throw new ChaCha20Exception(sprintf("Const index %d is outstide range [0..%d[", $index, self::STATE_CONST_LENGTH.'['));
         }
         $this->initial_state[self::STATE_CONST_BASEINDEX + $index] = $this->cap($value);
     }
 
     /**
-     * initialize internal "key" values one by one
+     * initialize initial state's "key" values one by one
      *
      * @param int       $index      index in key range
      * @param uint32    $value      value to store
      */
     public function set_key_index_uint32($index, $value) {
         if ($index < 0 or $index >= self::STATE_KEY_LENGTH) {
-            throw new Exception(sprintf("Key index %d is outstide range [0..%d[", $index, self::STATE_KEY_LENGTH.'['));
+            throw new ChaCha20Exception(sprintf("Key index %d is outstide range [0..%d[", $index, self::STATE_KEY_LENGTH.'['));
         }
         $this->initial_state[self::STATE_KEY_BASEINDEX + $index] = $this->cap($value);
     }
 
     /**
-     * initialize internal "nonce" values one by one
+     * initialize initial state's "nonce" values one by one
      *
      * @param int       $index      index in nonce range
      * @param uint32    $value      value to store
      */
     public function set_nonce_index_uint32($index, $value) {
         if ($index < 0 or $index >= self::STATE_NONCE_LENGTH) {
-            throw new Exception(sprintf("Nonce index %d is outstide range [0..%d[", $index, self::STATE_NONCE_LENGTH.'['));
+            throw new ChaCha20Exception(sprintf("Nonce index %d is outstide range [0..%d[", $index, self::STATE_NONCE_LENGTH.'['));
         }
         $this->initial_state[self::STATE_NONCE_BASEINDEX + $index] = $this->cap($value);
     }
 
     /**
-     * initialize internal "block-counter" index
+     * initialize initial state's "block-counter" index
      *
      * @param uint32    $position   new block-counter index
      */
@@ -148,7 +148,7 @@ class ChaCha20Block {
     }
 
     /**
-     * increment internal "block-counter" value by $step
+     * increment initial state's "block-counter" value by $step
      *
      * @param uint32    $step       step added to current block-counter value
      */
@@ -167,14 +167,20 @@ class ChaCha20Block {
      *
      * @param   binary_string     $str    binary string holding little-endian uint32's
      */
-    private function bin_to_internal($str, $name, $index, $num) {
-        assert ($index > 0);
-        assert ($num > 0);
-        assert ($index + $num <= self::STATE_ARRAY_LENGTH);
+    public function bin_to_internal($str, $name, $index, $num) {
+        if ($index < 0) {
+            throw new ChaCha20Exception(sprintf("Index %d cannot be negative", $index));
+        }
+        if ($num < 0) {
+            throw new ChaCha20Exception(sprintf("Amount %d cannot be negative", $num));
+        }
+        if ($index + $num > self::STATE_ARRAY_LENGTH) {
+            throw new ChaCha20Exception(sprintf("Cannot copy %d numbers starting at index %d as it would exceed target size of %d", $num, $index, self::STATE_ARRAY_LENGTH));
+        }
         // check for input length
         $req_len = $num * self::INT_BIT_LENGTH >> 3;
         if (strlen($str) !== $req_len) {
-            throw new Exception($name.' "'.bin2hex($str).'" is not a '.$req_len.'-bits long hex string');
+            throw new ChaCha20Exception(sprintf('%s "%s" is not a %d-bits long hex string', $name, bin2hex($str), $req_len));
         }
         // extract littl-endian uint32 from it
         $arr = unpack("V".$num, $str);

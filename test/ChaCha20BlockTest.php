@@ -89,23 +89,24 @@ final class ChaCha20BlockTest extends TestCase
     // do_quarter_round(int $i_a, int $i_b, int $i_c, int $i_d)
     public function testQuarterRound() /* add ': void' in php 7.1 */
     {
+        // rfc7539 test vector 2.2.1
 
-   //     879531e0  c5ecf37d  516461b1  c9a62f8a
-   //     44c20ef3  3390af7f  d9fc690b  2a5f714c
-   //     53372767  b00a5631  974c541a  359e9963
-   //     5c971061  3d631689  2098d9d6  91dbd320
+        $vector = [
+            0x879531e0, 0xc5ecf37d, 0x516461b1, 0xc9a62f8a,
+            0x44c20ef3, 0x3390af7f, 0xd9fc690b, 0x2a5f714c,
+            0x53372767, 0xb00a5631, 0x974c541a, 0x359e9963,
+            0x5c971061, 0x3d631689, 0x2098d9d6, 0x91dbd320
+        ];
 
-   // We will apply the QUARTERROUND(2,7,8,13) operation to this state.
-   // For obvious reasons, this one is part of what is called a "diagonal
-   // round":
+        ChaCha20Block::do_quarter_round(2, 7, 8, 13, $vector);
 
-   // After applying QUARTERROUND(2,7,8,13)
-
-   //     879531e0  c5ecf37d *bdb886dc  c9a62f8a
-   //     44c20ef3  3390af7f  d9fc690b *cfacafd2
-   //    *e46bea80  b00a5631  974c541a  359e9963
-   //     5c971061 *ccc07c79  2098d9d6  91dbd320
-        $this->assertTrue(TRUE);
+        $this->assertEquals([
+                0x879531e0, 0xc5ecf37d, 0xbdb886dc, 0xc9a62f8a,
+                0x44c20ef3, 0x3390af7f, 0xd9fc690b, 0xcfacafd2,
+                0xe46bea80, 0xb00a5631, 0x974c541a, 0x359e9963,
+                0x5c971061, 0xccc07c79, 0x2098d9d6, 0x91dbd320
+            ],
+            $vector);
     }
 
     public function testComputeBlock() /* add ': void' in php 7.1 */

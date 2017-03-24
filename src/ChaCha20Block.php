@@ -125,7 +125,7 @@ class ChaCha20Block {
         if ($index < 0 or $index >= self::STATE_CONST_LENGTH) {
             throw new ChaCha20Exception(sprintf("Const index %d is outstide range [0..%d[", $index, self::STATE_CONST_LENGTH.'['));
         }
-        $this->initial_state[self::STATE_CONST_BASEINDEX + $index] = $this->cap($value);
+        $this->initial_state[self::STATE_CONST_BASEINDEX + $index] = self::cap($value);
     }
 
     /**
@@ -138,7 +138,7 @@ class ChaCha20Block {
         if ($index < 0 or $index >= self::STATE_KEY_LENGTH) {
             throw new ChaCha20Exception(sprintf("Key index %d is outstide range [0..%d[", $index, self::STATE_KEY_LENGTH.'['));
         }
-        $this->initial_state[self::STATE_KEY_BASEINDEX + $index] = $this->cap($value);
+        $this->initial_state[self::STATE_KEY_BASEINDEX + $index] = self::cap($value);
     }
 
     /**
@@ -151,7 +151,7 @@ class ChaCha20Block {
         if ($index < 0 or $index >= self::STATE_NONCE_LENGTH) {
             throw new ChaCha20Exception(sprintf("Nonce index %d is outstide range [0..%d[", $index, self::STATE_NONCE_LENGTH.'['));
         }
-        $this->initial_state[self::STATE_NONCE_BASEINDEX + $index] = $this->cap($value);
+        $this->initial_state[self::STATE_NONCE_BASEINDEX + $index] = self::cap($value);
     }
 
     /**
@@ -160,7 +160,7 @@ class ChaCha20Block {
      * @param uint32    $position   new block-counter index
      */
     public function set_counter(int $position) /* add ': void' in php 7.1 */ {
-        $this->initial_state[self::STATE_COUNTER_BASEINDEX] = $this->cap($position);
+        $this->initial_state[self::STATE_COUNTER_BASEINDEX] = self::cap($position);
     }
 
     /**
@@ -170,7 +170,7 @@ class ChaCha20Block {
      */
     public function inc_counter(int $step = 1) /* add ': void' in php 7.1 */ {
         $curval = $this->initial_state[self::STATE_COUNTER_BASEINDEX];
-        $newval = $this->cap($curval + $step);
+        $newval = self::cap($curval + $step);
         $this->set_counter($newval);
     }
 
@@ -243,18 +243,18 @@ class ChaCha20Block {
         $c = $this->final_state[$i_c];
         $d = $this->final_state[$i_d];
         // do the quarter round
-        $a = $this->add_cap($a, $b);  // a += b;
-        $d = $this->xor($d, $a);      // d ^= a;
-        $d = $this->rot_left($d, 16); // d <<<= 16;
-        $c = $this->add_cap($c, $d);  // c += d;
-        $b = $this->xor($b, $c);      // b ^= c;
-        $b = $this->rot_left($b, 12); // b <<<= 12;
-        $a = $this->add_cap($a, $b);  // a += b;
-        $d = $this->xor($d, $a);      // d ^= a;
-        $d = $this->rot_left($d, 8);  // d <<<= 8;
-        $c = $this->add_cap($c, $d);  // c += d;
-        $b = $this->xor($b, $c);      // b ^= c;
-        $b = $this->rot_left($b, 7);  // b <<<= 7;
+        $a = self::add_cap($a, $b);  // a += b;
+        $d = self::xor($d, $a);      // d ^= a;
+        $d = self::rot_left($d, 16); // d <<<= 16;
+        $c = self::add_cap($c, $d);  // c += d;
+        $b = self::xor($b, $c);      // b ^= c;
+        $b = self::rot_left($b, 12); // b <<<= 12;
+        $a = self::add_cap($a, $b);  // a += b;
+        $d = self::xor($d, $a);      // d ^= a;
+        $d = self::rot_left($d, 8);  // d <<<= 8;
+        $c = self::add_cap($c, $d);  // c += d;
+        $b = self::xor($b, $c);      // b ^= c;
+        $b = self::rot_left($b, 7);  // b <<<= 7;
         // stores modified uint32's
         $this->final_state[$i_a] = $a;
         $this->final_state[$i_b] = $b;
@@ -290,7 +290,7 @@ class ChaCha20Block {
         $this->intermediary_state = $this->final_state;
         // add the initial state to the final state
         for ($i=0; $i<self::STATE_ARRAY_LENGTH; $i++) {
-            $this->final_state[$i] = $this->add_cap($this->final_state[$i], $this->initial_state[$i]);
+            $this->final_state[$i] = self::add_cap($this->final_state[$i], $this->initial_state[$i]);
         }
     }
 
@@ -307,6 +307,28 @@ class ChaCha20Block {
                 return $this->intermediary_state;
             case self::STATE_FINAL:
                 return $this->final_state;
+            default:
+                throw new ChaCha20Exception(sprintf("State enum %d is invalid", $state));
+        }
+    }
+
+    /**
+     * set internal state as an array of uint32
+     *
+     * @param array  $array      array of uint32 to set as state
+     * @param int    $state      enum defining which state to return
+     */
+    public function set_state(array $array, int $state) /* add ': void' in php 7.1 */ {
+        switch ($state) {
+            case self::STATE_INITIAL:
+                $this->initial_state = $array;
+                return;
+            case self::STATE_INTERMEDIATE:
+                $this->intermediary_state = $array;
+                return;
+            case self::STATE_FINAL:
+                $this->final_state = $array;
+                return;
             default:
                 throw new ChaCha20Exception(sprintf("State enum %d is invalid", $state));
         }

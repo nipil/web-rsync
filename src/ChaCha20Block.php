@@ -35,7 +35,7 @@ class ChaCha20Block {
     /**
      * Enum for state selection
      */
-    const STATE_INTERNAL = 0;
+    const STATE_INITIAL = 0;
     const STATE_INTERMEDIATE = 1;
     const STATE_FINAL = 2;
 
@@ -55,7 +55,7 @@ class ChaCha20Block {
     const FULL_QUARTER_ROUND_ITERATIONS = 10;
 
     /**
-     * internal state is what is built when key, nonce, ctr are modified
+     * initial state is what is built when key, nonce, ctr are modified
      */
     private $initial_state;
 
@@ -175,15 +175,15 @@ class ChaCha20Block {
     }
 
     /**
-     * puts binary data to internal state
+     * puts binary data to INITIAL state
      *
      * extract $num little-endian uint32 from a least-significant-bit-starting
-     * BINARY str named $name, and places these uint32's into internal-state
+     * BINARY str named $name, and places these uint32's into INITIAL-state
      * starting at $index
      *
      * @param   binary_string     $str    binary string holding little-endian uint32's
      */
-    public function bin_to_internal(string $str, string $name, int $index, int $num) /* add ': void' in php 7.1 */ {
+    public function bin_to_initial(string $str, string $name, int $index, int $num) /* add ': void' in php 7.1 */ {
         if ($index < 0) {
             throw new ChaCha20Exception(sprintf("Index %d cannot be negative", $index));
         }
@@ -208,7 +208,7 @@ class ChaCha20Block {
      * set key from a least-significant-bit-starting BINARY string
      */
     public function set_key(string $string) /* add ': void' in php 7.1 */ {
-        $this->bin_to_internal(
+        $this->bin_to_initial(
             $string,
             "Key",
             self::STATE_KEY_BASEINDEX,
@@ -219,7 +219,7 @@ class ChaCha20Block {
      * set nonce from a least-significant-bit-starting BINARY string
      */
     public function set_nonce(string $string) /* add ': void' in php 7.1 */ {
-        $this->bin_to_internal(
+        $this->bin_to_initial(
             $string,
             "Nonce",
             self::STATE_NONCE_BASEINDEX,
@@ -227,14 +227,14 @@ class ChaCha20Block {
     }
 
     /**
-     * display internal state in matrix form
+     * display FINAL state in matrix form
      */
     public function __toString() : string {
         return vsprintf("00:0x%08x\t01:0x%08x\t02:0x%08x\t03:0x%08x\n04:0x%08x\t05:0x%08x\t06:0x%08x\t07:0x%08x\n08:0x%08x\t09:0x%08x\t10:0x%08x\t11:0x%08x\n12:0x%08x\t13:0x%08x\t14:0x%08x\t15:0x%08x\n", $this->final_state);
     }
 
     /**
-     * apply a quarter-round to internal-state
+     * apply a quarter-round to FINAL al-state
      */
     public function do_quarter_round(int $i_a, int $i_b, int $i_c, int $i_d) /* add ': void' in php 7.1 */ {
         // fetch required uint32's
@@ -266,7 +266,7 @@ class ChaCha20Block {
      * computes a block
      */
     public function compute_block() /* add ': void' in php 7.1 */ {
-        // initialize internal state with algorithm constants
+        // initialize INITIAL state with algorithm constants
         $this->set_const_index_value(0, self::CONSTANT_VALUE_0);
         $this->set_const_index_value(1, self::CONSTANT_VALUE_1);
         $this->set_const_index_value(2, self::CONSTANT_VALUE_2);
@@ -286,6 +286,8 @@ class ChaCha20Block {
             $this->do_quarter_round(2, 7, 8,13); // 3rd diagonal
             $this->do_quarter_round(3, 4, 9,14); // 4th diagonal
         }
+        // snapshot the intermediary state
+        $this->intermediary_state = $this->final_state;
         // add the initial state to the final state
         for ($i=0; $i<self::STATE_ARRAY_LENGTH; $i++) {
             $this->final_state[$i] = $this->add_cap($this->final_state[$i], $this->initial_state[$i]);
@@ -299,7 +301,7 @@ class ChaCha20Block {
      */
     public function get_state(int $state) /* add ': void' in php 7.1 */ {
         switch ($state) {
-            case self::STATE_INTERNAL:
+            case self::STATE_INITIAL:
                 return $this->initial_state;
             case self::STATE_INTERMEDIATE:
                 return $this->intermediary_state;
@@ -308,6 +310,29 @@ class ChaCha20Block {
             default:
                 throw new ChaCha20Exception(sprintf("State enum %d is invalid", $state));
         }
+    }
+
+    /**
+     * serialize internal state as binary string of little-endian uint32
+     *
+     * @param int    $state      enum defining which state to return
+     */
+    public function serialize_state(int $state) /* add ': void' in php 7.1 */ {
+        $source = NULL;
+        switch ($state) {
+            case self::STATE_INITIAL:
+                $source = $this->initial_state;
+                break;
+            case self::STATE_INTERMEDIATE:
+                $source = $this->intermediary_state;
+                break;
+            case self::STATE_FINAL:
+                $source = $this->final_state;
+                break;
+            default:
+                throw new ChaCha20Exception(sprintf("State enum %d is invalid", $state));
+        }
+        return pack("V16", ...$source);
     }
 
     /**

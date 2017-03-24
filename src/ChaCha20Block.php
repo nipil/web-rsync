@@ -1,4 +1,8 @@
-<?php namespace WRS;
+<?php
+
+declare(strict_types=1);
+
+namespace WRS;
 
 /**
  * Calculates ChaCha20 blocks based on a given (key, nonce, ctr) set
@@ -58,7 +62,7 @@ class ChaCha20Block {
      *
      * @return uint32    an integer capped at INT_BIT_MASK bits
      */
-    public static function cap($value) {
+    public static function cap(int $value) : int {
         return $value & self::INT_BIT_MASK;
     }
 
@@ -70,7 +74,7 @@ class ChaCha20Block {
      *
      * @return uint32   $value rotated $nbits to the left
      */
-    public static function rot_left($value, $left) {
+    public static function rot_left(int $value, int $left) : int {
         if ($left < 0 or $left >= self::INT_BIT_LENGTH) {
             throw new ChaCha20Exception(sprintf("Left bitwise-rotation %d is outstide range [0..%d[", $left, self::INT_BIT_LENGTH));
         }
@@ -86,7 +90,7 @@ class ChaCha20Block {
      *
      * @return uint32    an integer capped at INT_BIT_MASK bits
      */
-    public static function xor($a, $b) {
+    public static function xor(int $a, int $b) : int {
         return $a ^ $b;
     }
 
@@ -95,7 +99,7 @@ class ChaCha20Block {
      *
      * @return uint32    an integer capped at INT_BIT_MASK bits
      */
-    public static function add_cap($a, $b) {
+    public static function add_cap(int $a, int $b) : int {
         return self::cap($a + $b);
     }
 
@@ -105,7 +109,7 @@ class ChaCha20Block {
      * @param int       $index      index in const range
      * @param uint32    $value      value to store
      */
-    public function set_const($index, $value) {
+    public function set_const(int $index, int $value) /* add ': void' in php 7.1 */ {
         if ($index < 0 or $index >= self::STATE_CONST_LENGTH) {
             throw new ChaCha20Exception(sprintf("Const index %d is outstide range [0..%d[", $index, self::STATE_CONST_LENGTH.'['));
         }
@@ -118,7 +122,7 @@ class ChaCha20Block {
      * @param int       $index      index in key range
      * @param uint32    $value      value to store
      */
-    public function set_key_index_uint32($index, $value) {
+    public function set_key_index_uint32(int $index, int $value) /* add ': void' in php 7.1 */ {
         if ($index < 0 or $index >= self::STATE_KEY_LENGTH) {
             throw new ChaCha20Exception(sprintf("Key index %d is outstide range [0..%d[", $index, self::STATE_KEY_LENGTH.'['));
         }
@@ -131,7 +135,7 @@ class ChaCha20Block {
      * @param int       $index      index in nonce range
      * @param uint32    $value      value to store
      */
-    public function set_nonce_index_uint32($index, $value) {
+    public function set_nonce_index_uint32(int $index, int $value) /* add ': void' in php 7.1 */ {
         if ($index < 0 or $index >= self::STATE_NONCE_LENGTH) {
             throw new ChaCha20Exception(sprintf("Nonce index %d is outstide range [0..%d[", $index, self::STATE_NONCE_LENGTH.'['));
         }
@@ -143,7 +147,7 @@ class ChaCha20Block {
      *
      * @param uint32    $position   new block-counter index
      */
-    public function set_counter($position) {
+    public function set_counter(int $position) /* add ': void' in php 7.1 */ {
         $this->initial_state[self::STATE_COUNTER_BASEINDEX] = $this->cap($position);
     }
 
@@ -152,7 +156,7 @@ class ChaCha20Block {
      *
      * @param uint32    $step       step added to current block-counter value
      */
-    public function inc_counter($step = 1) {
+    public function inc_counter(int $step = 1) /* add ': void' in php 7.1 */ {
         $curval = $this->initial_state[self::STATE_COUNTER_BASEINDEX];
         $newval = $this->cap($curval + $step);
         $this->set_counter($newval);
@@ -167,7 +171,7 @@ class ChaCha20Block {
      *
      * @param   binary_string     $str    binary string holding little-endian uint32's
      */
-    public function bin_to_internal($str, $name, $index, $num) {
+    public function bin_to_internal(string $str, string $name, int $index, int $num) /* add ': void' in php 7.1 */ {
         if ($index < 0) {
             throw new ChaCha20Exception(sprintf("Index %d cannot be negative", $index));
         }
@@ -191,7 +195,7 @@ class ChaCha20Block {
     /**
      * set key from a least-significant-bit-starting BINARY string
      */
-    public function set_key($string) {
+    public function set_key(string $string) /* add ': void' in php 7.1 */ {
         $this->bin_to_internal(
             $string,
             "Key",
@@ -202,7 +206,7 @@ class ChaCha20Block {
     /**
      * set nonce from a least-significant-bit-starting BINARY string
      */
-    public function set_nonce($string) {
+    public function set_nonce(string $string) /* add ': void' in php 7.1 */ {
         $this->bin_to_internal(
             $string,
             "Nonce",
@@ -213,14 +217,14 @@ class ChaCha20Block {
     /**
      * display internal state in matrix form
      */
-    public function __toString() {
+    public function __toString() : string {
         return vsprintf("00:0x%08x\t01:0x%08x\t02:0x%08x\t03:0x%08x\n04:0x%08x\t05:0x%08x\t06:0x%08x\t07:0x%08x\n08:0x%08x\t09:0x%08x\t10:0x%08x\t11:0x%08x\n12:0x%08x\t13:0x%08x\t14:0x%08x\t15:0x%08x\n", $this->final_state);
     }
 
     /**
      * apply a quarter-round to internal-state
      */
-    public function do_quarter_round($i_a, $i_b, $i_c, $i_d) {
+    public function do_quarter_round(int $i_a, int $i_b, int $i_c, int $i_d) /* add ': void' in php 7.1 */ {
         // fetch required uint32's
         $a = $this->final_state[$i_a];
         $b = $this->final_state[$i_b];
@@ -249,7 +253,7 @@ class ChaCha20Block {
     /**
      * computes a block
      */
-    public function compute_block() {
+    public function compute_block() /* add ': void' in php 7.1 */ {
         // start from the initial state
         $this->final_state = $this->initial_state;
         // compute full rounds
@@ -277,7 +281,7 @@ class ChaCha20Block {
      * creates and initalize a Block.
      *
      */
-    public function __construct($key=NULL, $nonce=NULL, $ctr=NULL) {
+    public function __construct(string $key=NULL, string $nonce=NULL, string $ctr=NULL) {
         // initialize
         $this->initial_state = array_fill(0, self::STATE_ARRAY_LENGTH, 0x00000000);
         $this->set_const(0, self::CONSTANT_VALUE_0);

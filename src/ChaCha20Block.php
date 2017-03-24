@@ -33,6 +33,13 @@ class ChaCha20Block {
         + self::STATE_NONCE_LENGTH;
 
     /**
+     * Enum for state selection
+     */
+    const STATE_INTERNAL = 0;
+    const STATE_PRE_FINAL = 1;
+    const STATE_FINAL = 2;
+
+    /**
      * These are the ChaCha20 constants. They are not magical,
      * nor cryptographically designed : the represent an ascii-str
      * "expand 32-byte k" when written as 4 LITTLE-endian uint32
@@ -51,6 +58,11 @@ class ChaCha20Block {
      * internal state is what is built when key, nonce, ctr are modified
      */
     private $initial_state;
+
+    /**
+     * intermediary state when rounds are done
+     */
+    private $intermediary_state;
 
     /**
      * final state is the output of the calculation
@@ -254,6 +266,11 @@ class ChaCha20Block {
      * computes a block
      */
     public function compute_block() /* add ': void' in php 7.1 */ {
+        // initialize internal state with algorithm constants
+        $this->set_const_index_value(0, self::CONSTANT_VALUE_0);
+        $this->set_const_index_value(1, self::CONSTANT_VALUE_1);
+        $this->set_const_index_value(2, self::CONSTANT_VALUE_2);
+        $this->set_const_index_value(3, self::CONSTANT_VALUE_3);
         // start from the initial state
         $this->final_state = $this->initial_state;
         // compute full rounds
@@ -276,6 +293,24 @@ class ChaCha20Block {
     }
 
     /**
+     * get internal state as an array of uint32
+     *
+     * @param int    $state      enum defining which state to return
+     */
+    public function get_state(int $state) /* add ': void' in php 7.1 */ {
+        switch ($state) {
+            case self::STATE_INTERNAL:
+                return $this->initial_state;
+            case self::STATE_PRE_FINAL:
+                return $this->intermediary_state;
+            case self::STATE_FINAL:
+                return $this->final_state;
+            default:
+                throw new ChaCha20Exception(sprintf("State enum %d is invalid", $state));
+        }
+    }
+
+    /**
      * construct a "NULL" Block
      *
      * creates and initalize a Block.
@@ -284,10 +319,6 @@ class ChaCha20Block {
     public function __construct(string $key=NULL, string $nonce=NULL, string $ctr=NULL) {
         // initialize
         $this->initial_state = array_fill(0, self::STATE_ARRAY_LENGTH, 0x00000000);
-        $this->set_const_index_value(0, self::CONSTANT_VALUE_0);
-        $this->set_const_index_value(1, self::CONSTANT_VALUE_1);
-        $this->set_const_index_value(2, self::CONSTANT_VALUE_2);
-        $this->set_const_index_value(3, self::CONSTANT_VALUE_3);
         $this->final_state = $this->initial_state;
     }
 }

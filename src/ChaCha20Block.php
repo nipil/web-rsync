@@ -258,11 +258,6 @@ class ChaCha20Block {
      * computes a block
      */
     public function compute_block() /* add ': void' in php 7.1 */ {
-        // initialize INITIAL state with algorithm constants
-        $this->set_const_index_value(0, self::CONSTANT_VALUE_0);
-        $this->set_const_index_value(1, self::CONSTANT_VALUE_1);
-        $this->set_const_index_value(2, self::CONSTANT_VALUE_2);
-        $this->set_const_index_value(3, self::CONSTANT_VALUE_3);
         // start from the initial state
         $this->intermediary_state = $this->initial_state;
         // compute full rounds
@@ -355,10 +350,27 @@ class ChaCha20Block {
      * creates and initalize a Block.
      *
      */
-    public function __construct(string $key=NULL, string $nonce=NULL, string $ctr=NULL) {
-        // initialize
+    public function __construct(string $key=NULL, string $nonce=NULL, int $ctr=NULL) {
+        // empty everything
         $this->initial_state = array_fill(0, self::STATE_ARRAY_LENGTH, 0x00000000);
         $this->intermediary_state = $this->initial_state;
         $this->final_state = $this->initial_state;
+
+        // initialize INITIAL state with algorithm constants
+        $this->set_const_index_value(0, self::CONSTANT_VALUE_0);
+        $this->set_const_index_value(1, self::CONSTANT_VALUE_1);
+        $this->set_const_index_value(2, self::CONSTANT_VALUE_2);
+        $this->set_const_index_value(3, self::CONSTANT_VALUE_3);
+
+        // initialize others if provided
+        if ($key !== NULL) {
+            $this->set_key($key);
+        }
+        if ($nonce !== NULL) {
+            $this->set_nonce($nonce);
+        }
+        if ($ctr !== NULL) {
+            $this->set_counter($ctr);
+        }
     }
 }

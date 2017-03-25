@@ -110,26 +110,29 @@ final class ChaCha20BlockTest extends TestCase
             $vector);
     }
 
-    public function testComputeBlock() /* add ': void' in php 7.1 */
+    public function testConstructorEmpty() /* add ': void' in php 7.1 */
     {
         // rfc7539 test vector 2.3.2
         $c = new ChaCha20Block();
         $this->assertEquals([
-                0x00000000, 0x00000000, 0x00000000, 0x00000000,
+                0x61707865, 0x3320646e, 0x79622d32, 0x6b206574,
                 0x00000000, 0x00000000, 0x00000000, 0x00000000,
                 0x00000000, 0x00000000, 0x00000000, 0x00000000,
                 0x00000000, 0x00000000, 0x00000000, 0x00000000
             ],
             $c->get_state(ChaCha20Block::STATE_INITIAL),
             "clear state failed");
+    }
 
-        // initialize
-        $c->set_key(hex2bin("000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"));
-        $c->set_nonce(hex2bin("000000090000004a00000000"));
-        $c->set_counter(1);
+    public function testConstructorValued() /* add ': void' in php 7.1 */
+    {
+        // rfc7539 test vector 2.3.2
+        $key = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f";
+        $nonce = "000000090000004a00000000";
+        $ctr = 1;
 
-        // compute
-        $c->compute_block();
+        // valued constructor
+        $c = new ChaCha20Block(hex2bin($key), hex2bin($nonce), $ctr);
 
         // initial
         $this->assertEquals([
@@ -140,6 +143,20 @@ final class ChaCha20BlockTest extends TestCase
             ],
             $c->get_state(ChaCha20Block::STATE_INITIAL),
             "initial state failed");
+
+        // provides
+        return $c;
+    }
+
+    /**
+     * @depends testConstructorValued
+     */
+    public function testComputeBlock($c) /* add ': void' in php 7.1 */
+    {
+        // rfc7539 test vector 2.3.2
+
+        // compute
+        $c->compute_block();
 
         // intermediate
         $this->assertEquals([

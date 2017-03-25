@@ -164,6 +164,13 @@ class ChaCha20Block {
     }
 
     /**
+     * get "block-counter" index
+     */
+    public function get_counter() /* add ': int' in php 7.1 */ {
+        return $this->initial_state[self::STATE_COUNTER_BASEINDEX];
+    }
+
+    /**
      * increment initial state's "block-counter" value by $step
      *
      * @param uint32    $step       step added to current block-counter value
@@ -347,8 +354,11 @@ class ChaCha20Block {
     /**
      * construct a "NULL" Block
      *
-     * creates and initalize a Block.
+     * creates and initalizes a Block.
      *
+     * @param key   binary_string
+     * @param nonce binary_string
+     * @param ctr   uint32
      */
     public function __construct(string $key=NULL, string $nonce=NULL, int $ctr=NULL) {
         // empty everything

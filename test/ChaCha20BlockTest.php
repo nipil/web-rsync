@@ -114,6 +114,8 @@ final class ChaCha20BlockTest extends TestCase
     {
         // rfc7539 test vector 2.3.2
         $c = new ChaCha20Block();
+
+        // initial
         $this->assertEquals([
                 0x61707865, 0x3320646e, 0x79622d32, 0x6b206574,
                 0x00000000, 0x00000000, 0x00000000, 0x00000000,
@@ -122,6 +124,9 @@ final class ChaCha20BlockTest extends TestCase
             ],
             $c->get_state(ChaCha20Block::STATE_INITIAL),
             "clear state failed");
+
+        // check counter
+        $this->assertEquals(0, $c->get_counter());
     }
 
     public function testConstructorValued() /* add ': void' in php 7.1 */
@@ -143,6 +148,9 @@ final class ChaCha20BlockTest extends TestCase
             ],
             $c->get_state(ChaCha20Block::STATE_INITIAL),
             "initial state failed");
+
+        // check counter
+        $this->assertEquals(1, $c->get_counter());
 
         // provides
         return $c;

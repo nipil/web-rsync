@@ -358,6 +358,7 @@ class ChaCha20Block {
     public function __construct(string $key=NULL, string $nonce=NULL, string $ctr=NULL) {
         // initialize
         $this->initial_state = array_fill(0, self::STATE_ARRAY_LENGTH, 0x00000000);
+        $this->intermediary_state = $this->initial_state;
         $this->final_state = $this->initial_state;
     }
 }

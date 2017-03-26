@@ -363,7 +363,7 @@ final class ChaCha20BlockTest extends TestCase
         $this->assertEquals([
                 ChaCha20Block::buildUint32(0x8377, 0x78ab),
                 ChaCha20Block::buildUint32(0xe238, 0xd763),
-                0xa67ae21e,
+                ChaCha20Block::buildUint32(0xa67a, 0xe21e),
                 0x5950bb2f,
                 ChaCha20Block::buildUint32(0xc4f2, 0xd0c7),
                 ChaCha20Block::buildUint32(0xfc62, 0xbb2f),

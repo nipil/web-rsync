@@ -58,9 +58,18 @@ class ChaCha20Random extends ChaCha20Block {
     }
 
     /**
-     * generates a counter from /dev/urandom
+     * generates a sub-counter from /dev/urandom
      */
-    public function __construct(string $key=NULL, string $nonce=NULL, int $block_ctr=NULL, $block_sub_ctr = 0) {
+    public static function random_sub_counter() {
+        $str = random_bytes(1);
+        $value = ord($str[0]) % ChaCha20Block::STATE_ARRAY_LENGTH;
+        return $value;
+    }
+
+    /**
+     * generates an PRNG object (possibly randomized)
+     */
+    public function __construct(string $key=NULL, string $nonce=NULL, int $block_ctr=NULL, $block_sub_ctr = NULL) {
         // provide random if necessary
         if ($key === NULL) {
             $key = self::random_key();
@@ -70,6 +79,9 @@ class ChaCha20Random extends ChaCha20Block {
         }
         if ($block_ctr === NULL) {
             $block_ctr = self::random_counter();
+        }
+        if ($block_sub_ctr === NULL) {
+            $block_sub_ctr = self::random_sub_counter();
         }
         // initialize ChaCha20Block
         parent::__construct($key, $nonce, $block_ctr);

@@ -112,12 +112,13 @@ class ChaCha20Block {
         if ($left < 0 or $left >= self::INT_BIT_LENGTH) {
             throw new ChaCha20Exception(sprintf("Left bitwise-rotation %d is outstide range [0..%d[", $left, self::INT_BIT_LENGTH));
         }
+        if ($left === 0) {
+            return $value;
+        }
         $lp = self::cap($value << $left);
-        // printf("LP %d %s\n", $lp, gettype($lp));
         $rp = self::cap($value >> (self::INT_BIT_LENGTH - $left));
-        // printf("RP %d %s\n", $rp, gettype($rp));
-        $value = $lp | $rp;
-        // printf("VL %d %s\n", $value, gettype($value));
+        $m = (1 << $left) - 1;
+        $value = $lp | ($rp & $m);
         return $value;
     }
 

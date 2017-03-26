@@ -34,35 +34,30 @@ final class ChaCha20BlockTest extends TestCase
      */
     public function testAddCap(int $a, int $b, int $expected) /* add ': void' in php 7.1 */
     {
-        $this->assertEquals($expected, ChaCha20Block::add_cap($a, $b));
+            $this->assertEquals($expected, ChaCha20Block::add_cap($a, $b));
     }
 
     public function testCap() /* add ': void' in php 7.1 */
     {
-        $this->assertEquals(0xFFFFFFFF, ChaCha20Block::cap(0x7FFFFFFFFFFFFFFF));
+        if (PHP_INT_SIZE === 4) {
+            $this->assertTrue(TRUE);
+        } else {
+            $this->assertEquals(0xFFFFFFFF, ChaCha20Block::cap(0x7FFFFFFFFFFFFFFF));
+        }
     }
 
     public function testRotLeft() /* add ': void' in php 7.1 */
     {
         // rfc7539 test vector 2.1
-        $this->assertEquals(0xcc5fed3c, ChaCha20Block::rot_left(0x7998bfda, 7));
+        $this->assertEquals(
+            ChaCha20Block::buildUint32(0xcc5f, 0xed3c),
+            ChaCha20Block::rot_left(0x7998bfda, 7));
     }
 
     public function testXor() /* add ': void' in php 7.1 */
     {
         // rfc7539 test vector 2.1
         $this->assertEquals(0x7998bfda, ChaCha20Block::xor(0x01020304, 0x789abcde));
-    }
-
-    public function testAddCapWithoutOverlflow() /* add ': void' in php 7.1 */
-    {
-        // rfc7539 test vector 2.1
-        $this->assertEquals(0x789abcde, ChaCha20Block::add_cap(0x77777777, 0x01234567));
-    }
-
-    public function testAddCapWithOverlflow() /* add ': void' in php 7.1 */
-    {
-        $this->assertEquals(0x08888888, ChaCha20Block::add_cap(0x87777777, 0x81111111));
     }
 
     // set_const(int $index, int $value)
@@ -119,19 +114,43 @@ final class ChaCha20BlockTest extends TestCase
         // rfc7539 test vector 2.2.1
 
         $vector = [
-            0x879531e0, 0xc5ecf37d, 0x516461b1, 0xc9a62f8a,
-            0x44c20ef3, 0x3390af7f, 0xd9fc690b, 0x2a5f714c,
-            0x53372767, 0xb00a5631, 0x974c541a, 0x359e9963,
-            0x5c971061, 0x3d631689, 0x2098d9d6, 0x91dbd320
+            ChaCha20Block::buildUint32(0x8795, 0x31e0),
+            ChaCha20Block::buildUint32(0xc5ec, 0xf37d),
+            0x516461b1, // 2
+            ChaCha20Block::buildUint32(0xc9a6, 0x2f8a),
+            0x44c20ef3,
+            0x3390af7f,
+            ChaCha20Block::buildUint32(0xd9fc, 0x690b),
+            0x2a5f714c, // 7
+            0x53372767, // 8
+            ChaCha20Block::buildUint32(0xb00a, 0x5631),
+            ChaCha20Block::buildUint32(0x974c, 0x541a),
+            0x359e9963,
+            0x5c971061,
+            0x3d631689, // 13
+            0x2098d9d6,
+            ChaCha20Block::buildUint32(0x91db, 0xd320)
         ];
 
         ChaCha20Block::do_quarter_round(2, 7, 8, 13, $vector);
 
         $this->assertEquals([
-                0x879531e0, 0xc5ecf37d, 0xbdb886dc, 0xc9a62f8a,
-                0x44c20ef3, 0x3390af7f, 0xd9fc690b, 0xcfacafd2,
-                0xe46bea80, 0xb00a5631, 0x974c541a, 0x359e9963,
-                0x5c971061, 0xccc07c79, 0x2098d9d6, 0x91dbd320
+                ChaCha20Block::buildUint32(0x8795, 0x31e0),
+                ChaCha20Block::buildUint32(0xc5ec, 0xf37d),
+                ChaCha20Block::buildUint32(0xbdb8, 0x86dc), // 2
+                ChaCha20Block::buildUint32(0xc9a6, 0x2f8a),
+                0x44c20ef3,
+                0x3390af7f,
+                ChaCha20Block::buildUint32(0xd9fc, 0x690b),
+                ChaCha20Block::buildUint32(0xcfac, 0xafd2), // 7
+                ChaCha20Block::buildUint32(0xe46b, 0xea80), // 8
+                ChaCha20Block::buildUint32(0xb00a, 0x5631),
+                ChaCha20Block::buildUint32(0x974c, 0x541a),
+                0x359e9963,
+                0x5c971061,
+                ChaCha20Block::buildUint32(0xccc0, 0x7c79), // 13
+                0x2098d9d6,
+                ChaCha20Block::buildUint32(0x91db, 0xd320)
             ],
             $vector);
     }
@@ -187,27 +206,49 @@ final class ChaCha20BlockTest extends TestCase
      */
     public function testComputeBlock($c) /* add ': void' in php 7.1 */
     {
-        // rfc7539 test vector 2.3.2
-
         // compute
         $c->compute_block();
 
         // intermediate
         $this->assertEquals([
-                0x837778ab, 0xe238d763, 0xa67ae21e, 0x5950bb2f,
-                0xc4f2d0c7, 0xfc62bb2f, 0x8fa018fc, 0x3f5ec7b7,
-                0x335271c2, 0xf29489f3, 0xeabda8fc, 0x82e46ebd,
-                0xd19c12b4, 0xb04e16de, 0x9e83d0cb, 0x4e3c50a2
+                ChaCha20Block::buildUint32(0x8377, 0x78ab),
+                ChaCha20Block::buildUint32(0xe238, 0xd763),
+                0xa67ae21e,
+                0x5950bb2f,
+                ChaCha20Block::buildUint32(0xc4f2, 0xd0c7),
+                ChaCha20Block::buildUint32(0xfc62, 0xbb2f),
+                ChaCha20Block::buildUint32(0x8fa0, 0x18fc),
+                0x3f5ec7b7,
+                0x335271c2,
+                ChaCha20Block::buildUint32(0xf294, 0x89f3),
+                ChaCha20Block::buildUint32(0xeabd, 0xa8fc),
+                ChaCha20Block::buildUint32(0x82e4, 0x6ebd),
+                ChaCha20Block::buildUint32(0xd19c, 0x12b4),
+                ChaCha20Block::buildUint32(0xb04e, 0x16de),
+                ChaCha20Block::buildUint32(0x9e83, 0xd0cb),
+                0x4e3c50a2
             ],
             $c->get_state(ChaCha20Block::STATE_INTERMEDIATE),
             "intermediate state failed");
 
         // final
         $this->assertEquals([
-                0xe4e7f110, 0x15593bd1, 0x1fdd0f50, 0xc47120a3,
-                0xc7f4d1c7, 0x0368c033, 0x9aaa2204, 0x4e6cd4c3,
-                0x466482d2, 0x09aa9f07, 0x05d7c214, 0xa2028bd9,
-                0xd19c12b5, 0xb94e16de, 0xe883d0cb, 0x4e3c50a2
+                ChaCha20Block::buildUint32(0xe4e7, 0xf110),
+                0x15593bd1,
+                0x1fdd0f50,
+                ChaCha20Block::buildUint32(0xc471, 0x20a3),
+                ChaCha20Block::buildUint32(0xc7f4, 0xd1c7),
+                0x0368c033,
+                ChaCha20Block::buildUint32(0x9aaa, 0x2204),
+                0x4e6cd4c3,
+                0x466482d2,
+                0x09aa9f07,
+                0x05d7c214,
+                ChaCha20Block::buildUint32(0xa202, 0x8bd9),
+                ChaCha20Block::buildUint32(0xd19c, 0x12b5),
+                ChaCha20Block::buildUint32(0xb94e, 0x16de),
+                ChaCha20Block::buildUint32(0xe883, 0xd0cb),
+                0x4e3c50a2
             ],
             $c->get_state(ChaCha20Block::STATE_FINAL),
             "final state failed");

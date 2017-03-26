@@ -23,9 +23,9 @@ final class ChaCha20BlockTest extends TestCase
                 0x11239567,
                 ChaCha20Block::buildUint32(0x889a, 0x0cde)],
             "unsigned-overflow" => [
-                ChaCha20Block::buildUint32(0x8776, 0x8777),
-                ChaCha20Block::buildUint32(0x8123, 0x8567),
-                ChaCha20Block::buildUint32(0x089a, 0x0cde)],
+                ChaCha20Block::buildUint32(0x8666, 0x6666),
+                ChaCha20Block::buildUint32(0x8111, 0x1111),
+                ChaCha20Block::buildUint32(0x0777, 0x7777)],
         ];
     }
 
@@ -34,7 +34,7 @@ final class ChaCha20BlockTest extends TestCase
      */
     public function testAddCap(int $a, int $b, int $expected) /* add ': void' in php 7.1 */
     {
-            $this->assertEquals($expected, ChaCha20Block::add_cap($a, $b));
+        $this->assertEquals($expected, ChaCha20Block::add_cap($a, $b));
     }
 
     public function testCap() /* add ': void' in php 7.1 */

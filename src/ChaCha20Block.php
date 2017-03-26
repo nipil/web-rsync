@@ -13,7 +13,14 @@ class ChaCha20Block {
      * ChaCha20 works on 32-bit integers
      */
     const INT_BIT_LENGTH = 32;
-    const INT_BIT_MASK = 0xFFFFFFFF;
+    const INT_BIT_HALF_LENGTH = ChaCha20Block::INT_BIT_LENGTH >> 1;
+    const INT_BIT_HALFMASK = 0xFFFF;
+
+    // make sure it's an integer on 32-bits platforms
+    const INT_BIT_MASK =
+        ChaCha20Block::INT_BIT_HALFMASK
+        << ChaCha20Block::INT_BIT_HALF_LENGTH
+        | ChaCha20Block::INT_BIT_HALFMASK;
 
     /**
      * Define the ChaCha20 state format
@@ -55,6 +62,19 @@ class ChaCha20Block {
     const FULL_QUARTER_ROUND_ITERATIONS = 10;
 
     /**
+     * build a integer ensuring it stays an int on 32-bit platform
+     */
+    public static function buildUint32(int $hi, int $lo) {
+        if ($hi < 0 or $hi > self::INT_BIT_HALFMASK) {
+            throw new ChaCha20Exception(sprintf("Hi-part is outstide range [0..%d[", $hi, self::INT_BIT_HALFMASK));
+        }
+        if ($lo < 0 or $lo > self::INT_BIT_HALFMASK) {
+            throw new ChaCha20Exception(sprintf("Lo-part is outstide range [0..%d[", $lo, self::INT_BIT_HALFMASK));
+        }
+        return $hi << self::INT_BIT_HALF_LENGTH | $lo;
+    }
+
+    /**
      * initial state is what is built when key, nonce, ctr are modified
      */
     private $initial_state;
@@ -90,10 +110,12 @@ class ChaCha20Block {
         if ($left < 0 or $left >= self::INT_BIT_LENGTH) {
             throw new ChaCha20Exception(sprintf("Left bitwise-rotation %d is outstide range [0..%d[", $left, self::INT_BIT_LENGTH));
         }
-        $first = $value;
         $lp = self::cap($value << $left);
+        // printf("LP %d %s\n", $lp, gettype($lp));
         $rp = self::cap($value >> (self::INT_BIT_LENGTH - $left));
+        // printf("RP %d %s\n", $rp, gettype($rp));
         $value = $lp | $rp;
+        // printf("VL %d %s\n", $value, gettype($value));
         return $value;
     }
 
@@ -108,11 +130,32 @@ class ChaCha20Block {
 
     /**
      * add two integers and cap the sum to the required number of bits
+     * simulate half-length interger sum to avoid auto-conversions
      *
      * @return uint32    an integer capped at INT_BIT_MASK bits
      */
     public static function add_cap(int $a, int $b) : int {
-        return self::cap($a + $b);
+        // printf("\na: %d 0x%08x %s\n", $a, $a, gettype($a));
+        // printf("\nb: %d 0x%08x %s\n", $b, $b, gettype($b));
+        // printf("\nah: %d 0x%08x %s\n", $ah, $ah, gettype($ah));
+        // printf("\nal: %d 0x%08x %s\n", $al, $al, gettype($al));
+        // printf("\nbh: %d 0x%08x %s\n", $bh, $bh, gettype($bh));
+        // printf("\nbl: %d 0x%08x %s\n", $bl, $bl, gettype($bl));
+        // printf("\ncl: %d 0x%08x %s\n", $cl, $cl, gettype($cl));
+        // printf("\ncc: %d 0x%08x %s\n", $cc, $cc, gettype($cc));
+        // printf("\nch: %d 0x%08x %s\n", $ch, $ch, gettype($ch));
+        // printf("\nc: %d 0x%08x %s\n", $c, $c, gettype($c));
+        $ah = $a >> self::INT_BIT_HALF_LENGTH;
+        $al = $a & self::INT_BIT_HALFMASK;
+        $bh = $b >> self::INT_BIT_HALF_LENGTH;
+        $bl = $b & self::INT_BIT_HALFMASK;
+        $cl = $al + $bl;
+        $cc = $cl >> self::INT_BIT_HALF_LENGTH;
+        $cl &= self::INT_BIT_HALFMASK;
+        $ch = $ah + $bh + $cc;
+        $ch &= self::INT_BIT_HALFMASK;
+        $c = self::buildUint32($ch, $cl);
+        return $c;
     }
 
     /**

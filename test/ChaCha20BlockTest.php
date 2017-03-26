@@ -11,6 +11,32 @@ use WRS\ChaCha20Exception;
  */
 final class ChaCha20BlockTest extends TestCase
 {
+
+    public function providerAddCap() {
+        return [
+            "no-overflow" => [
+                0x77777777,
+                0x01234567,
+                0x789abcde],
+            "signed-overflow" => [
+                0x77767777,
+                0x11239567,
+                ChaCha20Block::buildUint32(0x889a, 0x0cde)],
+            "unsigned-overflow" => [
+                ChaCha20Block::buildUint32(0x8776, 0x8777),
+                ChaCha20Block::buildUint32(0x8123, 0x8567),
+                ChaCha20Block::buildUint32(0x089a, 0x0cde)],
+        ];
+    }
+
+    /**
+     * @dataProvider providerAddCap
+     */
+    public function testAddCap(int $a, int $b, int $expected) /* add ': void' in php 7.1 */
+    {
+        $this->assertEquals($expected, ChaCha20Block::add_cap($a, $b));
+    }
+
     public function testCap() /* add ': void' in php 7.1 */
     {
         $this->assertEquals(0xFFFFFFFF, ChaCha20Block::cap(0x7FFFFFFFFFFFFFFF));

@@ -63,6 +63,8 @@ class ChaCha20Block {
 
     /**
      * build a integer ensuring it stays an int on 32-bit platform
+     *
+     * MUST USE to construct any integer above 0x7FFFFFFF on 32-bit php
      */
     public static function buildUint32(int $hi, int $lo) {
         if ($hi < 0 or $hi > self::INT_BIT_HALFMASK) {

@@ -30,7 +30,7 @@ class ChaCha20Random extends ChaCha20Block {
     /**
      * generates a key from /dev/urandom
      */
-    public static function random_key() {
+    public static function weak_random_key() {
         return $str = random_bytes(
             ChaCha20Block::STATE_KEY_LENGTH
             * ChaCha20Block::INT_BIT_LENGTH
@@ -40,7 +40,7 @@ class ChaCha20Random extends ChaCha20Block {
     /**
      * generates a nonce from /dev/urandom
      */
-    public static function random_nonce() {
+    public static function weak_random_nonce() {
         return random_bytes(
             ChaCha20Block::STATE_NONCE_LENGTH
             * ChaCha20Block::INT_BIT_LENGTH
@@ -50,7 +50,7 @@ class ChaCha20Random extends ChaCha20Block {
     /**
      * generates a counter from /dev/urandom
      */
-    public static function random_counter() {
+    public static function weak_random_counter() {
         $str = random_bytes(
             ChaCha20Block::INT_BIT_LENGTH
             >> 3);
@@ -60,7 +60,7 @@ class ChaCha20Random extends ChaCha20Block {
     /**
      * generates a sub-counter from /dev/urandom
      */
-    public static function random_sub_counter() {
+    public static function weak_random_sub_counter() {
         $str = random_bytes(1);
         $value = ord($str[0]) % ChaCha20Block::STATE_ARRAY_LENGTH;
         return $value;
@@ -72,20 +72,22 @@ class ChaCha20Random extends ChaCha20Block {
     public function __construct(string $key=NULL, string $nonce=NULL, int $block_ctr=NULL, $block_sub_ctr = NULL) {
         // provide random if necessary
         if ($key === NULL) {
-            $key = self::random_key();
+            $key = self::weak_random_key();
         }
         if ($nonce === NULL) {
-            $nonce = self::random_nonce();
+            $nonce = self::weak_random_nonce();
         }
         if ($block_ctr === NULL) {
-            $block_ctr = self::random_counter();
+            $block_ctr = self::weak_random_counter();
         }
         if ($block_sub_ctr === NULL) {
-            $block_sub_ctr = self::random_sub_counter();
+            $block_sub_ctr = self::weak_random_sub_counter();
         }
         // initialize ChaCha20Block
         parent::__construct($key, $nonce, $block_ctr);
         // initialize state index
         $block_sub_index = $block_sub_ctr;
+        // compute first block of data
+        $this->compute_block();
     }
 }

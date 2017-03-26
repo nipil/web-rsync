@@ -234,10 +234,33 @@ final class ChaCha20BlockTest extends TestCase
         $this->assertTrue(TRUE);
     }
 
-    // inc_counter(int $step = 1)
-    public function testIncCounter() /* add ': void' in php 7.1 */
+    public function testIncCounterNoOverflow() /* add ': void' in php 7.1 */
     {
-        $this->assertTrue(TRUE);
+        $c = new ChaCha20Block();
+        $c->set_counter(0x12345678);
+        $c->inc_counter(0x12341111);
+        $this->assertEquals(0x24686789, $c->get_counter());
+    }
+
+    public function testIncCounterSignedOverflow() /* add ': void' in php 7.1 */
+    {
+        $c = new ChaCha20Block();
+        $c->set_counter(0x72345678);
+        $c->inc_counter(0x12341111);
+        $this->assertEquals(
+            ChaCha20Block::buildUint32(0x8468, 0x6789),
+            $c->get_counter());
+    }
+
+    /**
+     * @expectedException WRS\ChaCha20Exception
+     */
+    public function testIncCounterUnsignedOverflow() /* add ': void' in php 7.1 */
+    {
+        $c = new ChaCha20Block();
+        $c->set_counter(ChaCha20Block::buildUint32(0x8001, 0x8001));
+        $c->inc_counter(ChaCha20Block::buildUint32(0x8002, 0x8002));
+        printf("0x%08x\n", $c->get_counter());
     }
 
     // bin_to_internal(string $str, string $name, int $index, int $num)

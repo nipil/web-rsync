@@ -10,22 +10,26 @@ namespace WRS;
 class ChaCha20Random extends ChaCha20Block {
 
     /**
-     * sub_counter is the integer index in the current block
+     * cache block output
+     */
+    private $random_data;
+
+    /**
+     * block_sub_index is the integer index in the current block
      **/
 
-    private $sub_counter;
+    private $block_sub_index;
 
     public function set_sub_counter(int $index) {
         if ($index < 0 or $index >= self::STATE_KEY_LENGTH) {
             throw new ChaCha20Exception(sprintf("Sub-counter index %d is outstide range [0..%d[", $index, self::STATE_KEY_LENGTH.'['));
         }
-        $this->sub_counter = $index;
+        $this->block_sub_index = $index;
     }
 
     public function get_sub_counter() {
-        return $this->sub_counter;
+        return $this->block_sub_index;
     }
-
 
     /**
      * generates a key from /dev/urandom
@@ -70,6 +74,7 @@ class ChaCha20Random extends ChaCha20Block {
      * generates an PRNG object (possibly randomized)
      */
     public function __construct(string $key=NULL, string $nonce=NULL, int $block_ctr=NULL, $block_sub_ctr = NULL) {
+
         // provide random if necessary
         if ($key === NULL) {
             $key = self::weak_random_key();
@@ -83,11 +88,36 @@ class ChaCha20Random extends ChaCha20Block {
         if ($block_sub_ctr === NULL) {
             $block_sub_ctr = self::weak_random_sub_counter();
         }
+
         // initialize ChaCha20Block
         parent::__construct($key, $nonce, $block_ctr);
+
         // initialize state index
-        $block_sub_index = $block_sub_ctr;
+        $this->block_sub_index = $block_sub_ctr;
+
         // compute first block of data
         $this->compute_block();
+        $this->random_data = $this->get_state(ChaCha20Random::STATE_FINAL);
+    }
+
+    /**
+     * provide a random integer (int32) for each call
+     */
+    public function rand()
+    {
+        // get
+        $value = $this->random_data[$this->block_sub_index];
+        $this->block_sub_index++;
+
+        // end of block, calculate another
+        if ($this->block_sub_index == ChaCha20Block::STATE_ARRAY_LENGTH)
+        {
+            $this->block_sub_index = 0;
+            $this->inc_counter();
+            $this->compute_block();
+            $this->random_data = $this->get_state(ChaCha20Random::STATE_FINAL);
+        }
+
+        return $value;
     }
 }

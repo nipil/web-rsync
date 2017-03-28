@@ -12,19 +12,10 @@ use WRS\ChaCha20Random;
  */
 final class ChaCha20RandomTest extends TestCase
 {
-
-    public static function abs_add_callable($carry, $item) {
-        $carry += abs($item);
-        return $carry;
-    }
-
     public function testConstructorEmpty() /* add ': void' in php 7.1 */
     {
         $r = new ChaCha20Random();
         $s = $r->get_state(ChaCha20Random::STATE_INITIAL);
-
-        // verify sub-counter
-        $this->assertEquals(0, $r->get_sub_counter());
 
         // verify constants
         $c = array_slice($s,
@@ -61,5 +52,17 @@ final class ChaCha20RandomTest extends TestCase
     {
         $r = new ChaCha20Random();
         $r->set_sub_counter(-1);
+    }
+
+    public function testMultipleRand() /* add ': void' in php 7.1 */
+    {
+        $r = new ChaCha20Random(NULL, NULL, 123456789, 12);
+        $this->assertEquals(123456789, $r->get_counter());
+        $this->assertEquals(12, $r->get_sub_counter());
+        for ($i = 0; $i < 20; $i++) {
+            $v = $r->rand();
+        }
+        $this->assertEquals(123456791, $r->get_counter());
+        $this->assertEquals(0, $r->get_sub_counter());
     }
 }

@@ -16,5 +16,7 @@
             "WRS\\Tests\\": "tests/"
         }
     },
-    "require": {}
+    "require": {
+        "nipil/chacha20": "^1.0"
+    }
 }

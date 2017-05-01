@@ -22,6 +22,6 @@ class ActionCreateKey extends Action {
 
     public function run() {
         $this->logger->debug(__METHOD__);
-        $this->key_manager->create_master_key();
+        $this->key_manager->create_master();
     }
 }

@@ -9,10 +9,19 @@ use WRS\ServerApp;
     // TODO
 );
 
-if (php_sapi_name() === 'cli' OR defined('STDIN')) {
-    $app = new ClientApp();
-} else {
-    $app = new ServerApp();
+$main_logger = \Logger::getLogger("main");
+
+function main() {
+    if (php_sapi_name() === 'cli' OR defined('STDIN')) {
+        $app = new ClientApp();
+    } else {
+        $app = new ServerApp();
+    }
+    $app->run();
 }
 
-$app->run();
+try {
+    main();
+} catch (\Exception $e) {
+    $main_logger->fatal($e);
+}

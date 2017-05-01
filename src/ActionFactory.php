@@ -18,6 +18,11 @@ class ActionFactory {
     public static function create(string $name, Arguments $args) {
         ActionFactory::setup_logger();
         ActionFactory::$logger->debug(__METHOD__);
-        return NULL;
+
+        if ($name == "createkey") {
+            return new ActionCreateKey($args);
+        } else {
+            throw new \Exception("Unknown action ".$name);
+        }
     }
 }

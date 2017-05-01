@@ -17,6 +17,7 @@
         }
     },
     "require": {
+        "apache/log4php": "^2.3",
         "nipil/chacha20": "^1.0"
     }
 }

@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace WRS;
 
 class ServerApp {
+
+    private $logger;
+
     public function __construct() {
+        $this->logger = \Logger::getLogger(get_class($this));
+        $this->logger->info("Starting server");
     }
 
     public function run() {
-        echo "server\n";
+        $this->logger->info("Running server");
     }
 }

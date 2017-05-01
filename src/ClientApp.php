@@ -6,10 +6,14 @@ namespace WRS;
 
 class ClientApp {
 
+    private $logger;
+
     public function __construct() {
+        $this->logger = \Logger::getLogger(get_class($this));
+        $this->logger->info("Starting client");
     }
 
     public function run() {
-        echo "client\n";
+        $this->logger->info("Running client");
     }
 }

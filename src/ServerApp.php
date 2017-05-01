@@ -9,7 +9,7 @@ class ServerApp {
     private $logger;
 
     public function __construct() {
-        $this->logger = \Logger::getLogger(get_class($this));
+        $this->logger = \Logger::getLogger(__CLASS__);
         $this->logger->debug(__METHOD__);
         $this->logger->info("Starting server");
     }

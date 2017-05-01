@@ -19,10 +19,12 @@ class ClientApp {
         $this->logger->debug(__METHOD__);
         $this->logger->info("Running client");
 
-        $action = $this->args->get_action();
-        if ($action === NULL) {
+        $action_name = $this->args->get_action();
+        if ($action_name === NULL) {
             $this->logger->fatal("No action provided");
             return;
         }
+
+        $action = ActionFactory::create($action_name, $this->args);
     }
 }

@@ -14,6 +14,8 @@ class KeyManager {
     const MASTER_KEY_FILE = "wrs_private_key.txt";
     const MASTER_SALT_FILE = "wrs_master_salt.txt";
 
+    const HASH_FUNCTION = "sha512";
+
     private $logger = NULL;
 
     private $master_key;
@@ -71,6 +73,31 @@ class KeyManager {
         $this->logger->debug(__METHOD__);
         $this->create_master_key();
         $this->create_master_salt();
+    }
+
+    public function derive_key(int $req_len, string $additionnal_info = "") {
+        if ($req_len <= 0) {
+            throw new \Exception("Invalid length");
+        }
+
+        // extract phase (with 2.1 note : 'IKM' is used as the HMAC input, not as the HMAC key)
+        $prk = hash_hmac(self::HASH_FUNCTION, $this->master_key, $this->master_salt, TRUE);
+
+        // handles different hashing functions
+        $len = strlen($prk);
+        $n_iter = ceil($req_len / $len);
+
+        // expand phase RFC 5869
+        $final_output = "";
+        $iteration_output = "";
+        for ($i = 1; $i <= $n_iter; $i++) {
+            $iteration_input = $iteration_output . $additionnal_info . $i;
+            $iteration_output = hash_hmac(self::HASH_FUNCTION, $iteration_input, $prk, TRUE);
+            $final_output .= $iteration_output;
+        }
+
+        // retain only requested length byte
+        return substr($final_output, 0, $req_len);
     }
 
     public function __construct(Arguments $args) {

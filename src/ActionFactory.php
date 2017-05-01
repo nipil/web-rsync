@@ -9,20 +9,20 @@ class ActionFactory {
     private static $logger = NULL;
 
     public static function setup_logger() {
-        if (ActionFactory::$logger === NULL) {
-            ActionFactory::$logger = \Logger::getLogger("ActionFactory");
-            ActionFactory::$logger->debug(__METHOD__);
+        if (self::$logger === NULL) {
+            self::$logger = \Logger::getLogger("ActionFactory");
+            self::$logger->debug(__METHOD__);
         }
     }
 
     public static function create(string $name, Arguments $args) {
-        ActionFactory::setup_logger();
-        ActionFactory::$logger->debug(__METHOD__);
+        self::setup_logger();
+        self::$logger->debug(__METHOD__);
 
         if ($name == "createkey") {
             return new ActionCreateKey($args);
         } else {
-            throw new \Exception("Unknown action ".$name);
+            throw new \Exception(sprintf("Unknown action %s", $name));
         }
     }
 }

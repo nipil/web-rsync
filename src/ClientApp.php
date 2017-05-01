@@ -26,5 +26,6 @@ class ClientApp {
         }
 
         $action = ActionFactory::create($action_name, $this->args);
+        $action->run();
     }
 }

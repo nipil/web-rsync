@@ -9,11 +9,14 @@ class ClientApp {
     private $logger;
     private $args;
     private $key_manager;
+    private $base_path;
 
-    public function __construct() {
+    public function __construct(string $base_path) {
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->logger->debug(__METHOD__);
-        $this->args = new Arguments();
+        $this->base_path = $base_path;
+        $this->config = new Config(FALSE, $base_path);
+        $this->args = new Arguments($this->config);
         $this->key_manager = new KeyManager($this->args);
     }
 
@@ -23,8 +26,7 @@ class ClientApp {
 
         $action_name = $this->args->get_action();
         if ($action_name === NULL) {
-            $this->logger->fatal("No action provided");
-            return;
+            throw new \Exception("No action provided");
         }
 
         if ($action_name == "createkey") {
@@ -35,5 +37,6 @@ class ClientApp {
         } else {
             throw new \Exception("Unknown action");
         }
+        return 0;
     }
 }

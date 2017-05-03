@@ -16,7 +16,7 @@ class KeyManager {
 
     const HASH_FUNCTION = "sha512";
 
-    private $logger = NULL;
+    private $logger;
 
     private $master_key;
     private $master_salt;

@@ -6,8 +6,8 @@ namespace WRS;
 
 class ActionCreateKey extends Action {
 
-    private $logger = NULL;
-    private $key_manager = NULL;
+    private $logger;
+    private $key_manager;
 
     public function __construct(Arguments $args, KeyManager $manager) {
         $this->logger = \Logger::getLogger(__CLASS__);

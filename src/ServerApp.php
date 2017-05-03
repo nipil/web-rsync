@@ -7,10 +7,12 @@ namespace WRS;
 class ServerApp {
 
     private $logger;
+    private $base_path;
 
-    public function __construct() {
+    public function __construct(string $base_path) {
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->logger->debug(__METHOD__);
+        $this->base_path = $base_path;
         $this->logger->info("Starting server");
     }
 

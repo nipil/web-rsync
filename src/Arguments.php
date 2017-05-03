@@ -6,12 +6,15 @@ namespace WRS;
 
 class Arguments {
 
+    private $logger;
     private $args;
+    private $config;
 
-    public function __construct() {
+    public function __construct(Config $config) {
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->logger->debug(__METHOD__);
         $this->args = NULL;
+        $this->config = $config;
         $this->parse_args();
     }
 

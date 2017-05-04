@@ -16,6 +16,7 @@ class ClientApp {
         $this->logger->debug(__METHOD__);
         $this->base_path = $base_path;
         $this->config = new Config(FALSE, $base_path);
+        $this->config->load_required_default();
         $this->args = new Arguments($this->config);
         $this->key_manager = new KeyManager($this->args);
     }

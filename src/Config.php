@@ -20,8 +20,13 @@ class Config {
     }
 
     public function load_required_default() {
-        $path = realpath($base_path . "/" . self::CONFIG_FILE);
-        // TODO: test return value
+        $path = realpath($this->base_path . "/" . self::CONFIG_FILE);
+        if ($path === FALSE) {
+            throw new \Exception(sprintf(
+                "Invalid path for file %s in folder %s",
+                self::CONFIG_FILE,
+                $this->base_path));
+        }
         $data = @include($path);
         if ($data === FALSE) {
             throw new \Exception(sprintf(
@@ -31,9 +36,13 @@ class Config {
         $this->data = $data;
     }
 
-    public function load_optional_custom(string $path) {
-        $path = realpath($path);
-        // TODO: test return value
+    public function load_optional_custom(string $filepath) {
+        $path = realpath($filepath);
+        if ($path === FALSE) {
+            throw new \Exception(sprintf(
+                "Invalid path for config file %s",
+                filepath));
+        }
         $this->data = @include($path);
         if ($data === FALSE) {
         }

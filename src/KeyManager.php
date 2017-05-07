@@ -75,6 +75,40 @@ class KeyManager {
         }
     }
 
+    public function set_master_key(string $hex_key) {
+        $this->logger->debug(__METHOD__.":".join(" ", func_get_args()));
+        $res = preg_match(
+            sprintf("/^[[:xdigit:]]{%d}$/", KeyManager::MASTER_KEY_LENGTH_BYTES * 2),
+            $hex_key);
+        if ($res === FALSE) {
+            throw new \Exception("Could not match master key with validation regex");
+        } elseif ($res === 0) {
+            throw new \Exception("Master key is invalid");
+        }
+        $this->master_key = $hex_key;
+    }
+
+    public function set_master_salt(string $hex_salt) {
+        $this->logger->debug(__METHOD__.":".join(" ", func_get_args()));
+        $res = preg_match(
+            sprintf("/^[[:xdigit:]]{%d}$/", KeyManager::MASTER_SALT_LENGTH_BYTES * 2),
+            $hex_salt);
+        if ($res === FALSE) {
+            throw new \Exception("Could not match master salt with validation regex");
+        } elseif ($res === 0) {
+            throw new \Exception("Master salt is invalid");
+        }
+        $this->master_salt = $hex_salt;
+    }
+
+    public function get_master_key() {
+        return $this->master_key;
+    }
+
+    public function get_master_salt() {
+        return $this->master_salt;
+    }
+
     public function __construct(string $base_path) {
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->logger->debug(__METHOD__.":".join(" ", func_get_args()));

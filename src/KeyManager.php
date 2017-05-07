@@ -8,74 +8,34 @@ class KeyManager {
 
     const MASTER_KEY_LENGTH_BITS = 1 << 12;
     const MASTER_KEY_LENGTH_BYTES = self::MASTER_KEY_LENGTH_BITS >> 3;
-
     const MASTER_SALT_LENGTH_BYTES = 1 << 3;
-
-    const MASTER_KEY_FILE = "wrs_private_key.txt";
-    const MASTER_SALT_FILE = "wrs_master_salt.txt";
-
+    const MASTER_SECRET_FILE = "wrs_secret.php";
     const HASH_FUNCTION = "sha512";
 
     private $logger;
-
+    private $base_path;
     private $master_key;
     private $master_salt;
 
-    private function create_to_file(&$target_bytes,
-                                    int $byte_length,
-                                    string $file) {
+    public function get_secret_path() {
         $this->logger->debug(__METHOD__);
-        if ($byte_length <= 0) {
+        $path = realpath($this->base_path);
+        if ($path === FALSE) {
             throw new \Exception(sprintf(
-                "Invalid length",
-                $byte_length));
+                "%s is not a valid path",
+                $path));
         }
-        if ($file === NULL) {
-            throw new \Exception(sprintf(
-                "Invalid file name",
-                $file));
-        }
-        $target_bytes = random_bytes($byte_length);
-        $data_hex = bin2hex($target_bytes);
-        $res = file_put_contents($file, $data_hex);
-        if ($res === FALSE) {
-            throw new \Exception(sprintf(
-                "Could not write random data to file %s",
-                $file));
-        }
-    }
-
-    protected function create_master_key() {
-        $this->logger->debug(__METHOD__);
-        $this->logger->info("Please wait while generating master key...");
-        $this->create_to_file(
-            $this->master_key,
-            self::MASTER_KEY_LENGTH_BYTES,
-            self::MASTER_KEY_FILE);
-        $this->logger->info(sprintf(
-            "Private key stored in file %s",
-            self::MASTER_KEY_FILE));
-    }
-
-    protected function create_master_salt() {
-        $this->logger->debug(__METHOD__);
-        $this->logger->info("Please wait while generating master salt...");
-        $this->create_to_file(
-            $this->master_salt,
-            self::MASTER_SALT_LENGTH_BYTES,
-            self::MASTER_SALT_FILE);
-        $this->logger->info(sprintf(
-            "Master salt stored in file %s",
-            self::MASTER_SALT_FILE));
+        return $path . '/' . self::MASTER_SECRET_FILE;
     }
 
     public function create_master() {
         $this->logger->debug(__METHOD__);
-        $this->create_master_key();
-        $this->create_master_salt();
+        $this->master_key = bin2hex(random_bytes(self::MASTER_KEY_LENGTH_BYTES));
+        $this->master_salt = bin2hex(random_bytes(self::MASTER_SALT_LENGTH_BYTES));
     }
 
     public function derive_key(int $req_len, string $additionnal_info = "") {
+        $this->logger->debug(__METHOD__.":".join(" ", func_get_args()));
         if ($req_len <= 0) {
             throw new \Exception("Invalid length");
         }
@@ -100,8 +60,24 @@ class KeyManager {
         return substr($final_output, 0, $req_len);
     }
 
-    public function __construct(Arguments $args) {
-        $this->logger = \Logger::getLogger(__CLASS__);
+    public function save() {
         $this->logger->debug(__METHOD__);
+        // build data
+        $data = array();
+        $data["key"] = $this->master_key;
+        $data["salt"] = $this->master_salt;
+        // generate text
+        $txt = '<?php'.PHP_EOL.'return '.var_export($data, true).';'.PHP_EOL;
+        // save key configuration
+        $res = file_put_contents($this->get_secret_path(), $txt);
+        if ($res === FALSE) {
+            throw new \Exception();
+        }
+    }
+
+    public function __construct(string $base_path) {
+        $this->logger = \Logger::getLogger(__CLASS__);
+        $this->logger->debug(__METHOD__.":".join(" ", func_get_args()));
+        $this->base_path = $base_path;
     }
 }

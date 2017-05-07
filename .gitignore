@@ -2,4 +2,4 @@ composer.phar
 /vendor/
 
 # private key, don't commit it
-wrs_private_key.txt
+wrs_secret.php

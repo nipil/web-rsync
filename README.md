@@ -1,5 +1,7 @@
 # web-rsync
 
+[![Build Status](https://travis-ci.org/nipil/web-rsync.svg?branch=master)](https://travis-ci.org/nipil/web-rsync)
+
 rsync-like tool, working over http
 
 ## client-side requirements

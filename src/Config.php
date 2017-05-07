@@ -38,6 +38,7 @@ class Config {
         } else {
             $this->data = $data;
         }
+        $this->logger->debug("Default config loaded: ".var_export($this->data, TRUE));
     }
 
     public function load_custom_required(string $filepath) {
@@ -57,6 +58,7 @@ class Config {
         }
         // store loaded data
         $this->data = $data;
+        $this->logger->debug("Custom config loaded: ".var_export($this->data, TRUE));
     }
 
     public function get(string $name) {

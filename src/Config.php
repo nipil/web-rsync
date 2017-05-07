@@ -29,7 +29,7 @@ class Config {
                 $this->base_path));
         }
         // build config file path
-        $filepath = $path . "/" . self::CONFIG_FILE;
+        $filepath = $path . DIRECTORY_SEPARATOR . self::CONFIG_FILE;
         // load data
         $data = @include($file);
         // which may fail

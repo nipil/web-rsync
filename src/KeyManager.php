@@ -25,7 +25,7 @@ class KeyManager {
                 "%s is not a valid path",
                 $path));
         }
-        return $path . '/' . self::MASTER_SECRET_FILE;
+        return $path . DIRECTORY_SEPARATOR . self::MASTER_SECRET_FILE;
     }
 
     public function create_master() {

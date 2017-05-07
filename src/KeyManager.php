@@ -79,5 +79,7 @@ class KeyManager {
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->logger->debug(__METHOD__.":".join(" ", func_get_args()));
         $this->base_path = $base_path;
+        $this->master_key = NULL;
+        $this->master_salt = NULL;
     }
 }

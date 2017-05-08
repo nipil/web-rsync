@@ -51,6 +51,21 @@ class KeyManagerTest extends TestCase
         . "  'salt' => '" . self::SAMPLE_MASTER_SALT . "'," . PHP_EOL
         . ");" . PHP_EOL;
 
+    const SAMPLE_INPUT_NULL = "<?php" . PHP_EOL
+        . "return array (" . PHP_EOL
+        . "  'key' => null," . PHP_EOL
+        . "  'salt' => null," . PHP_EOL
+        . ");" . PHP_EOL;
+
+    const SAMPLE_INPUT_MISSING = "<?php" . PHP_EOL
+        . "return array (" . PHP_EOL
+        . "  'missing' => null," . PHP_EOL
+        . "  'salt' => null," . PHP_EOL
+        . ");" . PHP_EOL;
+
+    const SAMPLE_INPUT_NOT_AN_ARRAY = "<?php" . PHP_EOL
+        . "return TRUE;" . PHP_EOL;
+
     public function setUp()
     {
         vfsStreamWrapper::register();
@@ -72,7 +87,7 @@ class KeyManagerTest extends TestCase
             "invalid master salt");
     }
 
-    public function testMasterKeySave() {
+    public function testMasterSave() {
         $km = new KeyManager(vfsStream::url('baseDirectory'));
         $km->set_master_key(self::SAMPLE_MASTER_KEY);
         $km->set_master_salt(self::SAMPLE_MASTER_SALT);
@@ -92,7 +107,7 @@ class KeyManagerTest extends TestCase
         $this->assertEquals(self::SAMPLE_OUTPUT_FILE, $content, "output differ");
     }
 
-    public function testMasterKeyLoad() {
+    public function testMasterLoad() {
         $this->assertFalse(
             vfsStreamWrapper::getRoot()->hasChild(KeyManager::MASTER_SECRET_FILE),
             "master key file already present");
@@ -116,5 +131,101 @@ class KeyManagerTest extends TestCase
         $this->assertEquals(
             $km->get_master_salt(),
             self::SAMPLE_MASTER_SALT);
+    }
+
+    /**
+     * @expectedException        Exception
+     * @expectedExceptionMessage Cannot load master key/salt
+     */
+    public function testMasterLoadFailedMissingFile() {
+        $this->assertFalse(
+            vfsStreamWrapper::getRoot()->hasChild(KeyManager::MASTER_SECRET_FILE),
+            "master key file already present");
+        $km = new KeyManager(vfsStream::url('baseDirectory'));
+        $km->load();
+    }
+
+    /**
+     * @expectedException        Exception
+     * @expectedExceptionMessage Missing key in master key/salt file
+     */
+    public function testMasterLoadFailedNull() {
+        $this->assertFalse(
+            vfsStreamWrapper::getRoot()->hasChild(KeyManager::MASTER_SECRET_FILE),
+            "master key file already present");
+        file_put_contents(
+            vfsStream::url(
+                'baseDirectory'
+                . DIRECTORY_SEPARATOR
+                . KeyManager::MASTER_SECRET_FILE),
+            self::SAMPLE_INPUT_NULL);
+        $this->assertTrue(
+            vfsStreamWrapper::getRoot()->hasChild(KeyManager::MASTER_SECRET_FILE),
+            "master key file is absent");
+        $km = new KeyManager(vfsStream::url('baseDirectory'));
+        $km->load();
+    }
+
+    /**
+     * @expectedException        Exception
+     * @expectedExceptionMessage Missing key in master key/salt file
+     */
+    public function testMasterLoadFailedMissingKey() {
+        $this->assertFalse(
+            vfsStreamWrapper::getRoot()->hasChild(KeyManager::MASTER_SECRET_FILE),
+            "master key file already present");
+        file_put_contents(
+            vfsStream::url(
+                'baseDirectory'
+                . DIRECTORY_SEPARATOR
+                . KeyManager::MASTER_SECRET_FILE),
+            self::SAMPLE_INPUT_MISSING);
+        $this->assertTrue(
+            vfsStreamWrapper::getRoot()->hasChild(KeyManager::MASTER_SECRET_FILE),
+            "master key file is absent");
+        $km = new KeyManager(vfsStream::url('baseDirectory'));
+        $km->load();
+    }
+
+    /**
+     * @expectedException        Exception
+     * @expectedExceptionMessage Missing key in master key/salt file
+     */
+    public function testMasterLoadFailedNotAnArray() {
+        $this->assertFalse(
+            vfsStreamWrapper::getRoot()->hasChild(KeyManager::MASTER_SECRET_FILE),
+            "master key file already present");
+        file_put_contents(
+            vfsStream::url(
+                'baseDirectory'
+                . DIRECTORY_SEPARATOR
+                . KeyManager::MASTER_SECRET_FILE),
+            self::SAMPLE_INPUT_NOT_AN_ARRAY);
+        $this->assertTrue(
+            vfsStreamWrapper::getRoot()->hasChild(KeyManager::MASTER_SECRET_FILE),
+            "master key file is absent");
+        $km = new KeyManager(vfsStream::url('baseDirectory'));
+        $km->load();
+    }
+
+    /**
+     * @expectedException        Exception
+     * @expectedExceptionMessage Missing key in master key/salt file
+     */
+    public function testMasterLoadFailedEmpty() {
+        $this->assertFalse(
+            vfsStreamWrapper::getRoot()->hasChild(KeyManager::MASTER_SECRET_FILE),
+            "master key file already present");
+        file_put_contents(
+            vfsStream::url(
+                'baseDirectory'
+                . DIRECTORY_SEPARATOR
+                . KeyManager::MASTER_SECRET_FILE),
+            "");
+        $this->assertTrue(
+            vfsStreamWrapper::getRoot()->hasChild(KeyManager::MASTER_SECRET_FILE),
+            "master key file is absent");
+        $km = new KeyManager(vfsStream::url('baseDirectory'));
+        $km->load();
     }
 }

@@ -88,4 +88,30 @@ class KeyManagerTest extends TestCase
         $this->assertNotSame(FALSE, $content, "content is FALSE");
         $this->assertEquals(self::SAMPLE_OUTPUT_FILE, $content, "output differ");
     }
+
+    public function testMasterKeyLoad() {
+        $this->assertFalse(
+            vfsStreamWrapper::getRoot()->hasChild(KeyManager::MASTER_SECRET_FILE),
+            "master key file already present");
+        file_put_contents(
+            vfsStream::url(
+                'baseDirectory'
+                . DIRECTORY_SEPARATOR
+                . KeyManager::MASTER_SECRET_FILE),
+            self::SAMPLE_OUTPUT_FILE);
+        $this->assertTrue(
+            vfsStreamWrapper::getRoot()->hasChild(KeyManager::MASTER_SECRET_FILE),
+            "master key file is absent");
+
+        $km = new KeyManager(vfsStream::url('baseDirectory'));
+        $km->load();
+
+        $this->assertEquals(
+            $km->get_master_key(),
+            self::SAMPLE_MASTER_KEY);
+
+        $this->assertEquals(
+            $km->get_master_salt(),
+            self::SAMPLE_MASTER_SALT);
+    }
 }

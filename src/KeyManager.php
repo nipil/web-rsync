@@ -60,6 +60,24 @@ class KeyManager {
         return substr($final_output, 0, $req_len);
     }
 
+    public function load() {
+        $this->logger->debug(__METHOD__);
+        // load master key/salt
+        $res = @include($this->get_secret_path());
+        if ($res === FALSE) {
+            throw new \Exception("Cannot load master key/salt");
+        }
+        var_dump($res);
+        if (!isset($res["key"])) {
+            throw new \Exception("Missing key in master key/salt file");
+        }
+        $this->set_master_key($res["key"]);
+        if (!isset($res["salt"])) {
+            throw new \Exception("Missing salt in master key/salt file");
+        }
+        $this->set_master_salt($res["salt"]);
+    }
+
     public function save() {
         $this->logger->debug(__METHOD__);
         // build data

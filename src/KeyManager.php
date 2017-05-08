@@ -89,7 +89,7 @@ class KeyManager {
         // save key configuration
         $res = file_put_contents($this->get_secret_path(), $txt);
         if ($res === FALSE) {
-            throw new \Exception();
+            throw new \Exception("Cannot save master key/salt");
         }
     }
 

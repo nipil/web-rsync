@@ -228,4 +228,40 @@ class KeyManagerTest extends TestCase
         $km = new KeyManager(vfsStream::url('baseDirectory'));
         $km->load();
     }
+
+    /**
+     * @expectedException        Exception
+     * @expectedExceptionMessage Invalid length requested for derived key
+     */
+    public function testMasterKeyDerivationFailed() {
+        $km = new KeyManager(vfsStream::url('baseDirectory'));
+        $km->set_master_key(self::SAMPLE_MASTER_KEY);
+        $km->set_master_salt(self::SAMPLE_MASTER_SALT);
+        $km->derive_key(0);
+    }
+
+    public function testMasterKeyDerivation() {
+        $km = new KeyManager(vfsStream::url('baseDirectory'));
+        $km->set_master_key(self::SAMPLE_MASTER_KEY);
+        $km->set_master_salt(self::SAMPLE_MASTER_SALT);
+
+        $mac = hash_hmac(KeyManager::HASH_FUNCTION, "", "", TRUE);
+        $len = strlen(hash_hmac(KeyManager::HASH_FUNCTION, "", "", TRUE));
+
+        for ($i = 0; $i < 4; $i ++) {
+            for ($j = -3; $j < 4; $j++) {
+                $req_len = $len * $i + $j;
+                if ($req_len <= 0) {
+                    continue;
+                }
+                $additional_text = sprintf("derived_test_%d", $req_len);
+                $key = $km->derive_key($req_len, $additional_text);
+                $hex_key = bin2hex($key);
+                $res = preg_match(
+                    sprintf("/^[[:xdigit:]]{%d}$/", $req_len * 2),
+                    $hex_key);
+                $this->assertEquals($res, 1, "Derived key in hex form does not have requested length for " . $additional_text);
+            }
+        }
+    }
 }

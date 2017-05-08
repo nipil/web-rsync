@@ -10,18 +10,6 @@ use WRS\KeyManager;
 
 use org\bovigo\vfs\vfsStream, org\bovigo\vfs\vfsStreamWrapper, org\bovigo\vfs\vfsStreamDirectory;
 
-/*
- * see: https://github.com/mikey179/vfsStream/wiki/Known-Issues
- *
- * override "realpath" by creating a function
- * in the "current" namespace which will be called
- * instead of the global one : that way, realpath
- * doesn't complain about vfsStream pathes
- */
-function realpath($path) {
-    return $path;
-}
-
 class KeyManagerTest extends TestCase
 {
     const SAMPLE_MASTER_KEY = "8ff59950984a23510d5942d8f7c39a0af501d4"

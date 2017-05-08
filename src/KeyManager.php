@@ -19,13 +19,7 @@ class KeyManager {
 
     public function get_secret_path() {
         $this->logger->debug(__METHOD__);
-        $path = realpath($this->base_path);
-        if ($path === FALSE) {
-            throw new \Exception(sprintf(
-                "%s is not a valid path",
-                $path));
-        }
-        return $path . DIRECTORY_SEPARATOR . self::MASTER_SECRET_FILE;
+        return $this->base_path . DIRECTORY_SEPARATOR . self::MASTER_SECRET_FILE;
     }
 
     public function create_master() {

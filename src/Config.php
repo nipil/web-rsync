@@ -25,15 +25,8 @@ class Config {
 
     public function load_default_optional() {
         $this->logger->debug(__METHOD__);
-        // check path alone
-        $path = realpath($this->base_path);
-        if ($path === FALSE) {
-            throw new \Exception(sprintf(
-                "Invalid path %s",
-                $this->base_path));
-        }
         // build config file path
-        $filepath = $path . DIRECTORY_SEPARATOR . self::CONFIG_FILE;
+        $filepath = $this->base_path . DIRECTORY_SEPARATOR . self::CONFIG_FILE;
         if (!file_exists($filepath)) {
             $this->logger->info("No configuration file found, using default values");
             $this->data = array();
@@ -53,18 +46,16 @@ class Config {
 
     public function load_custom_required(string $filepath) {
         $this->logger->debug(__METHOD__.":".join(" ",func_get_args()));
-        // file MUST exist
-        $path = realpath($filepath);
-        if ($path === FALSE) {
+        if (!file_exists($filepath)) {
             throw new \Exception(sprintf(
-                "Invalid path for config file %s",
-                $path));
+                "Configuration file %s not found",
+                $filepath));
         }
-        $data = @include($path);
+        $data = @include($filepath);
         if (gettype($data) !== "array") {
             throw new \Exception(sprintf(
                 "Invalid configuration file %s",
-                $path));
+                $filepath));
         }
         // store loaded data
         $this->data = $data;

@@ -23,10 +23,16 @@ class Config {
         return $this->data;
     }
 
+    public function get_default_config_file() {
+        return $this->base_path
+            . DIRECTORY_SEPARATOR
+            . self::CONFIG_FILE;
+    }
+
     public function save() {
         $this->logger->debug(__METHOD__);
         // build config file path
-        $filepath = $this->base_path . DIRECTORY_SEPARATOR . self::CONFIG_FILE;
+        $filepath = $this->get_default_config_file();
         // generate text
         $txt = '<?php'.PHP_EOL.'return '.var_export($this->data, true).';'.PHP_EOL;
         // save key configuration
@@ -41,7 +47,7 @@ class Config {
     public function load_default_optional() {
         $this->logger->debug(__METHOD__);
         // build config file path
-        $filepath = $this->base_path . DIRECTORY_SEPARATOR . self::CONFIG_FILE;
+        $filepath = $this->get_default_config_file();
         if (!file_exists($filepath)) {
             $this->logger->info("No configuration file found, using default values");
             $this->data = array();

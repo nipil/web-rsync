@@ -19,6 +19,10 @@ class Config {
         $this->data = array();
     }
 
+    public function get_data() {
+        return $this->data;
+    }
+
     public function load_default_optional() {
         $this->logger->debug(__METHOD__);
         // check path alone
@@ -30,14 +34,20 @@ class Config {
         }
         // build config file path
         $filepath = $path . DIRECTORY_SEPARATOR . self::CONFIG_FILE;
-        // load data
-        $data = @include($file);
-        // which may fail
-        if ($data === FALSE) {
+        if (!file_exists($filepath)) {
+            $this->logger->info("No configuration file found, using default values");
             $this->data = array();
-        } else {
-            $this->data = $data;
+            return;
         }
+        // load data
+        $data = @include($filepath);
+        // which may fail because
+        if (gettype($data) !== "array") {
+            throw new \Exception(sprintf(
+                "Invalid configuration file %s",
+                $filepath));
+        }
+        $this->data = $data;
         $this->logger->debug("Default config loaded: ".var_export($this->data, TRUE));
     }
 
@@ -51,9 +61,9 @@ class Config {
                 $path));
         }
         $data = @include($path);
-        if ($data === FALSE) {
+        if (gettype($data) !== "array") {
             throw new \Exception(sprintf(
-                "Could not load configuration file %s",
+                "Invalid configuration file %s",
                 $path));
         }
         // store loaded data

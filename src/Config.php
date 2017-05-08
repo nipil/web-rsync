@@ -91,7 +91,7 @@ class Config {
         return $this->data[$name];
     }
 
-    public function set_int(string $name, int $value) {
+    public function set_integer(string $name, int $value) {
         $this->logger->debug(__METHOD__.":".join(" ",func_get_args()));
         $this->data[$name] = $value;
     }

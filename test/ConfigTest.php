@@ -125,7 +125,7 @@ class ConfigTest extends TestCase
         $key = "integer";
         $value = 42;
         $config = new Config(vfsStream::url('baseDirectory'));
-        $config->set_int($key, $value);
+        $config->set_integer($key, $value);
         $this->assertEquals(
             $config->get($key),
             $value,
@@ -152,7 +152,7 @@ class ConfigTest extends TestCase
 
     public function testConfigSave() {
         $config = new Config(vfsStream::url('baseDirectory'));
-        $config->set_int("integer", 42);
+        $config->set_integer("integer", 42);
         $config->set_string("string", "text");
         $this->assertFalse(
             vfsStreamWrapper::getRoot()->hasChild(Config::CONFIG_FILE),

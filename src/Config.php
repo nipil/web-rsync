@@ -23,6 +23,21 @@ class Config {
         return $this->data;
     }
 
+    public function save() {
+        $this->logger->debug(__METHOD__);
+        // build config file path
+        $filepath = $this->base_path . DIRECTORY_SEPARATOR . self::CONFIG_FILE;
+        // generate text
+        $txt = '<?php'.PHP_EOL.'return '.var_export($this->data, true).';'.PHP_EOL;
+        // save key configuration
+        $res = file_put_contents($filepath, $txt);
+        if ($res === FALSE) {
+            throw new \Exception(sprintf(
+                "Cannot save config file %s",
+                $filepath));
+        }
+    }
+
     public function load_default_optional() {
         $this->logger->debug(__METHOD__);
         // build config file path

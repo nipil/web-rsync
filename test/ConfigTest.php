@@ -12,7 +12,8 @@ class ConfigTest extends TestCase
 {
     const SAMPLE_INPUT_VALID = "<?php" . PHP_EOL
         . "return array (" . PHP_EOL
-        . "  'example' => 'test'," . PHP_EOL
+        . "  'integer' => 42," . PHP_EOL
+        . "  'string' => 'text'," . PHP_EOL
         . ");" . PHP_EOL;
 
     const SAMPLE_INPUT_NOT_AN_ARRAY = "toto";
@@ -59,7 +60,10 @@ class ConfigTest extends TestCase
         $config->load_default_optional();
         $this->assertEquals(
             $config->get_data(),
-            array ('example' => 'test'),
+            array (
+                'integer' => 42,
+                'string' => 'text'
+                ),
             "Loaded configuration is incorrect");
     }
 
@@ -96,7 +100,10 @@ class ConfigTest extends TestCase
                 . Config::CONFIG_FILE));
         $this->assertEquals(
             $config->get_data(),
-            array ('example' => 'test'),
+            array (
+                'integer' => 42,
+                'string' => 'text'
+                ),
             "Loaded configuration is incorrect");
     }
 
@@ -134,5 +141,27 @@ class ConfigTest extends TestCase
             $config->get($key),
             $value,
             "invalid config value");
+    }
+
+    public function testConfigSave() {
+        $config = new Config(vfsStream::url('baseDirectory'));
+        $config->set_int("integer", 42);
+        $config->set_string("string", "text");
+        $this->assertFalse(
+            vfsStreamWrapper::getRoot()->hasChild(Config::CONFIG_FILE),
+            "config file already present");
+
+        $config->save();
+        $this->assertTrue(
+            vfsStreamWrapper::getRoot()->hasChild(Config::CONFIG_FILE),
+            "config file is absent");
+
+        $content = file_get_contents(
+            vfsStream::url(
+                'baseDirectory'
+                . DIRECTORY_SEPARATOR
+                . Config::CONFIG_FILE));
+        $this->assertNotSame(FALSE, $content, "content is FALSE");
+        $this->assertEquals(self::SAMPLE_INPUT_VALID, $content, "output differ");
     }
 }

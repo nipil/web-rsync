@@ -113,4 +113,26 @@ class ConfigTest extends TestCase
                 . DIRECTORY_SEPARATOR
                 . Config::CONFIG_FILE));
     }
+
+    public function testConfigSetInt() {
+        $key = "integer";
+        $value = 42;
+        $config = new Config(vfsStream::url('baseDirectory'));
+        $config->set_int($key, $value);
+        $this->assertEquals(
+            $config->get($key),
+            $value,
+            "invalid config value");
+    }
+
+    public function testConfigSetText() {
+        $key = "string";
+        $value = "text";
+        $config = new Config(vfsStream::url('baseDirectory'));
+        $config->set_string($key, $value);
+        $this->assertEquals(
+            $config->get($key),
+            $value,
+            "invalid config value");
+    }
 }

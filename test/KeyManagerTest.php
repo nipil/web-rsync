@@ -11,6 +11,8 @@ use WRS\KeyManager;
 use org\bovigo\vfs\vfsStream, org\bovigo\vfs\vfsStreamWrapper, org\bovigo\vfs\vfsStreamDirectory;
 
 /*
+ * see: https://github.com/mikey179/vfsStream/wiki/Known-Issues
+ *
  * override "realpath" by creating a function
  * in the "current" namespace which will be called
  * instead of the global one : that way, realpath

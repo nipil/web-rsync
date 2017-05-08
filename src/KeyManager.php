@@ -37,7 +37,7 @@ class KeyManager {
     public function derive_key(int $req_len, string $additionnal_info = "") {
         $this->logger->debug(__METHOD__.":".join(" ", func_get_args()));
         if ($req_len <= 0) {
-            throw new \Exception("Invalid length");
+            throw new \Exception("Invalid length requested for derived key");
         }
 
         // extract phase (with 2.1 note : 'IKM' is used as the HMAC input, not as the HMAC key)

@@ -83,8 +83,11 @@ class KeyManagerTest extends TestCase
         $this->assertTrue(
             vfsStreamWrapper::getRoot()->hasChild(KeyManager::MASTER_SECRET_FILE),
             "master key file is absent");
-        $content = file_get_contents(vfsStream::url(
-            'baseDirectory' . DIRECTORY_SEPARATOR . KeyManager::MASTER_SECRET_FILE));
+        $content = file_get_contents(
+            vfsStream::url(
+                'baseDirectory'
+                . DIRECTORY_SEPARATOR
+                . KeyManager::MASTER_SECRET_FILE));
         $this->assertNotSame(FALSE, $content, "content is FALSE");
         $this->assertEquals(self::SAMPLE_OUTPUT_FILE, $content, "output differ");
     }

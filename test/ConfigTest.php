@@ -143,6 +143,13 @@ class ConfigTest extends TestCase
             "invalid config value");
     }
 
+    public function testConfigGetInexistant() {
+        $config = new Config(vfsStream::url('baseDirectory'));
+        $value = $config->get("inexistant");
+        $this->assertNull($value,
+            "Non-existing configuration should be NULL");
+    }
+
     public function testConfigSave() {
         $config = new Config(vfsStream::url('baseDirectory'));
         $config->set_int("integer", 42);

@@ -65,9 +65,7 @@ class Config {
     public function get(string $name) {
         $this->logger->debug(__METHOD__.":".join(" ",func_get_args()));
         if (!isset($this->data[$name])) {
-            throw new \Exception(sprintf(
-                "Could not find configuration for value %s",
-                $name));
+            return NULL;
         }
         return $this->data[$name];
     }

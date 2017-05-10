@@ -121,7 +121,7 @@ class KeyManager {
     }
 
     public function __construct(string $base_path) {
-        $this->logger = App::GetLogger(__CLASS__);
+        $this->logger = App::GetLogger();
         $this->logger->debug(__METHOD__, func_get_args());
         $this->base_path = $base_path;
         $this->master_key = NULL;

@@ -10,7 +10,7 @@ class ActionCreateKey extends Action {
     private $key_manager;
 
     public function __construct(Arguments $args, KeyManager $manager) {
-        $this->logger = App::GetLogger(__CLASS__);
+        $this->logger = App::GetLogger();
         $this->logger->debug(__METHOD__);
 
         $this->key_manager = $manager;

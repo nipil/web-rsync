@@ -10,7 +10,7 @@ class Arguments {
     private $args;
 
     public function __construct() {
-        $this->logger = App::GetLogger(__CLASS__);
+        $this->logger = App::GetLogger();
         $this->logger->debug(__METHOD__);
         $this->args = array();
     }

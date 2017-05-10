@@ -7,6 +7,8 @@ use WRS\ClientApp;
 use WRS\ServerApp;
 
 try {
+    // configure logger
+    App::SetLogger(new \Monolog\Logger('web-rsync'));
     // same script handles client side and server side
     if (php_sapi_name() === 'cli' OR defined('STDIN')) {
         $app = new ClientApp(__DIR__);

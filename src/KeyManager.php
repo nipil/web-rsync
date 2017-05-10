@@ -61,7 +61,6 @@ class KeyManager {
         if ($res === FALSE) {
             throw new \Exception("Cannot load master key/salt");
         }
-        var_dump($res);
         if (!isset($res["key"])) {
             throw new \Exception("Missing key in master key/salt file");
         }

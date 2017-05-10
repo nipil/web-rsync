@@ -51,8 +51,7 @@ class KeyManagerTest extends TestCase
         . "  'salt' => null," . PHP_EOL
         . ");" . PHP_EOL;
 
-    const SAMPLE_INPUT_NOT_AN_ARRAY = "<?php" . PHP_EOL
-        . "return TRUE;" . PHP_EOL;
+    const SAMPLE_INPUT_NOT_AN_ARRAY = "tata";
 
     public function setUp()
     {

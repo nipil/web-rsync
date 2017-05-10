@@ -3,6 +3,7 @@
     "description": "rsync-like tool, working over http",
     "require-dev": {
         "phpunit/phpunit": "^6.0",
+        "satooshi/php-coveralls": "^1.0",
         "mikey179/vfsStream": "^1.6"
     },
     "authors": [

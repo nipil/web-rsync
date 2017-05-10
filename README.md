@@ -1,6 +1,7 @@
 # web-rsync
 
 [![Build Status](https://travis-ci.org/nipil/web-rsync.svg?branch=master)](https://travis-ci.org/nipil/web-rsync)
+[![Coverage Status](https://coveralls.io/repos/github/nipil/web-rsync/badge.svg?branch=master)](https://coveralls.io/github/nipil/web-rsync?branch=master)
 
 rsync-like tool, working over http
 

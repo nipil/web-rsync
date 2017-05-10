@@ -65,7 +65,7 @@ Variables :
 
 Preparation :
 
-- set `T` to operation name ("SIGN", "CRYPT", or "TOTP")
+- set `T` to operation name (`SIGN`, `CRYPT`, or `TOTP`)
 - compute `N = floor(TIMESTAMP / DURATION_${T})`
 - `DERIVATION_TEXT = T | N` where `|` is the concatenation operator
 
@@ -88,9 +88,9 @@ Because the whole scheme relies on a shared-secret, requires clock synchronisati
 
 Base binary string  :
 
-- PAYLOAD: the data being transmitted
-- SIGNATURE: a binary string
-- TOTP: a binary string
+- `PAYLOAD` : the data being transmitted
+- `SIGNATURE` : a binary string
+- `TOTP` : a binary string
 
 Computed binary strings :
 
@@ -117,19 +117,22 @@ The signature of the payload is computed by applying the HMAC function to `PAYLO
 
 ### Encryption
 
-The ciphertext of the payload is computed by applying the AES256 function to `PAYLOAD` using `CRYPT_KEY` :
+The ciphertext of the payload is computed by applying the ENCRYPT function to `PAYLOAD` using `CRYPT_KEY` :
 
     ENCRYPTED_PAYLOAD = ENCRYPT(data=PAYLOAD, key=CRYPT_KEY)
 
 ### Decryption
 
-The cleartexxt of the encrypted payload is computed by applying the AES256 function to `ENCRYPTED_PAYLOAD` using `CRYPT_KEY` :
+The cleartexxt of the encrypted payload is computed by applying the DECRYPT function to `ENCRYPTED_PAYLOAD` using `CRYPT_KEY` :
 
     PAYLOAD = DECRYPT(data=ENCRYPTED_PAYLOAD, key=CRYPT_KEY)
 
 ## Cryptographic tasks
 
-Each of these operations are to be done on both sides, so that the client authenticates and validates the server, and vice-versa.
+Each of these operations are to be done on both sides, so that
+
+- the client authenticates and validates the server
+- the server authenticates and validates the client
 
 Upon sending anything, do the following operations :
 
@@ -155,3 +158,5 @@ Verification steps using time-based keys :
 - if it fails, test with PREVIOUS key
 - if it fails, test with NEXT key
 - if it fails, reject payload
+
+Previous and next keys are time-dependant and `DURATION_*` seconds away in both directions from current key.

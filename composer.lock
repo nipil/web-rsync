@@ -4,64 +4,65 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7d8144848d5de6b6809608d831e35c94",
-    "content-hash": "7a5e0c07615b8e07de1817e153cf7b76",
+    "hash": "f118129f83df06e5bf8319c739251d44",
+    "content-hash": "7242f3f641640e3c5bf1efaaf59c618d",
     "packages": [
         {
-            "name": "apache/log4php",
-            "version": "2.3.0",
+            "name": "monolog/monolog",
+            "version": "1.22.1",
             "source": {
                 "type": "git",
-                "url": "https://git-wip-us.apache.org/repos/asf/logging-log4php.git",
-                "reference": "cac428b6f67d2035af39784da1d1a299ef42fcf2"
-            },
-            "require": {
-                "php": ">=5.2.7"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "src/main/php/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "description": "A versatile logging framework for PHP",
-            "homepage": "http://logging.apache.org/log4php/",
-            "keywords": [
-                "log",
-                "logging",
-                "php"
-            ],
-            "time": "2012-10-26 09:13:25"
-        },
-        {
-            "name": "nipil/chacha20",
-            "version": "v1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nipil/ChaCha20.git",
-                "reference": "45936b7dc68d62880abddf4e12b8476111ae59c9"
+                "url": "https://github.com/Seldaek/monolog.git",
+                "reference": "1e044bc4b34e91743943479f1be7a1d5eb93add0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nipil/ChaCha20/zipball/45936b7dc68d62880abddf4e12b8476111ae59c9",
-                "reference": "45936b7dc68d62880abddf4e12b8476111ae59c9",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/1e044bc4b34e91743943479f1be7a1d5eb93add0",
+                "reference": "1e044bc4b34e91743943479f1be7a1d5eb93add0",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0.0"
+                "php": ">=5.3.0",
+                "psr/log": "~1.0"
+            },
+            "provide": {
+                "psr/log-implementation": "1.0.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.0"
+                "aws/aws-sdk-php": "^2.4.9 || ^3.0",
+                "doctrine/couchdb": "~1.0@dev",
+                "graylog2/gelf-php": "~1.0",
+                "jakub-onderka/php-parallel-lint": "0.9",
+                "php-amqplib/php-amqplib": "~2.4",
+                "php-console/php-console": "^3.1.3",
+                "phpunit/phpunit": "~4.5",
+                "phpunit/phpunit-mock-objects": "2.3.0",
+                "ruflin/elastica": ">=0.90 <3.0",
+                "sentry/sentry": "^0.13",
+                "swiftmailer/swiftmailer": "~5.3"
+            },
+            "suggest": {
+                "aws/aws-sdk-php": "Allow sending log messages to AWS services like DynamoDB",
+                "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
+                "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
+                "ext-mongo": "Allow sending log messages to a MongoDB server",
+                "graylog2/gelf-php": "Allow sending log messages to a GrayLog2 server",
+                "mongodb/mongodb": "Allow sending log messages to a MongoDB server via PHP Driver",
+                "php-amqplib/php-amqplib": "Allow sending log messages to an AMQP server using php-amqplib",
+                "php-console/php-console": "Allow sending log messages to Google Chrome",
+                "rollbar/rollbar": "Allow sending log messages to Rollbar",
+                "ruflin/elastica": "Allow sending log messages to an Elastic Search server",
+                "sentry/sentry": "Allow sending log messages to a Sentry server"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "ChaCha20\\": "src/",
-                    "ChaCha20\\Tests\\": "tests/"
+                    "Monolog\\": "src/Monolog"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -70,12 +71,66 @@
             ],
             "authors": [
                 {
-                    "name": "nipil",
-                    "email": "nipil@users.noreply.github.com"
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "http://seld.be"
                 }
             ],
-            "description": "A pure-php implementation of ChaCha20 for both 32-bit and 64 bits",
-            "time": "2017-04-08 10:04:53"
+            "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
+            "homepage": "http://github.com/Seldaek/monolog",
+            "keywords": [
+                "log",
+                "logging",
+                "psr-3"
+            ],
+            "time": "2017-03-13 07:08:03"
+        },
+        {
+            "name": "psr/log",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
+                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Log\\": "Psr/Log/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "homepage": "https://github.com/php-fig/log",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "time": "2016-10-10 12:19:37"
         }
     ],
     "packages-dev": [

@@ -29,7 +29,7 @@ class KeyManager {
     }
 
     public function derive_key(int $req_len, string $additionnal_info = "") {
-        $this->logger->debug(__METHOD__.":".join(" ", func_get_args()));
+        $this->logger->debug(__METHOD__, func_get_args());
         if ($req_len <= 0) {
             throw new \Exception("Invalid length requested for derived key");
         }
@@ -88,7 +88,7 @@ class KeyManager {
     }
 
     public function set_master_key(string $hex_key) {
-        $this->logger->debug(__METHOD__.":".join(" ", func_get_args()));
+        $this->logger->debug(__METHOD__, func_get_args());
         $res = preg_match(
             sprintf("/^[[:xdigit:]]{%d}$/", KeyManager::MASTER_KEY_LENGTH_BYTES * 2),
             $hex_key);
@@ -101,7 +101,7 @@ class KeyManager {
     }
 
     public function set_master_salt(string $hex_salt) {
-        $this->logger->debug(__METHOD__.":".join(" ", func_get_args()));
+        $this->logger->debug(__METHOD__, func_get_args());
         $res = preg_match(
             sprintf("/^[[:xdigit:]]{%d}$/", KeyManager::MASTER_SALT_LENGTH_BYTES * 2),
             $hex_salt);
@@ -122,8 +122,8 @@ class KeyManager {
     }
 
     public function __construct(string $base_path) {
-        $this->logger = \Logger::getLogger(__CLASS__);
-        $this->logger->debug(__METHOD__.":".join(" ", func_get_args()));
+        $this->logger = App::GetLogger(__CLASS__);
+        $this->logger->debug(__METHOD__, func_get_args());
         $this->base_path = $base_path;
         $this->master_key = NULL;
         $this->master_salt = NULL;

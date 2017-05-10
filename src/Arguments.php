@@ -10,7 +10,7 @@ class Arguments {
     private $args;
 
     public function __construct() {
-        $this->logger = \Logger::getLogger(__CLASS__);
+        $this->logger = App::GetLogger(__CLASS__);
         $this->logger->debug(__METHOD__);
         $this->args = array();
     }
@@ -25,7 +25,7 @@ class Arguments {
     }
 
     protected function get_param(string $name) {
-        $this->logger->debug(__METHOD__.":".join(" ",func_get_args()));
+        $this->logger->debug(__METHOD__, func_get_args());
         if (isset($this->args[$name])) {
             return $this->args[$name];
         } else {

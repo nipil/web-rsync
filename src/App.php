@@ -4,7 +4,18 @@ declare(strict_types=1);
 
 namespace WRS;
 
+use Monolog\Logger;
+
 abstract class App {
+
+    private static $Logger = NULL;
+
+    public static function GetLogger(string $name) {
+        if (self::$Logger === NULL) {
+            self::$Logger = new Logger('root');
+        }
+        return self::$Logger->withName($name);
+    }
 
     private $base_path;
 

@@ -13,8 +13,8 @@ class ClientApp extends App {
     public function __construct(string $base_path) {
         parent::__construct($base_path);
 
-        $this->logger = \Logger::getLogger(__CLASS__);
-        $this->logger->debug(__METHOD__.":".join(" ",func_get_args()));
+        $this->logger = App::GetLogger(__CLASS__);
+        $this->logger->debug(__METHOD__, func_get_args());
 
         $this->args = new Arguments();
         $this->config = new Config($this->get_base_path());

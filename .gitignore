@@ -3,3 +3,4 @@ composer.phar
 
 # private key, don't commit it
 wrs_secret.php
+build

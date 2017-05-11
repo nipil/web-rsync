@@ -4,40 +4,38 @@ declare(strict_types=1);
 
 namespace WRS\Crypto;
 
-use WRS\Apps\App;
+use WRS\Apps\App,
+    WRS\KeyValue\KeyValueInterface;
 
 class KeyManager {
 
     const MASTER_KEY_LENGTH_BITS = 1 << 12;
     const MASTER_KEY_LENGTH_BYTES = self::MASTER_KEY_LENGTH_BITS >> 3;
     const MASTER_SALT_LENGTH_BYTES = 1 << 3;
-    const MASTER_SECRET_FILE = "wrs_secret.php";
     const HASH_FUNCTION = "sha512";
 
-    private $logger;
-    private $base_path;
-    private $master_key;
-    private $master_salt;
+    const CONFIG_NAME_KEY = "master-key";
+    const CONFIG_NAME_SALT = "master-salt";
 
-    public function get_secret_path() {
-        $this->logger->debug(__METHOD__);
-        return $this->base_path . DIRECTORY_SEPARATOR . self::MASTER_SECRET_FILE;
-    }
+    private $logger;
+    private $config;
 
     public function create_master() {
-        $this->logger->debug(__METHOD__);
-        $this->master_key = bin2hex(random_bytes(self::MASTER_KEY_LENGTH_BYTES));
-        $this->master_salt = bin2hex(random_bytes(self::MASTER_SALT_LENGTH_BYTES));
+        $this->set_master_key(random_bytes(self::MASTER_KEY_LENGTH_BYTES));
+        $this->set_master_salt(random_bytes(self::MASTER_SALT_LENGTH_BYTES));
     }
 
     public function derive_key(int $req_len, string $additionnal_info = "") {
-        $this->logger->debug(__METHOD__, func_get_args());
         if ($req_len <= 0) {
             throw new \Exception("Invalid length requested for derived key");
         }
 
         // extract phase (with 2.1 note : 'IKM' is used as the HMAC input, not as the HMAC key)
-        $prk = hash_hmac(self::HASH_FUNCTION, $this->master_key, $this->master_salt, TRUE);
+        $prk = hash_hmac(
+            self::HASH_FUNCTION,
+            $this->get_master_key(),
+            $this->get_master_salt(),
+            TRUE);
 
         // handles different hashing functions
         $len = strlen($prk);
@@ -56,77 +54,65 @@ class KeyManager {
         return substr($final_output, 0, $req_len);
     }
 
-    public function load() {
-        $this->logger->debug(__METHOD__);
-        // load master key/salt
-        $res = @include($this->get_secret_path());
-        if ($res === FALSE) {
-            throw new \Exception("Cannot load master key/salt");
+    protected function bin_to_hex(string $name, int $req_len, string $bin) {
+        $hex = bin2hex($bin);
+        $len = strlen($bin);
+        if ($len != $req_len) {
+            throw new \Exception(sprintf(
+                "Invalid length for %s : %s",
+                $name,
+                $len));
         }
-        if (!isset($res["key"])) {
-            throw new \Exception("Missing key in master key/salt file");
-        }
-        $this->set_master_key($res["key"]);
-        if (!isset($res["salt"])) {
-            throw new \Exception("Missing salt in master key/salt file");
-        }
-        $this->set_master_salt($res["salt"]);
+        $this->config->set_string($name, $hex);
     }
 
-    public function save() {
-        $this->logger->debug(__METHOD__);
-        // build data
-        $data = array();
-        $data["key"] = $this->master_key;
-        $data["salt"] = $this->master_salt;
-        // generate text
-        $txt = '<?php'.PHP_EOL.'return '.var_export($data, true).';'.PHP_EOL;
-        // save key configuration
-        $res = file_put_contents($this->get_secret_path(), $txt);
-        if ($res === FALSE) {
-            throw new \Exception("Cannot save master key/salt");
-        }
+    public function set_master_key(string $key) {
+        return $this->bin_to_hex(
+            self::CONFIG_NAME_KEY,
+            self::MASTER_KEY_LENGTH_BYTES,
+            $key);
     }
 
-    public function set_master_key(string $hex_key) {
-        $this->logger->debug(__METHOD__, func_get_args());
-        $res = preg_match(
-            sprintf("/^[[:xdigit:]]{%d}$/", KeyManager::MASTER_KEY_LENGTH_BYTES * 2),
-            $hex_key);
-        if ($res === FALSE) {
-            throw new \Exception("Could not match master key with validation regex");
-        } elseif ($res === 0) {
-            throw new \Exception("Master key is invalid");
-        }
-        $this->master_key = $hex_key;
+    public function set_master_salt(string $salt) {
+        return $this->bin_to_hex(
+            self::CONFIG_NAME_SALT,
+            self::MASTER_SALT_LENGTH_BYTES,
+            $salt);
     }
 
-    public function set_master_salt(string $hex_salt) {
-        $this->logger->debug(__METHOD__, func_get_args());
-        $res = preg_match(
-            sprintf("/^[[:xdigit:]]{%d}$/", KeyManager::MASTER_SALT_LENGTH_BYTES * 2),
-            $hex_salt);
-        if ($res === FALSE) {
-            throw new \Exception("Could not match master salt with validation regex");
-        } elseif ($res === 0) {
-            throw new \Exception("Master salt is invalid");
+    protected function hex_to_bin(string $name, int $req_len) {
+        $hex = $this->config->get_string($name);
+        $bin = @hex2bin($hex);
+        if ($bin === FALSE) {
+            throw new \Exception(sprintf(
+                "Invalid hex string %s : %s",
+                $name,
+                $hex));
         }
-        $this->master_salt = $hex_salt;
+        $len = strlen($bin);
+        if ($len != $req_len) {
+            throw new \Exception(sprintf(
+                "Invalid length for %s : %s",
+                $name,
+                $len));
+        }
+        return $bin;
     }
 
     public function get_master_key() {
-        return $this->master_key;
+        return $this->hex_to_bin(
+            self::CONFIG_NAME_KEY,
+            self::MASTER_KEY_LENGTH_BYTES);
     }
 
     public function get_master_salt() {
-        return $this->master_salt;
+        return $this->hex_to_bin(
+            self::CONFIG_NAME_SALT,
+            self::MASTER_SALT_LENGTH_BYTES);
     }
 
-    public function __construct(string $base_path) {
+    public function __construct(KeyValueInterface $config) {
         $this->logger = App::GetLogger();
-        $this->logger->debug(__METHOD__, func_get_args());
-        $this->base_path = $base_path;
-        $this->master_key = NULL;
-        $this->master_salt = NULL;
+        $this->config = $config;
     }
 }

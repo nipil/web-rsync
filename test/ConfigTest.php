@@ -49,8 +49,9 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * @dataProvider      providerStringToIntInvalid
-     * @expectedException Exception
+     * @dataProvider             providerStringToIntInvalid
+     * @expectedException        Exception
+     * @expectedExceptionMessage Invalid integer
      */
     public function testStringToIntFail(string $input, int $expected) {
         $value = Config::StringToInt($input);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WRS;
 
-class Config implements KeyValueInterface {
+class StoredKeyValue implements KeyValueInterface {
 
     private $logger;
     private $storage;

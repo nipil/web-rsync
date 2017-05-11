@@ -6,7 +6,7 @@ namespace WRS;
 
 use PHPUnit\Framework\TestCase;
 
-class ConfigTest extends TestCase
+class StoredKeyValueTest extends TestCase
 {
     const KEY = "test";
     const VALUE_STRING = "value";
@@ -34,7 +34,7 @@ class ConfigTest extends TestCase
      * @dataProvider providerStringToIntValid
      */
     public function testStringToIntSuccess(string $input, int $expected) {
-        $value = Config::StringToInt($input);
+        $value = StoredKeyValue::StringToInt($input);
         $this->assertSame($expected, $value);
     }
 
@@ -54,19 +54,19 @@ class ConfigTest extends TestCase
      * @expectedExceptionMessage Invalid integer
      */
     public function testStringToIntFail(string $input, int $expected) {
-        $value = Config::StringToInt($input);
+        $value = StoredKeyValue::StringToInt($input);
         $this->assertSame($expected, $value);
     }
 
     public function testHasKey() {
-        $config = new Config(new NullStorage());
+        $config = new StoredKeyValue(new NullStorage());
         $this->assertFalse($config->has_key(self::KEY), "key should not exist");
         $config->set_integer(self::KEY, self::VALUE_INT);
         $this->assertTrue($config->has_key(self::KEY), "key should exist");
     }
 
     public function testSetString() {
-        $config = new Config(new NullStorage());
+        $config = new StoredKeyValue(new NullStorage());
         $config->set_string(self::KEY, self::VALUE_STRING);
         $value = $config->get_string(self::KEY);
         $this->assertSame(self::VALUE_STRING, $value);
@@ -78,12 +78,12 @@ class ConfigTest extends TestCase
      * @expectedExceptionMessage Cannot load key test
      */
     public function testGetStringFail() {
-        $config = new Config(new NullStorage());
+        $config = new StoredKeyValue(new NullStorage());
         $config->get_string(self::KEY);
     }
 
     public function testSetInteger() {
-        $config = new Config(new NullStorage());
+        $config = new StoredKeyValue(new NullStorage());
         $config->set_integer(self::KEY, self::VALUE_INT);
         $value = $config->get_integer(self::KEY);
         $this->assertSame(self::VALUE_INT, $value);
@@ -95,7 +95,7 @@ class ConfigTest extends TestCase
      * @expectedExceptionMessage Cannot load key test
      */
     public function testGetIntegerFail() {
-        $config = new Config(new NullStorage());
+        $config = new StoredKeyValue(new NullStorage());
         $config->get_integer(self::KEY);
     }
 }

@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace WRS;
+namespace WRS\Tests;
 
 use PHPUnit\Framework\TestCase;
+
+use WRS\Storage\NullStorage,
+    WRS\KeyValue\StoredKeyValue;
 
 class StoredKeyValueTest extends TestCase
 {

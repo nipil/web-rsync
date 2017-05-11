@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace WRS;
 
+use WRS\Apps\App;
+
 class Arguments {
 
     private $logger;

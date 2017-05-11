@@ -2,13 +2,15 @@
 
 declare(strict_types=1);
 
-namespace WRS;
+namespace WRS\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-use WRS\KeyManager;
+use WRS\Crypto\KeyManager;
 
-use org\bovigo\vfs\vfsStream, org\bovigo\vfs\vfsStreamWrapper, org\bovigo\vfs\vfsStreamDirectory;
+use org\bovigo\vfs\vfsStream,
+    org\bovigo\vfs\vfsStreamWrapper,
+    org\bovigo\vfs\vfsStreamDirectory;
 
 class KeyManagerTest extends TestCase
 {

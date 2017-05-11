@@ -2,9 +2,9 @@
 
 require_once __DIR__.'/vendor/autoload.php';
 
-use WRS\App;
-use WRS\ClientApp;
-use WRS\ServerApp;
+use WRS\Apps\App,
+    WRS\Apps\ClientApp,
+    WRS\Apps\ServerApp;
 
 try {
     // configure logger

@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace WRS;
+namespace WRS\Crypto;
+
+use WRS\Apps\App;
 
 class KeyManager {
 

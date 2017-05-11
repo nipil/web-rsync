@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace WRS;
+namespace WRS\KeyValue;
+
+use WRS\Apps\App, WRS\Storage\StorageInterface;
 
 class StoredKeyValue implements KeyValueInterface {
 

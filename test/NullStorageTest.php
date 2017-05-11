@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace WRS;
+namespace WRS\Tests;
 
 use PHPUnit\Framework\TestCase;
+
+use WRS\Storage\NullStorage;
 
 class NullStorageTest extends TestCase
 {

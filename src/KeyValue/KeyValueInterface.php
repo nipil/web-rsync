@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace WRS;
+namespace WRS\KeyValue;
 
 interface KeyValueInterface {
     public function has_key(string $key);

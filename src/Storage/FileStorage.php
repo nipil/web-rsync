@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace WRS;
+namespace WRS\Storage;
 
 class FileStorage implements StorageInterface
 {

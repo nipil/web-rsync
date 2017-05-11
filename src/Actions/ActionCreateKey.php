@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
-namespace WRS;
+namespace WRS\Actions;
+
+use WRS\Arguments,
+    WRS\Apps\App,
+    WRS\Crypto\KeyManager;
 
 class ActionCreateKey extends Action {
 

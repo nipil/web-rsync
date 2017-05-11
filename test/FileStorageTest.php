@@ -2,11 +2,15 @@
 
 declare(strict_types=1);
 
-namespace WRS;
+namespace WRS\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-use org\bovigo\vfs\vfsStream, org\bovigo\vfs\vfsStreamWrapper, org\bovigo\vfs\vfsStreamDirectory;
+use org\bovigo\vfs\vfsStream,
+    org\bovigo\vfs\vfsStreamWrapper,
+    org\bovigo\vfs\vfsStreamDirectory;
+
+use WRS\Storage\FileStorage;
 
 class FileStorageTest extends TestCase
 {

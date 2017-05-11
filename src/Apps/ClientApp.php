@@ -2,7 +2,13 @@
 
 declare(strict_types=1);
 
-namespace WRS;
+namespace WRS\Apps;
+
+use WRS\Arguments,
+    WRS\Apps\App,
+    WRS\Crypto\KeyManager,
+    WRS\KeyValue\StoredKeyValue,
+    WRS\Storage\FileStorage;
 
 class ClientApp extends App {
 
@@ -17,7 +23,7 @@ class ClientApp extends App {
         $this->logger->debug(__METHOD__, func_get_args());
 
         $this->args = new Arguments();
-        $this->config = new Config($this->get_base_path());
+        $this->config = new StoredKeyValue($this->get_base_path());
         $this->key_manager = new KeyManager($this->get_base_path());
     }
 

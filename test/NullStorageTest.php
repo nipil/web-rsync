@@ -18,10 +18,13 @@ class NullStorageTest extends TestCase
         $this->assertTrue(TRUE);
     }
 
+    /**
+     * @expectedException        Exception
+     * @expectedExceptionMessage Cannot load key test
+     */
     public function testLoad()
     {
         $ns = new NullStorage();
         $result = $ns->load(self::KEY);
-        $this->assertNull($result);
     }
 }

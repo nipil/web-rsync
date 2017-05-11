@@ -11,6 +11,8 @@ class NullStorage implements StorageInterface
     }
 
     public function load(string $name) {
-        return NULL;
+        throw new \Exception(sprintf(
+            "Cannot load key %s",
+            $name));
     }
 }

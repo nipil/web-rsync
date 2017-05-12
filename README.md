@@ -5,12 +5,26 @@
 
 rsync-like tool, working over http
 
-## client-side requirements
+# Install PHP 7.0
 
-PHP 7.0 and other stuff
+This version is available directly on Ubuntu 16.04 LTS and Debian Stretch
 
-sudo apt-get install git composer php-cli php-xml php-mbstring zip
+    sudo apt-get install php7.0-cli
 
-## server-side requirements
+# Get composer
 
-PHP 7.0, write access to a folder
+Either install via your distribution :
+
+    sudo apt-get install composer
+
+Or get composer directly :
+
+- go to https://getcomposer.org/download/
+- follow directions and obtain a file `composer.phar`
+
+# Extensions required for developpement only
+
+- phpunit requires ext-dom and ext-mbstring
+- coveralls requires ext-curl
+
+And if you want to get test-coverage locally, ext-xdebug is required too.

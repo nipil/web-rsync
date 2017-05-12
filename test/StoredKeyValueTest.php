@@ -99,6 +99,19 @@ class StoredKeyValueTest extends TestCase
         $config->set_string(self::KEY, self::VALUE_STRING);
     }
 
+    public function testGetString() {
+        // mock StorageInterface::exists to return specific values
+        $storage = $this->createMock(StorageInterface::class);
+        $map = [[self::KEY, self::VALUE_STRING], ];
+        $storage->method('load')
+                ->will($this->returnValueMap($map));
+
+        // test with mock object
+        $config = new StoredKeyValue($storage);
+        $text = $config->get_string(self::KEY);
+        $this->assertSame(self::VALUE_STRING, $text);
+    }
+
     /**
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Cannot load key .*$#
@@ -123,6 +136,23 @@ class StoredKeyValueTest extends TestCase
         // test with mock object
         $config = new StoredKeyValue($storage);
         $config->set_integer(self::KEY, self::VALUE_INT);
+    }
+
+    /**
+     * @dataProvider providerStringToIntValid
+     *
+     * $input is the textual representation of $expected
+     */
+    public function testGetInteger(string $input, int $expected) {
+        // mock StorageInterface::load to return textual representation of numbers
+        $storage = $this->createMock(StorageInterface::class);
+        $storage->method('load')
+                ->willReturn($input);
+
+        // test with mock object
+        $config = new StoredKeyValue($storage);
+        $int = $config->get_integer(self::KEY);
+        $this->assertSame($expected, $int);
     }
 
     /**

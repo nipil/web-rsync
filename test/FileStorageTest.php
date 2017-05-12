@@ -15,7 +15,7 @@ use WRS\Storage\FileStorage;
 class FileStorageTest extends TestCase
 {
     const DIR = "baseDirectory";
-    const ABS = self::DIR . DIRECTORY_SEPARATOR . "abs";
+    const ABS = "abs";
     const FILE = "file";
     const CONTENT = "content";
 
@@ -48,7 +48,7 @@ class FileStorageTest extends TestCase
      */
     public function testSaveFail()
     {
-        $fs = new FileStorage(vfsStream::url(self::ABS));
+        $fs = new FileStorage(vfsStream::url(self::DIR . DIRECTORY_SEPARATOR . self::ABS));
         $fs->save(self::FILE, self::CONTENT);
     }
 
@@ -58,7 +58,7 @@ class FileStorageTest extends TestCase
      */
     public function testLoadFail()
     {
-        $fs = new FileStorage(vfsStream::url(self::ABS));
+        $fs = new FileStorage(vfsStream::url(self::DIR . DIRECTORY_SEPARATOR . self::ABS));
         $fs->load(self::FILE);
     }
 }

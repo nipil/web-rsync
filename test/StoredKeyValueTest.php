@@ -6,14 +6,25 @@ namespace WRS\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-use WRS\Storage\NullStorage,
+use WRS\Storage\StorageInterface,
     WRS\KeyValue\StoredKeyValue;
 
 class StoredKeyValueTest extends TestCase
 {
     const KEY = "test";
+    const ABSENT = "absent";
     const VALUE_STRING = "value";
     const VALUE_INT = 42;
+
+    /**
+     * mock StorageInterface::load to throw exceptions
+     */
+    public function setupMockedStorageLoadException(string $key) {
+        $storage = $this->createMock(StorageInterface::class);
+        $storage->method('load')
+                ->will($this->throwException(new \Exception(sprintf("Cannot load key %s",$key))));
+        return $storage;
+    }
 
     public function providerStringToIntValid() {
         $data = array(
@@ -43,62 +54,97 @@ class StoredKeyValueTest extends TestCase
 
     public function providerStringToIntInvalid() {
         $data = array(
-            "zero" => ["+0", 1],
-            "text" => ["text", 1],
-            "mixed" => ["36mix", 1],
-            "non-trimmed" => [" \t 6    \t", 1],
+            "empty" => ["", NULL],
+            "zero" => ["+0", NULL],
+            "text" => ["text", NULL],
+            "mixed" => ["36mix", NULL],
+            "non-trimmed" => [" \t 6    \t", NULL],
         );
         return $data;
     }
 
     /**
-     * @dataProvider             providerStringToIntInvalid
-     * @expectedException        Exception
-     * @expectedExceptionMessage Invalid integer
+     * @dataProvider providerStringToIntInvalid
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Invalid integer .*$#
      */
-    public function testStringToIntFail(string $input, int $expected) {
+    public function testStringToIntFail(string $input, $null) {
         $value = StoredKeyValue::StringToInt($input);
         $this->assertSame($expected, $value);
     }
 
     public function testHasKey() {
-        $config = new StoredKeyValue(new NullStorage());
-        $this->assertFalse($config->has_key(self::KEY), "key should not exist");
-        $config->set_integer(self::KEY, self::VALUE_INT);
+        // mock StorageInterface::exists to return specific values
+        $storage = $this->createMock(StorageInterface::class);
+        $map = [[self::KEY, TRUE], [self::ABSENT, FALSE]];
+        $storage->method('exists')
+                ->will($this->returnValueMap($map));
+
+        // test with mock object
+        $config = new StoredKeyValue($storage);
+        $this->assertFalse($config->has_key(self::ABSENT), "key should not exist");
         $this->assertTrue($config->has_key(self::KEY), "key should exist");
     }
 
     public function testSetString() {
-        $config = new StoredKeyValue(new NullStorage());
+        // mock StorageInterface to verify that save is called once
+        $storage = $this->createMock(StorageInterface::class);
+        $storage->expects($this->once())
+                ->method('save')
+                ->with($this->equalTo(self::KEY),
+                       $this->equalTo(self::VALUE_STRING));
+
+        // test with mock object
+        $config = new StoredKeyValue($storage);
         $config->set_string(self::KEY, self::VALUE_STRING);
-        $value = $config->get_string(self::KEY);
-        $this->assertSame(self::VALUE_STRING, $value);
     }
 
     /**
-     * @dataProvider             providerStringToIntInvalid
-     * @expectedException        Exception
-     * @expectedExceptionMessage Cannot load key test
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Cannot load key .*$#
      */
-    public function testGetStringFail() {
-        $config = new StoredKeyValue(new NullStorage());
-        $config->get_string(self::KEY);
+    public function testGetStringMissing() {
+        $storage = $this->setupMockedStorageLoadException(self::ABSENT);
+        $config = new StoredKeyValue($storage);
+        $config->get_string(self::ABSENT);
     }
 
     public function testSetInteger() {
-        $config = new StoredKeyValue(new NullStorage());
+        // mock StorageInterface to verify that save is called once
+        $storage = $this->createMock(StorageInterface::class);
+        $storage->expects($this->once())
+                ->method('save')
+                ->with($this->equalTo(self::KEY),
+                       $this->equalTo(self::VALUE_INT));
+
+        // test with mock object
+        $config = new StoredKeyValue($storage);
         $config->set_integer(self::KEY, self::VALUE_INT);
-        $value = $config->get_integer(self::KEY);
-        $this->assertSame(self::VALUE_INT, $value);
     }
 
     /**
-     * @dataProvider             providerStringToIntInvalid
-     * @expectedException        Exception
-     * @expectedExceptionMessage Cannot load key test
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Cannot load key .*$#
      */
-    public function testGetIntegerFail() {
-        $config = new StoredKeyValue(new NullStorage());
-        $config->get_integer(self::KEY);
+    public function testGetIntegerMissing() {
+        $storage = $this->setupMockedStorageLoadException(self::ABSENT);
+        $config = new StoredKeyValue($storage);
+        $config->get_integer(self::ABSENT);
+    }
+
+    /**
+     * @dataProvider providerStringToIntInvalid
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Invalid integer .*$#
+     */
+    public function testGetIntegerInvalid(string $input, $null) {
+        // mock StorageInterface::load to return input
+        $storage = $this->createMock(StorageInterface::class);
+        $storage->method('load')
+                ->will($this->returnArgument(0));
+
+        // test with mock object
+        $config = new StoredKeyValue($storage);
+        $config->get_integer($input);
     }
 }

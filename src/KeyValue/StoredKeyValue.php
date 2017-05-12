@@ -10,8 +10,6 @@ class StoredKeyValue implements KeyValueInterface {
 
     private $logger;
     private $storage;
-    private $data;
-    private $definitions;
 
     public static function StringToInt(string $input) {
         $valid = preg_match('/^-?[[:digit:]]+$/', $input);
@@ -31,37 +29,29 @@ class StoredKeyValue implements KeyValueInterface {
 
     public function __construct(StorageInterface $storage) {
         $this->logger = App::GetLogger();
-        $this->logger->debug(__METHOD__, func_get_args());
         $this->storage = $storage;
-        $this->data = array();
     }
 
     public function has_key(string $key) {
-        return array_key_exists($key, $this->data);
+        return $this->storage->exists($key);
     }
 
     public function get_string(string $key) {
-        if (!$this->has_key($key)) {
-            $this->data[$key] = $this->storage->load($key);
-        }
-        return $this->data[$key];
+        return $this->storage->load($key);
     }
 
     public function set_string(string $key, string $value) {
         $this->storage->save($key, $value);
-        $this->data[$key] = $value;
     }
 
     public function get_integer(string $key) {
-        if (!$this->has_key($key)) {
-            $input = $this->storage->load($key);
-            $this->data[$key] = self::StringToInt($input);
-        }
-        return $this->data[$key];
+        $str = $this->storage->load($key);
+        $int = self::StringToInt($str);
+        return $int;
     }
 
     public function set_integer(string $key, int $value) {
-        $this->storage->save($key, sprintf("%d", $value));
-        $this->data[$key] = $value;
+        $str = sprintf("%d", $value);
+        $this->storage->save($key, $str);
     }
 }

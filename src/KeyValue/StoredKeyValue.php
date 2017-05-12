@@ -20,9 +20,7 @@ class StoredKeyValue implements KeyValueInterface {
         }
         $result = sscanf($input, "%d", $value);
         if ($result === 0) {
-            throw new \Exception(sprintf(
-                "Cannot convert %s to an integer",
-                $name));
+            throw new \Exception("Cannot convert %s to an integer");
         }
         return $value;
     }

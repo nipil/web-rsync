@@ -20,6 +20,13 @@ class NullStorageTest extends TestCase
         $this->assertTrue(TRUE);
     }
 
+    public function testExists()
+    {
+        $ns = new NullStorage();
+        $ns->save(self::KEY, self::VALUE);
+        $this->assertSame(FALSE, $ns->exists(self::KEY));
+    }
+
     /**
      * @expectedException        Exception
      * @expectedExceptionMessage Cannot load key test

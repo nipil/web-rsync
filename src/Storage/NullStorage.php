@@ -15,4 +15,8 @@ class NullStorage implements StorageInterface
             "Cannot load key %s",
             $name));
     }
+
+    public function exists(string $name) {
+        return FALSE;
+    }
 }

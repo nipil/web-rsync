@@ -36,4 +36,9 @@ class FileStorage implements StorageInterface
         }
         return $result;
     }
+
+    public function exists(string $name) {
+        $filepath = $this->get_path($name);
+        return is_file($filepath);
+    }
 }

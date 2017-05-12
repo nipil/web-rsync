@@ -42,6 +42,16 @@ class FileStorageTest extends TestCase
         $this->assertSame(self::CONTENT, $content);
     }
 
+    public function testExists()
+    {
+        $fs = new FileStorage(vfsStream::url(self::DIR));
+        file_put_contents(vfsStream::url(self::DIR.DIRECTORY_SEPARATOR.self::FILE), self::CONTENT);
+        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild(self::FILE), "File should be present");
+        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild(self::ABS), "File should be absent");
+        $this->assertTrue($fs->exists(self::FILE), "Absent but should be present");
+        $this->assertFalse($fs->exists(self::ABS), "Present but should be absent");
+    }
+
     /**
      * @expectedException        Exception
      * @expectedExceptionMessage Cannot save data to file vfs://baseDirectory/abs/file

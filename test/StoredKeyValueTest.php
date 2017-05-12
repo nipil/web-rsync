@@ -91,8 +91,8 @@ class StoredKeyValueTest extends TestCase
         $storage = $this->createMock(StorageInterface::class);
         $storage->expects($this->once())
                 ->method('save')
-                ->with($this->equalTo(self::KEY),
-                       $this->equalTo(self::VALUE_STRING));
+                ->with($this->identicalTo(self::KEY),
+                       $this->identicalTo(self::VALUE_STRING));
 
         // test with mock object
         $config = new StoredKeyValue($storage);
@@ -110,12 +110,15 @@ class StoredKeyValueTest extends TestCase
     }
 
     public function testSetInteger() {
+        // storage receives textual data
+        $textual_value_int = sprintf("%d", self::VALUE_INT);
+
         // mock StorageInterface to verify that save is called once
         $storage = $this->createMock(StorageInterface::class);
         $storage->expects($this->once())
                 ->method('save')
-                ->with($this->equalTo(self::KEY),
-                       $this->equalTo(self::VALUE_INT));
+                ->with($this->identicalTo(self::KEY),
+                       $this->identicalTo($textual_value_int));
 
         // test with mock object
         $config = new StoredKeyValue($storage);

@@ -112,31 +112,4 @@ class KeyManagerTest extends TestCase
             KeyManager::MASTER_SALT_LENGTH_BYTES,
             strlen($this->key_manager->get_salt()));
     }
-
-    /**
-     * @expectedException        Exception
-     * @expectedExceptionMessage Invalid length requested for derived key
-     */
-    public function testMasterKeyDerivationFailed() {
-        $this->key_manager->derive_key(0);
-    }
-
-    public function testMasterKeyDerivation() {
-        $this->key_manager->set_key(hex2bin(self::SAMPLE_KEY));
-        $this->key_manager->set_salt(hex2bin(self::SAMPLE_SALT));
-
-        $len = strlen(hash_hmac(KeyManager::HASH_FUNCTION, "", "", TRUE));
-
-        for ($i = 0; $i < 4; $i ++) {
-            for ($j = -3; $j < 4; $j++) {
-                $req_len = $len * $i + $j;
-                if ($req_len <= 0) {
-                    continue;
-                }
-                $additional_text = sprintf("derived_test_%d", $req_len);
-                $key = $this->key_manager->derive_key($req_len, $additional_text);
-                $this->assertSame($req_len, strlen($key), "wrong length for derived key");
-            }
-        }
-    }
 }

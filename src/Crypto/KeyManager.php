@@ -8,7 +8,7 @@ use WRS\Apps\App,
     WRS\Crypto\SecretKeeperInterface,
     WRS\KeyValue\KeyValueInterface;
 
-class KeyManager implements SecretKeeperInterface, KeyDerivatorInterface {
+class KeyManager implements SecretKeeperInterface {
 
     const MASTER_KEY_LENGTH_BITS = 1 << 12;
     const MASTER_KEY_LENGTH_BYTES = self::MASTER_KEY_LENGTH_BITS >> 3;
@@ -24,31 +24,6 @@ class KeyManager implements SecretKeeperInterface, KeyDerivatorInterface {
     public function create_master() {
         $this->set_key(random_bytes(self::MASTER_KEY_LENGTH_BYTES));
         $this->set_salt(random_bytes(self::MASTER_SALT_LENGTH_BYTES));
-    }
-
-    public function derive_key(int $byte_length, string $additionnal_info = "") {
-        if ($byte_length <= 0) {
-            throw new \Exception("Invalid length requested for derived key");
-        }
-
-        // extract phase (with 2.1 note : 'IKM' is used as the HMAC input, not as the HMAC key)
-        $prk = hash_hmac(self::HASH_FUNCTION, $this->get_key(), $this->get_salt(), TRUE);
-
-        // handles different hashing functions
-        $len = strlen($prk);
-        $n_iter = ceil($byte_length / $len);
-
-        // expand phase RFC 5869
-        $final_output = "";
-        $iteration_output = "";
-        for ($i = 1; $i <= $n_iter; $i++) {
-            $iteration_input = $iteration_output . $additionnal_info . $i;
-            $iteration_output = hash_hmac(self::HASH_FUNCTION, $iteration_input, $prk, TRUE);
-            $final_output .= $iteration_output;
-        }
-
-        // retain only requested length byte
-        return substr($final_output, 0, $byte_length);
     }
 
     protected function bin_to_hex(string $name, int $req_len, string $bin) {

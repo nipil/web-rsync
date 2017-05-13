@@ -34,14 +34,6 @@ class UtilsTest extends TestCase
         return $data;
     }
 
-    /**
-     * @dataProvider providerStringToIntValid
-     */
-    public function testStringToIntSuccess(string $input, int $expected) {
-        $value = Utils::StringToInt($input);
-        $this->assertSame($expected, $value);
-    }
-
     public static function providerStringToIntInvalid() {
         $data = array(
             "empty" => ["", NULL],
@@ -55,15 +47,6 @@ class UtilsTest extends TestCase
             "minus plus" => ["-+5", NULL],
         );
         return $data;
-    }
-
-    /**
-     * @dataProvider providerStringToIntInvalid
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp #^Invalid integer .*$#
-     */
-    public function testStringToIntInvalid(string $input, $null) {
-        Utils::StringToInt($input);
     }
 
     public static function providerStringToIntTooLarge() {
@@ -83,6 +66,23 @@ class UtilsTest extends TestCase
             ));
         }
         return $data;
+    }
+
+    /**
+     * @dataProvider providerStringToIntValid
+     */
+    public function testStringToIntSuccess(string $input, int $expected) {
+        $value = Utils::StringToInt($input);
+        $this->assertSame($expected, $value);
+    }
+
+    /**
+     * @dataProvider providerStringToIntInvalid
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Invalid integer .*$#
+     */
+    public function testStringToIntInvalid(string $input, $null) {
+        Utils::StringToInt($input);
     }
 
     /**

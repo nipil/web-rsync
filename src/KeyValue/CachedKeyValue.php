@@ -45,7 +45,9 @@ class CachedKeyValue implements KeyValueInterface {
     public function get_string(string $key) {
         if ($this->has_cache($key)) {
             $value = $this->cache[$key];
-            // TODO: verify that data is a string
+            if (!is_string($value)) {
+                throw new \Exception(sprintf("Invalid type for key: %s", $key));
+            }
             return $value;
         } else {
             $value = $this->source->get_string($key);
@@ -62,7 +64,9 @@ class CachedKeyValue implements KeyValueInterface {
     public function get_integer(string $key) {
         if ($this->has_cache($key)) {
             $value = $this->cache[$key];
-            // TODO: verify that data is an integer
+            if (!is_int($value)) {
+                throw new \Exception(sprintf("Invalid type for key: %s", $key));
+            }
             return $value;
         } else {
             $value = $this->source->get_integer($key);

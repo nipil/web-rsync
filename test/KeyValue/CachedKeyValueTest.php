@@ -90,7 +90,47 @@ class CachedKeyValueTest extends TestCase
         $this->assertSame(self::VALUE_INT, $ckv->get_cache(self::KEY));
     }
 
-    // TODO: test cross-type cache set-get
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Invalid type for key: .*$#
+     */
+    public function testInvalidCacheAccessFromStringToInteger() {
+        // mock
+        $kvi = $this->createMock(KeyValueInterface::class);
+
+        // test
+        $ckv = new CachedKeyValue($kvi);
+
+        // setup cache pre-test
+        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
+        $ckv->set_cache_string(self::KEY, self::VALUE_STRING);
+        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
+        $this->assertSame(self::VALUE_STRING, $ckv->get_cache(self::KEY));
+
+        // actual test
+        $ckv->get_integer(self::KEY);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Invalid type for key: .*$#
+     */
+    public function testInvalidCacheAccessFromIntegerToString() {
+        // mock
+        $kvi = $this->createMock(KeyValueInterface::class);
+
+        // test
+        $ckv = new CachedKeyValue($kvi);
+
+        // setup cache pre-test
+        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
+        $ckv->set_cache_integer(self::KEY, self::VALUE_INT);
+        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
+        $this->assertSame(self::VALUE_INT, $ckv->get_cache(self::KEY));
+
+        // actual test
+        $ckv->get_string(self::KEY);
+    }
 
     public function testHasKeyWithoutCache() {
         // mock

@@ -7,16 +7,32 @@ namespace WRS;
 class Utils {
 
     public static function StringToInt(string $input) {
-        $valid = preg_match('/^-?[[:digit:]]+$/', $input);
+        // verify that number is actually an integer
+        $valid = preg_match('/^[-+]?[[:digit:]]+$/', $input);
         if ($valid === 0) {
             throw new \Exception(sprintf(
                 "Invalid integer %s",
                 $input));
         }
-        $result = sscanf($input, "%d", $value);
-        if ($result === 0) {
-            throw new \Exception("Cannot convert %s to an integer");
+
+        // test if bigger than max
+        $res = bccomp($input, sprintf("%d", PHP_INT_MAX));
+        if ($res === 1) {
+            throw new \Exception(sprintf(
+                "Integer too large %s",
+                $input));
         }
+
+        // test if smaller than min
+        $res = bccomp($input, sprintf("%d", PHP_INT_MIN));
+        if ($res === -1) {
+            throw new \Exception(sprintf(
+                "Integer too large %s",
+                $input));
+        }
+
+        // with the above validations, conversion cannot fail
+        $result = sscanf($input, "%d", $value);
         return $value;
     }
 }

@@ -13,8 +13,10 @@ class UtilsTest extends TestCase
     public static function providerStringToIntValid() {
         $data = array(
             "zero" => ["0", 0],
+            "zero plus" => ["+0", 0],
             "zero minus" => ["-0", 0],
             "five minus" => ["-5", -5],
+            "five plus" => ["+5", 5],
             "five" => ["5", 5],
             "int max 32 bits" => [ "2147483647",  2147483647],
             "int min 32 bits" => ["-2147483648", -2147483648],
@@ -39,10 +41,14 @@ class UtilsTest extends TestCase
     public static function providerStringToIntInvalid() {
         $data = array(
             "empty" => ["", NULL],
-            "zero" => ["+0", NULL],
             "text" => ["text", NULL],
             "mixed" => ["36mix", NULL],
+            "reverse mixed" => ["mix36", NULL],
             "non-trimmed" => [" \t 6    \t", NULL],
+            "plus plus" => ["++5", NULL],
+            "minus minus" => ["--5", NULL],
+            "plus minus" => ["+-5", NULL],
+            "minus plus" => ["-+5", NULL],
         );
         return $data;
     }
@@ -52,7 +58,31 @@ class UtilsTest extends TestCase
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid integer .*$#
      */
-    public function testStringToIntFail(string $input, $null) {
-        $value = Utils::StringToInt($input);
+    public function testStringToIntInvalid(string $input, $null) {
+        Utils::StringToInt($input);
+    }
+
+    public static function providerStringToIntTooLarge() {
+        $data = array(
+            "int max 64 bits +1" => [ "9223372036854775808", NULL],
+            "int min 64 bits -1" => ["-9223372036854775809", NULL],
+            "much too long" => ["-". str_repeat("9", 100), NULL],
+        );
+        if (PHP_INT_SIZE === 4) {
+            $data = array_merge($data, array(
+                "int max 32 bits +1" => [ "2147483648", NULL],
+                "int min 32 bits -1" => ["-2147483649", NULL],
+            ));
+        }
+        return $data;
+    }
+
+    /**
+     * @dataProvider providerStringToIntTooLarge
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Integer too large .+$#
+     */
+    public function testStringToIntTooLarge(string $input, $null) {
+        Utils::StringToInt($input);
     }
 }

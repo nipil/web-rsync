@@ -18,9 +18,13 @@ class UtilsTest extends TestCase
             "five minus" => ["-5", -5],
             "five plus" => ["+5", 5],
             "five" => ["5", 5],
-            "int max 32 bits" => [ "2147483647",  2147483647],
-            "int min 32 bits" => ["-2147483648", -2147483648],
         );
+        if (PHP_INT_SIZE === 4) {
+            $data = array_merge($data, array(
+                "int max 32 bits" => [ "2147483647",  2147483647],
+                "int min 32 bits" => ["-2147483648", -2147483648],
+            ));
+        }
         if (PHP_INT_SIZE === 8) {
             $data = array_merge($data, array(
                 "int max 64 bits" => [ "9223372036854775807",  9223372036854775807],
@@ -64,14 +68,18 @@ class UtilsTest extends TestCase
 
     public static function providerStringToIntTooLarge() {
         $data = array(
-            "int max 64 bits +1" => [ "9223372036854775808", NULL],
-            "int min 64 bits -1" => ["-9223372036854775809", NULL],
             "much too long" => ["-". str_repeat("9", 100), NULL],
         );
         if (PHP_INT_SIZE === 4) {
             $data = array_merge($data, array(
                 "int max 32 bits +1" => [ "2147483648", NULL],
                 "int min 32 bits -1" => ["-2147483649", NULL],
+            ));
+        }
+        if (PHP_INT_SIZE === 8) {
+            $data = array_merge($data, array(
+                "int max 64 bits +1" => [ "9223372036854775808", NULL],
+                "int min 64 bits -1" => ["-9223372036854775809", NULL],
             ));
         }
         return $data;

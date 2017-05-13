@@ -202,4 +202,19 @@ class HmacKeyDerivatorTest extends TestCase
         $hkdf = new HmacKeyDerivator($secret, $hasher);
         $hkdf->derive_key(-1, "");
     }
+
+    public function testZeroLength()
+    {
+        // mock hasher keeper to return a single byte
+        $hasher = $this->createMock(HashInterface::class);
+
+        // mock secret keeper to provide ikm and salt
+        $secret = $this->createMock(SecretKeeperInterface::class);
+
+        // create SUT and test
+        $hkdf = new HmacKeyDerivator($secret, $hasher);
+
+        // validate
+        $this->assertSame("", $hkdf->derive_key(0, ""));
+    }
 }

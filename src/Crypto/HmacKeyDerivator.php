@@ -32,6 +32,11 @@ class HmacKeyDerivator implements KeyDerivatorInterface {
             throw new \Exception(sprintf("Invalid key length : %d", $byte_length));
         }
 
+        // quickly return on simple edge case
+        if ($byte_length === 0) {
+            return "";
+        }
+
         /*
          * extract phase
          *

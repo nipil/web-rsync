@@ -26,52 +26,6 @@ class StoredKeyValueTest extends TestCase
         return $storage;
     }
 
-    public function providerStringToIntValid() {
-        $data = array(
-            "zero" => ["0", 0],
-            "zero minus" => ["-0", 0],
-            "five minus" => ["-5", -5],
-            "five" => ["5", 5],
-            "int max 32 bits" => [ "2147483647",  2147483647],
-            "int min 32 bits" => ["-2147483648", -2147483648],
-        );
-        if (PHP_INT_SIZE === 8) {
-            $data = array_merge($data, array(
-                "int max 64 bits" => [ "9223372036854775807",  9223372036854775807],
-                "int min 64 bits" => ["-9223372036854775808", -9223372036854775808],
-            ));
-        }
-        return $data;
-    }
-
-    /**
-     * @dataProvider providerStringToIntValid
-     */
-    public function testStringToIntSuccess(string $input, int $expected) {
-        $value = StoredKeyValue::StringToInt($input);
-        $this->assertSame($expected, $value);
-    }
-
-    public function providerStringToIntInvalid() {
-        $data = array(
-            "empty" => ["", NULL],
-            "zero" => ["+0", NULL],
-            "text" => ["text", NULL],
-            "mixed" => ["36mix", NULL],
-            "non-trimmed" => [" \t 6    \t", NULL],
-        );
-        return $data;
-    }
-
-    /**
-     * @dataProvider providerStringToIntInvalid
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp #^Invalid integer .*$#
-     */
-    public function testStringToIntFail(string $input, $null) {
-        $value = StoredKeyValue::StringToInt($input);
-    }
-
     public function testHasKey() {
         // mock StorageInterface::exists to return specific values
         $storage = $this->createMock(StorageInterface::class);
@@ -137,21 +91,19 @@ class StoredKeyValueTest extends TestCase
         $config->set_integer(self::KEY, self::VALUE_INT);
     }
 
-    /**
-     * @dataProvider providerStringToIntValid
-     *
-     * $input is the textual representation of $expected
-     */
-    public function testGetInteger(string $input, int $expected) {
+    public function testGetInteger() {
+        // storage receives textual data
+        $textual_value_int = sprintf("%d", self::VALUE_INT);
+
         // mock StorageInterface::load to return textual representation of numbers
         $storage = $this->createMock(StorageInterface::class);
         $storage->method('load')
-                ->willReturn($input);
+                ->willReturn($textual_value_int);
 
         // test with mock object
         $config = new StoredKeyValue($storage);
         $int = $config->get_integer(self::KEY);
-        $this->assertSame($expected, $int);
+        $this->assertSame(self::VALUE_INT, $int);
     }
 
     /**
@@ -165,18 +117,18 @@ class StoredKeyValueTest extends TestCase
     }
 
     /**
-     * @dataProvider providerStringToIntInvalid
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid integer .*$#
      */
-    public function testGetIntegerInvalid(string $input, $null) {
-        // mock StorageInterface::load to return input
+    public function testGetIntegerInvalid() {
+        // mock StorageInterface::load to return a non-integer
         $storage = $this->createMock(StorageInterface::class);
+        $map = [[self::KEY, self::VALUE_STRING], ];
         $storage->method('load')
-                ->will($this->returnArgument(0));
+                ->will($this->returnValueMap($map));
 
         // test with mock object
         $config = new StoredKeyValue($storage);
-        $config->get_integer($input);
+        $config->get_integer(self::KEY);
     }
 }

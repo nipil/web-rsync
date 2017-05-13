@@ -4,26 +4,14 @@ declare(strict_types=1);
 
 namespace WRS\KeyValue;
 
-use WRS\Apps\App, WRS\Storage\StorageInterface;
+use WRS\Utils,
+    WRS\Apps\App,
+    WRS\Storage\StorageInterface;
 
 class StoredKeyValue implements KeyValueInterface {
 
     private $logger;
     private $storage;
-
-    public static function StringToInt(string $input) {
-        $valid = preg_match('/^-?[[:digit:]]+$/', $input);
-        if ($valid === 0) {
-            throw new \Exception(sprintf(
-                "Invalid integer %s",
-                $input));
-        }
-        $result = sscanf($input, "%d", $value);
-        if ($result === 0) {
-            throw new \Exception("Cannot convert %s to an integer");
-        }
-        return $value;
-    }
 
     public function __construct(StorageInterface $storage) {
         $this->logger = App::GetLogger();
@@ -44,7 +32,7 @@ class StoredKeyValue implements KeyValueInterface {
 
     public function get_integer(string $key) {
         $str = $this->storage->load($key);
-        $int = self::StringToInt($str);
+        $int = Utils::StringToInt($str);
         return $int;
     }
 

@@ -16,7 +16,7 @@ use org\bovigo\vfs\vfsStream,
 
 class KeyManagerTest extends TestCase
 {
-    const SAMPLE_MASTER_KEY = "8ff59950984a23510d5942d8f7c39a0af501d4"
+    const SAMPLE_KEY = "8ff59950984a23510d5942d8f7c39a0af501d4"
         ."b2866c5ff6cfe35cce9473d3da20eaec20757f6c84e4252522d48906e07a"
         ."b5de9d15527f458903d137e50609ce14760ce09c41ab3b18a3c0abced10b"
         ."14a01890b2cf9691e136f75c63b92985b0a3615608fe362f144043a752bc"
@@ -35,7 +35,7 @@ class KeyManagerTest extends TestCase
         ."50debf0f036be2f3171b707a96dfa53b93cfea5df1bc720d7d588575f91d"
         ."3d3e15e11fa86be327001d22e3";
 
-    const SAMPLE_MASTER_SALT = "04e1d85929547ab6";
+    const SAMPLE_SALT = "04e1d85929547ab6";
 
     const DIR = "baseDirectory";
 
@@ -65,7 +65,7 @@ class KeyManagerTest extends TestCase
      * @expectedExceptionMessageRegExp /Invalid length for master-key : \d+/
      */
     public function testSetKeyInvalidHex(string $candidate, $null) {
-        $this->key_manager->set_master_key($candidate);
+        $this->key_manager->set_key($candidate);
     }
 
     /**
@@ -74,7 +74,7 @@ class KeyManagerTest extends TestCase
      * @expectedExceptionMessageRegExp /Invalid length for master-salt : \d+/
      */
     public function testSetSaltInvalidHex(string $candidate, $null) {
-        $this->key_manager->set_master_salt($candidate);
+        $this->key_manager->set_salt($candidate);
     }
 
     /**
@@ -87,7 +87,7 @@ class KeyManagerTest extends TestCase
         file_put_contents($file, $candidate);
         $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild(KeyManager::CONFIG_NAME_KEY), "File absent");
         $this->assertSame(file_get_contents($file), $candidate, "Wrong content");
-        $this->key_manager->get_master_key();
+        $this->key_manager->get_key();
     }
 
     /**
@@ -100,17 +100,17 @@ class KeyManagerTest extends TestCase
         file_put_contents($file, $candidate);
         $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild(KeyManager::CONFIG_NAME_SALT), "File absent");
         $this->assertSame(file_get_contents($file), $candidate, "Wrong content");
-        $this->key_manager->get_master_salt();
+        $this->key_manager->get_salt();
     }
 
     public function testCreateMaster() {
         $this->key_manager->create_master();
         $this->assertSame(
             KeyManager::MASTER_KEY_LENGTH_BYTES,
-            strlen($this->key_manager->get_master_key()));
+            strlen($this->key_manager->get_key()));
         $this->assertSame(
             KeyManager::MASTER_SALT_LENGTH_BYTES,
-            strlen($this->key_manager->get_master_salt()));
+            strlen($this->key_manager->get_salt()));
     }
 
     /**
@@ -122,8 +122,8 @@ class KeyManagerTest extends TestCase
     }
 
     public function testMasterKeyDerivation() {
-        $this->key_manager->set_master_key(hex2bin(self::SAMPLE_MASTER_KEY));
-        $this->key_manager->set_master_salt(hex2bin(self::SAMPLE_MASTER_SALT));
+        $this->key_manager->set_key(hex2bin(self::SAMPLE_KEY));
+        $this->key_manager->set_salt(hex2bin(self::SAMPLE_SALT));
 
         $len = strlen(hash_hmac(KeyManager::HASH_FUNCTION, "", "", TRUE));
 

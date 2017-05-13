@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace WRS\Crypto;
 
 use WRS\Apps\App,
+    WRS\Crypto\SecretKeeperInterface,
     WRS\KeyValue\KeyValueInterface;
 
-class KeyManager {
+class KeyManager implements SecretKeeperInterface {
 
     const MASTER_KEY_LENGTH_BITS = 1 << 12;
     const MASTER_KEY_LENGTH_BYTES = self::MASTER_KEY_LENGTH_BITS >> 3;
@@ -21,8 +22,8 @@ class KeyManager {
     private $config;
 
     public function create_master() {
-        $this->set_master_key(random_bytes(self::MASTER_KEY_LENGTH_BYTES));
-        $this->set_master_salt(random_bytes(self::MASTER_SALT_LENGTH_BYTES));
+        $this->set_key(random_bytes(self::MASTER_KEY_LENGTH_BYTES));
+        $this->set_salt(random_bytes(self::MASTER_SALT_LENGTH_BYTES));
     }
 
     public function derive_key(int $req_len, string $additionnal_info = "") {
@@ -31,7 +32,7 @@ class KeyManager {
         }
 
         // extract phase (with 2.1 note : 'IKM' is used as the HMAC input, not as the HMAC key)
-        $prk = hash_hmac(self::HASH_FUNCTION, $this->get_master_key(), $this->get_master_salt(), TRUE);
+        $prk = hash_hmac(self::HASH_FUNCTION, $this->get_key(), $this->get_salt(), TRUE);
 
         // handles different hashing functions
         $len = strlen($prk);
@@ -59,11 +60,11 @@ class KeyManager {
         $this->config->set_string($name, $hex);
     }
 
-    public function set_master_key(string $key) {
+    public function set_key(string $key) {
         return $this->bin_to_hex(self::CONFIG_NAME_KEY, self::MASTER_KEY_LENGTH_BYTES, $key);
     }
 
-    public function set_master_salt(string $salt) {
+    public function set_salt(string $salt) {
         return $this->bin_to_hex(self::CONFIG_NAME_SALT, self::MASTER_SALT_LENGTH_BYTES, $salt);
     }
 
@@ -80,11 +81,11 @@ class KeyManager {
         return $bin;
     }
 
-    public function get_master_key() {
+    public function get_key() {
         return $this->hex_to_bin(self::CONFIG_NAME_KEY, self::MASTER_KEY_LENGTH_BYTES);
     }
 
-    public function get_master_salt() {
+    public function get_salt() {
         return $this->hex_to_bin(self::CONFIG_NAME_SALT, self::MASTER_SALT_LENGTH_BYTES);
     }
 

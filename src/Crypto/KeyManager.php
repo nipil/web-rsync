@@ -8,7 +8,7 @@ use WRS\Apps\App,
     WRS\Crypto\SecretKeeperInterface,
     WRS\KeyValue\KeyValueInterface;
 
-class KeyManager implements SecretKeeperInterface {
+class KeyManager implements SecretKeeperInterface, KeyDerivatorInterface {
 
     const MASTER_KEY_LENGTH_BITS = 1 << 12;
     const MASTER_KEY_LENGTH_BYTES = self::MASTER_KEY_LENGTH_BITS >> 3;
@@ -26,8 +26,8 @@ class KeyManager implements SecretKeeperInterface {
         $this->set_salt(random_bytes(self::MASTER_SALT_LENGTH_BYTES));
     }
 
-    public function derive_key(int $req_len, string $additionnal_info = "") {
-        if ($req_len <= 0) {
+    public function derive_key(int $byte_length, string $additionnal_info = "") {
+        if ($byte_length <= 0) {
             throw new \Exception("Invalid length requested for derived key");
         }
 
@@ -36,7 +36,7 @@ class KeyManager implements SecretKeeperInterface {
 
         // handles different hashing functions
         $len = strlen($prk);
-        $n_iter = ceil($req_len / $len);
+        $n_iter = ceil($byte_length / $len);
 
         // expand phase RFC 5869
         $final_output = "";
@@ -48,7 +48,7 @@ class KeyManager implements SecretKeeperInterface {
         }
 
         // retain only requested length byte
-        return substr($final_output, 0, $req_len);
+        return substr($final_output, 0, $byte_length);
     }
 
     protected function bin_to_hex(string $name, int $req_len, string $bin) {

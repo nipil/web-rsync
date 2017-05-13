@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace WRS\Tests;
+namespace WRS\Tests\KeyValue;
 
 use PHPUnit\Framework\TestCase;
 

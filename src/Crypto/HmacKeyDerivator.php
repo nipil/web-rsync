@@ -62,10 +62,7 @@ class HmacKeyDerivator implements KeyDerivatorInterface {
         $iteration_output = "";
         for ($i = 1; $i <= $iterations; $i++) {
             $iteration_input = $iteration_output . $info . chr($i);
-            $iteration_output = $this->hasher->hmac(
-                $iteration_input, // hmac_message
-                $this->prk        // hmac_key
-            );
+            $iteration_output = $this->hasher->hmac($iteration_input, $this->prk);
             $buffer .= $iteration_output;
         }
 

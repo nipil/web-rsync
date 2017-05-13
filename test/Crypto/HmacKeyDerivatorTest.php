@@ -168,7 +168,7 @@ class HmacKeyDerivatorTest extends TestCase
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessageRegExp #^Too many iterations required: \d+$#
+     * @expectedExceptionMessageRegExp #^Too many iterations required : \d+$#
      */
     public function testTooManyIterations()
     {
@@ -184,5 +184,22 @@ class HmacKeyDerivatorTest extends TestCase
         // create SUT and test
         $hkdf = new HmacKeyDerivator($secret, $hasher);
         $hkdf->derive_key(256, "");
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Invalid key length : -?\d+$#
+     */
+    public function testNegativeLength()
+    {
+        // mock hasher keeper to return a single byte
+        $hasher = $this->createMock(HashInterface::class);
+
+        // mock secret keeper to provide ikm and salt
+        $secret = $this->createMock(SecretKeeperInterface::class);
+
+        // create SUT and test
+        $hkdf = new HmacKeyDerivator($secret, $hasher);
+        $hkdf->derive_key(-1, "");
     }
 }

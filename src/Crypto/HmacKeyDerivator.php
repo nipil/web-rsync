@@ -26,6 +26,12 @@ class HmacKeyDerivator implements KeyDerivatorInterface {
     }
 
     public function derive_key(int $byte_length, string $info) {
+
+        // reject negative byte_length
+        if ($byte_length < 0) {
+            throw new \Exception(sprintf("Invalid key length : %d", $byte_length));
+        }
+
         /*
          * extract phase
          *
@@ -52,7 +58,7 @@ class HmacKeyDerivator implements KeyDerivatorInterface {
          * counter is a single byte, thus we check for it
          */
         if ($iterations > self::MAX_ITERATIONS) {
-            throw new \Exception(sprintf("Too many iterations required: %d", $iterations));
+            throw new \Exception(sprintf("Too many iterations required : %d", $iterations));
         }
 
         /*

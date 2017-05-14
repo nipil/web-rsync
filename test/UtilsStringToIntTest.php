@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 use WRS\Utils;
 
-class UtilsTest extends TestCase
+class UtilsStringToIntTest extends TestCase
 {
     public static function providerStringToIntValid() {
         $data = array(

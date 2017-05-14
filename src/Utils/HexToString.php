@@ -6,7 +6,7 @@ namespace WRS\Utils;
 
 class HexToString {
 
-    public function convert(string $hex_str, int $req_len = NULL) {
+    public static function convert(string $hex_str, int $req_len = NULL) {
         $bin = @hex2bin($hex_str);
         if ($bin === FALSE) {
             throw new \Exception(sprintf("Invalid hex string %s", $hex_str));

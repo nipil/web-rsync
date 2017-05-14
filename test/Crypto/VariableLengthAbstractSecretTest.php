@@ -25,6 +25,8 @@ class VariableLengthAbstractSecretTest extends TestCase
         $this->assertSame("name", $stub->get_name());
         $this->assertSame(self::VALID_KEY_LENGTH, $stub->get_key_length());
         $this->assertSame(self::VALID_SALT_LENGTH, $stub->get_salt_length());
+
+        return $stub;
     }
 
     /**
@@ -64,5 +66,41 @@ class VariableLengthAbstractSecretTest extends TestCase
                         self::VALID_KEY_LENGTH,
                         0])
                      ->getMockForAbstractClass();
+    }
+
+    /**
+     * @depends testConstructorValid
+     */
+    public function testValidateKeyPass($stub) {
+        $str = str_repeat("_", self::VALID_KEY_LENGTH);
+        $this->assertSame(TRUE, $stub->validate_key($str));
+    }
+
+    /**
+     * @depends testConstructorValid
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Invalid key length : -?\d+$#
+     */
+    public function testValidateKeyFail($stub) {
+        $str = str_repeat("_", self::VALID_KEY_LENGTH + 1);
+        $stub->validate_key($str);
+    }
+
+    /**
+     * @depends testConstructorValid
+     */
+    public function testValidateSaltPass($stub) {
+        $str = str_repeat("_", self::VALID_SALT_LENGTH);
+        $this->assertSame(TRUE, $stub->validate_salt($str));
+    }
+
+    /**
+     * @depends testConstructorValid
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Invalid salt length : -?\d+$#
+     */
+    public function testValidateSaltFail($stub) {
+        $str = str_repeat("_", self::VALID_SALT_LENGTH + 1);
+        $stub->validate_salt($str);
     }
 }

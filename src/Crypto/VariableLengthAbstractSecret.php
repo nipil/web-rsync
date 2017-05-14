@@ -40,4 +40,20 @@ abstract class VariableLengthAbstractSecret implements SecretKeeperInterface {
     public function get_salt_length() {
         return $this->salt_length;
     }
+
+    public function validate_key($key) {
+        $len = strlen($key);
+        if ($len !== $this->get_key_length()) {
+            throw new \Exception(sprintf("Invalid key length : %d", $len));
+        }
+        return TRUE;
+    }
+
+    public function validate_salt($salt) {
+        $len = strlen($salt);
+        if ($len !== $this->get_salt_length()) {
+            throw new \Exception(sprintf("Invalid salt length : %d", $len));
+        }
+        return TRUE;
+    }
 }

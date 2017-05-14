@@ -10,7 +10,7 @@ use WRS\Utils\StringToInt;
 
 class StringToIntTest extends TestCase
 {
-    public static function providerStringToIntValid() {
+    public function providerStringToIntValid() {
         $data = array(
             "zero" => ["0", 0],
             "zero plus" => ["+0", 0],
@@ -34,7 +34,7 @@ class StringToIntTest extends TestCase
         return $data;
     }
 
-    public static function providerStringToIntInvalid() {
+    public function providerStringToIntInvalid() {
         $data = array(
             "empty" => ["", NULL],
             "text" => ["text", NULL],
@@ -49,7 +49,7 @@ class StringToIntTest extends TestCase
         return $data;
     }
 
-    public static function providerStringToIntTooLarge() {
+    public function providerStringToIntTooLarge() {
         $data = array(
             "much too long" => ["-". str_repeat("9", 100), NULL],
         );

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace WRS\Tests;
+namespace WRS\Tests\Utils;
 
 use PHPUnit\Framework\TestCase;
 
-use WRS\Utils;
+use WRS\Utils\HexToString;
 
 class UtilsHexToStringTest extends TestCase
 {
@@ -73,14 +73,14 @@ class UtilsHexToStringTest extends TestCase
      * @expectedExceptionMessageRegExp /^Invalid hex string .+$/
      */
     public function testHexToStringInvalid(string $input, $null) {
-        Utils::HexToString($input);
+        HexToString::convert($input);
     }
 
     /**
      * @dataProvider providerValidNoLength
      */
     public function testHexToStringValidNoLength(string $input, string $expected) {
-        $this->assertSame(bin2hex($expected), bin2hex(Utils::HexToString($input)));
+        $this->assertSame(bin2hex($expected), bin2hex(HexToString::convert($input)));
     }
 
     /**
@@ -89,13 +89,13 @@ class UtilsHexToStringTest extends TestCase
      * @expectedExceptionMessageRegExp #^Invalid length -?\d+ for .*$#
      */
     public function testHexToStringValidWithLengthFail(string $input, int $length, $unused) {
-        Utils::HexToString($input, $length);
+        HexToString::convert($input, $length);
     }
 
     /**
      * @dataProvider providerValidWithLengthPass
      */
     public function testHexToStringValidWithLengthPass(string $input, int $length, string $expected) {
-        $this->assertSame($expected, Utils::HexToString($input, $length));
+        $this->assertSame($expected, HexToString::convert($input, $length));
     }
 }

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace WRS\Tests;
+namespace WRS\Tests\Utils;
 
 use PHPUnit\Framework\TestCase;
 
-use WRS\Utils;
+use WRS\Utils\StringToInt;
 
-class UtilsStringToIntTest extends TestCase
+class StringToIntTest extends TestCase
 {
     public static function providerStringToIntValid() {
         $data = array(
@@ -72,7 +72,7 @@ class UtilsStringToIntTest extends TestCase
      * @dataProvider providerStringToIntValid
      */
     public function testStringToIntSuccess(string $input, int $expected) {
-        $value = Utils::StringToInt($input);
+        $value = StringToInt::convert($input);
         $this->assertSame($expected, $value);
     }
 
@@ -82,7 +82,7 @@ class UtilsStringToIntTest extends TestCase
      * @expectedExceptionMessageRegExp #^Invalid integer .*$#
      */
     public function testStringToIntInvalid(string $input, $null) {
-        Utils::StringToInt($input);
+        StringToInt::convert($input);
     }
 
     /**
@@ -91,6 +91,6 @@ class UtilsStringToIntTest extends TestCase
      * @expectedExceptionMessageRegExp #^Integer too large .+$#
      */
     public function testStringToIntTooLarge(string $input, $null) {
-        Utils::StringToInt($input);
+        StringToInt::convert($input);
     }
 }

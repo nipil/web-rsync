@@ -7,7 +7,8 @@ namespace WRS\KeyValue;
 use WRS\Utils,
     WRS\Apps\Abstracts\App,
     WRS\KeyValue\Interfaces\KeyValueInterface,
-    WRS\Storage\Interfaces\StorageInterface;
+    WRS\Storage\Interfaces\StorageInterface,
+    WRS\Utils\StringToInt;
 
 class StoredKeyValue implements KeyValueInterface {
 
@@ -33,7 +34,7 @@ class StoredKeyValue implements KeyValueInterface {
 
     public function get_integer(string $key) {
         $str = $this->storage->load($key);
-        $int = Utils::StringToInt($str);
+        $int = StringToInt::convert($str);
         return $int;
     }
 

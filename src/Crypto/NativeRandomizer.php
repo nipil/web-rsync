@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WRS\Crypto;
 
-use WRS\Crypto\RandomDataInterface;
+use WRS\Crypto\Interfaces\RandomDataInterface;
 
 class NativeRandomizer implements RandomDataInterface {
 

@@ -6,8 +6,8 @@ namespace WRS\Tests\KeyValue;
 
 use PHPUnit\Framework\TestCase;
 
-use WRS\KeyValue\KeyValueInterface,
-    WRS\KeyValue\CachedKeyValue;
+use WRS\KeyValue\CachedKeyValue,
+    WRS\KeyValue\Interfaces\KeyValueInterface;
 
 class CachedKeyValueTest extends TestCase
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WRS\Crypto;
 
-use WRS\Crypto\HashInterface;
+use WRS\Crypto\Interfaces\HashInterface;
 
 class NativeHasher implements HashInterface {
 

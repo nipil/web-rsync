@@ -7,8 +7,8 @@ namespace WRS\Tests\Crypto;
 use PHPUnit\Framework\TestCase;
 
 use WRS\Crypto\MasterSecret,
-    WRS\Crypto\RandomDataInterface,
-    WRS\KeyValue\KeyValueInterface;
+    WRS\Crypto\Interfaces\RandomDataInterface,
+    WRS\KeyValue\Interfaces\KeyValueInterface;
 
 class MasterSecretTest extends TestCase
 {

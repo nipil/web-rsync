@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace WRS\Crypto;
+namespace WRS\Crypto\Interfaces;
 
 interface SecretKeeperInterface {
     public function set_key(string $key);

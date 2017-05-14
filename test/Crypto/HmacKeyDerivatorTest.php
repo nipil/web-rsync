@@ -6,10 +6,10 @@ namespace WRS\Tests\Crypto;
 
 use PHPUnit\Framework\TestCase;
 
-use WRS\Crypto\SecretKeeperInterface,
-    WRS\Crypto\NativeHasher,
-    WRS\Crypto\HashInterface,
-    WRS\Crypto\HmacKeyDerivator;
+use WRS\Crypto\HmacKeyDerivator,
+    WRS\Crypto\Interfaces\SecretKeeperInterface,
+    WRS\Crypto\Interfaces\HashInterface,
+    WRS\Crypto\NativeHasher;
 
 class HmacKeyDerivatorTest extends TestCase
 {

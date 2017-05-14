@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace WRS\Crypto;
+namespace WRS\Crypto\Abstracts;
 
-use WRS\Crypto\SecretKeeperInterface;
+use WRS\Crypto\Interfaces\SecretKeeperInterface;
 
 abstract class VariableLengthAbstractSecret implements SecretKeeperInterface {
 

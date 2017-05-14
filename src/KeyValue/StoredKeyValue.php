@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace WRS\KeyValue;
 
 use WRS\Utils,
-    WRS\Apps\App,
-    WRS\Storage\StorageInterface;
+    WRS\Apps\Abstracts\App,
+    WRS\KeyValue\Interfaces\KeyValueInterface,
+    WRS\Storage\Interfaces\StorageInterface;
 
 class StoredKeyValue implements KeyValueInterface {
 

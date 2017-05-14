@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace WRS\Apps;
+namespace WRS\Apps\Abstracts;
 
 abstract class App {
 

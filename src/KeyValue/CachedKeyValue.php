@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WRS\KeyValue;
 
-use WRS\KeyValue\KeyValueInterface;
+use WRS\KeyValue\Interfaces\KeyValueInterface;
 
 class CachedKeyValue implements KeyValueInterface {
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace WRS\Storage;
 
+use WRS\Storage\Interfaces\StorageInterface;
+
 class FileStorage implements StorageInterface
 {
     private $directory;

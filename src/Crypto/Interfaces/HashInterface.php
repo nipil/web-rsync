@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace WRS\Crypto;
+namespace WRS\Crypto\Interfaces;
 
 interface HashInterface {
     public function hash(string $message);

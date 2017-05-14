@@ -6,7 +6,7 @@ namespace WRS\Tests\Crypto;
 
 use PHPUnit\Framework\TestCase;
 
-use WRS\Crypto\VariableLengthAbstractSecret;
+use WRS\Crypto\Abstracts\VariableLengthAbstractSecret;
 
 class VariableLengthAbstractSecretTest extends TestCase
 {

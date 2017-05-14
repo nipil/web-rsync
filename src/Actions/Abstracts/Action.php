@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace WRS\Actions;
+namespace WRS\Actions\Abstract;
 
 abstract class Action {
 

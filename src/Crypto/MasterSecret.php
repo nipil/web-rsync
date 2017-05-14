@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace WRS\Crypto;
 
-use WRS\KeyValue\KeyValueInterface,
-    WRS\Crypto\RandomDataInterface,
-    WRS\Crypto\VariableLengthAbstractSecret;
+use WRS\Crypto\Abstracts\VariableLengthAbstractSecret,
+    WRS\Crypto\Interfaces\RandomDataInterface,
+    WRS\KeyValue\Interfaces\KeyValueInterface;
 
 class MasterSecret extends VariableLengthAbstractSecret {
 

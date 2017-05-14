@@ -6,8 +6,8 @@ namespace WRS\Tests\KeyValue;
 
 use PHPUnit\Framework\TestCase;
 
-use WRS\Storage\StorageInterface,
-    WRS\KeyValue\StoredKeyValue;
+use WRS\KeyValue\StoredKeyValue,
+    WRS\Storage\Interfaces\StorageInterface;
 
 class StoredKeyValueTest extends TestCase
 {

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace WRS\Crypto;
 
-use WRS\Crypto\HashInterface,
-    WRS\Crypto\KeyDerivatorInterface;
+use WRS\Crypto\Interfaces\HashInterface,
+    WRS\Crypto\Interfaces\KeyDerivatorInterface,
+    WRS\Crypto\Interfaces\SecretKeeperInterface;
 
 class HmacKeyDerivator implements KeyDerivatorInterface {
 

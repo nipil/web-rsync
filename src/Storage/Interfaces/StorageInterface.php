@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace WRS\Storage;
+namespace WRS\Storage\Interfaces;
 
 interface StorageInterface
 {

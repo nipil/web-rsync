@@ -17,10 +17,9 @@ class VariableLengthAbstractSecretTest extends TestCase
     public function testConstructorValid()
     {
         $stub = $this->getMockBuilder(VariableLengthAbstractSecret::class)
-                     ->setConstructorArgs([
-                        self::VALID_NAME,
-                        self::VALID_KEY_LENGTH,
-                        self::VALID_SALT_LENGTH])
+                     ->setConstructorArgs([self::VALID_NAME,
+                                           self::VALID_KEY_LENGTH,
+                                           self::VALID_SALT_LENGTH])
                      ->getMockForAbstractClass();
         $this->assertSame("name", $stub->get_name());
         $this->assertSame(self::VALID_KEY_LENGTH, $stub->get_key_length());
@@ -35,10 +34,9 @@ class VariableLengthAbstractSecretTest extends TestCase
      */
     public function testConstructorInvalidname() {
         $stub = $this->getMockBuilder(VariableLengthAbstractSecret::class)
-                     ->setConstructorArgs([
-                        "",
-                        self::VALID_KEY_LENGTH,
-                        self::VALID_SALT_LENGTH])
+                     ->setConstructorArgs(["",
+                                           self::VALID_KEY_LENGTH,
+                                           self::VALID_SALT_LENGTH])
                      ->getMockForAbstractClass();
     }
 
@@ -48,10 +46,9 @@ class VariableLengthAbstractSecretTest extends TestCase
      */
     public function testConstructorInvalidKeyLength() {
         $stub = $this->getMockBuilder(VariableLengthAbstractSecret::class)
-                     ->setConstructorArgs([
-                        self::VALID_NAME,
-                        0,
-                        self::VALID_SALT_LENGTH])
+                     ->setConstructorArgs([self::VALID_NAME,
+                                           0,
+                                           self::VALID_SALT_LENGTH])
                      ->getMockForAbstractClass();
     }
 
@@ -61,10 +58,9 @@ class VariableLengthAbstractSecretTest extends TestCase
      */
     public function testConstructorInvalidSaltLength() {
         $stub = $this->getMockBuilder(VariableLengthAbstractSecret::class)
-                     ->setConstructorArgs([
-                        self::VALID_NAME,
-                        self::VALID_KEY_LENGTH,
-                        0])
+                     ->setConstructorArgs([self::VALID_NAME,
+                                           self::VALID_KEY_LENGTH,
+                                           0])
                      ->getMockForAbstractClass();
     }
 

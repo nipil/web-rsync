@@ -11,8 +11,8 @@ use WRS\Crypto\VariableLengthAbstractSecret;
 class VariableLengthAbstractSecretTest extends TestCase
 {
     const VALID_NAME = "name";
-    const VALID_KEY_LENGTH = 1;
-    const VALID_SALT_LENGTH = 1;
+    const VALID_KEY_LENGTH = 15;
+    const VALID_SALT_LENGTH = 10;
 
     public function testConstructorValid()
     {
@@ -44,7 +44,7 @@ class VariableLengthAbstractSecretTest extends TestCase
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessageRegExp #^Invalid key length : -?\d$#
+     * @expectedExceptionMessageRegExp #^Invalid key length : -?\d+$#
      */
     public function testConstructorInvalidKeyLength() {
         $stub = $this->getMockBuilder(VariableLengthAbstractSecret::class)
@@ -57,7 +57,7 @@ class VariableLengthAbstractSecretTest extends TestCase
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessageRegExp #^Invalid salt length : -?\d$#
+     * @expectedExceptionMessageRegExp #^Invalid salt length : -?\d+$#
      */
     public function testConstructorInvalidSaltLength() {
         $stub = $this->getMockBuilder(VariableLengthAbstractSecret::class)

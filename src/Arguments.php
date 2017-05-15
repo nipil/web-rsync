@@ -8,29 +8,25 @@ use WRS\Apps\App;
 
 class Arguments
 {
-    private $logger;
-    private $args;
+    const ACTION = "action";
 
-    public function __construct()
+    public function __construct(array $forced_arguments = null)
     {
-        $this->logger = App::GetLogger();
-        $this->logger->debug(__METHOD__);
         $this->args = array();
     }
 
-    public function parseArgs()
+    public function parse()
     {
-        $this->logger->debug(__METHOD__);
-        $this->args = getopt("", array(
-            "action:",
-            "config:",
-            ));
-        $this->logger->debug($this->args);
+        $this->args = getopt(
+            "",
+            array(
+                self::ACTION.":",
+            )
+        );
     }
 
-    protected function getParam(string $name)
+    public function getParam(string $name)
     {
-        $this->logger->debug(__METHOD__, func_get_args());
         if (isset($this->args[$name])) {
             return $this->args[$name];
         } else {
@@ -40,13 +36,18 @@ class Arguments
 
     public function getAction()
     {
-        $this->logger->debug(__METHOD__);
-        return $this->get_param("action");
+        return $this->getParam(self::ACTION);
     }
 
-    public function getConfig()
+    /* these following methods are used only for testing */
+
+    public function setArguments(array $new_arguments)
     {
-        $this->logger->debug(__METHOD__);
-        return $this->get_param("config");
+        $this->args = $new_arguments;
+    }
+
+    public function getArguments()
+    {
+        return $this->args;
     }
 }

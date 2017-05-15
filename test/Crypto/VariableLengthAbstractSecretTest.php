@@ -21,9 +21,9 @@ class VariableLengthAbstractSecretTest extends TestCase
                                            self::VALID_KEY_LENGTH,
                                            self::VALID_SALT_LENGTH])
                      ->getMockForAbstractClass();
-        $this->assertSame("name", $stub->get_name());
-        $this->assertSame(self::VALID_KEY_LENGTH, $stub->get_key_length());
-        $this->assertSame(self::VALID_SALT_LENGTH, $stub->get_salt_length());
+        $this->assertSame("name", $stub->getName());
+        $this->assertSame(self::VALID_KEY_LENGTH, $stub->getKeyLength());
+        $this->assertSame(self::VALID_SALT_LENGTH, $stub->getSaltLength());
 
         return $stub;
     }
@@ -32,7 +32,8 @@ class VariableLengthAbstractSecretTest extends TestCase
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid name$#
      */
-    public function testConstructorInvalidname() {
+    public function testConstructorInvalidname()
+    {
         $stub = $this->getMockBuilder(VariableLengthAbstractSecret::class)
                      ->setConstructorArgs(["",
                                            self::VALID_KEY_LENGTH,
@@ -44,7 +45,8 @@ class VariableLengthAbstractSecretTest extends TestCase
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid key length : -?\d+$#
      */
-    public function testConstructorInvalidKeyLength() {
+    public function testConstructorInvalidKeyLength()
+    {
         $stub = $this->getMockBuilder(VariableLengthAbstractSecret::class)
                      ->setConstructorArgs([self::VALID_NAME,
                                            0,
@@ -56,7 +58,8 @@ class VariableLengthAbstractSecretTest extends TestCase
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid salt length : -?\d+$#
      */
-    public function testConstructorInvalidSaltLength() {
+    public function testConstructorInvalidSaltLength()
+    {
         $stub = $this->getMockBuilder(VariableLengthAbstractSecret::class)
                      ->setConstructorArgs([self::VALID_NAME,
                                            self::VALID_KEY_LENGTH,
@@ -67,9 +70,10 @@ class VariableLengthAbstractSecretTest extends TestCase
     /**
      * @depends testConstructorValid
      */
-    public function testValidateKeyPass($stub) {
+    public function testValidateKeyPass($stub)
+    {
         $str = str_repeat("_", self::VALID_KEY_LENGTH);
-        $this->assertSame(TRUE, $stub->validate_key($str));
+        $this->assertSame(true, $stub->validateKey($str));
     }
 
     /**
@@ -77,17 +81,19 @@ class VariableLengthAbstractSecretTest extends TestCase
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid key length : -?\d+$#
      */
-    public function testValidateKeyFail($stub) {
+    public function testValidateKeyFail($stub)
+    {
         $str = str_repeat("_", self::VALID_KEY_LENGTH + 1);
-        $stub->validate_key($str);
+        $stub->validateKey($str);
     }
 
     /**
      * @depends testConstructorValid
      */
-    public function testValidateSaltPass($stub) {
+    public function testValidateSaltPass($stub)
+    {
         $str = str_repeat("_", self::VALID_SALT_LENGTH);
-        $this->assertSame(TRUE, $stub->validate_salt($str));
+        $this->assertSame(true, $stub->validateSalt($str));
     }
 
     /**
@@ -95,8 +101,9 @@ class VariableLengthAbstractSecretTest extends TestCase
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid salt length : -?\d+$#
      */
-    public function testValidateSaltFail($stub) {
+    public function testValidateSaltFail($stub)
+    {
         $str = str_repeat("_", self::VALID_SALT_LENGTH + 1);
-        $stub->validate_salt($str);
+        $stub->validateSalt($str);
     }
 }

@@ -6,9 +6,10 @@ namespace WRS\Crypto;
 
 use WRS\Crypto\Interfaces\RandomDataInterface;
 
-class NativeRandomizer implements RandomDataInterface {
-
-    public function get(int $length) {
+class NativeRandomizer implements RandomDataInterface
+{
+    public function get(int $length)
+    {
         if ($length < 0) {
             throw new \Exception(sprintf("Invalid number of bytes requested : %d", $length));
         }

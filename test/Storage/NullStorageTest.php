@@ -17,14 +17,14 @@ class NullStorageTest extends TestCase
     {
         $ns = new NullStorage();
         $ns->save(self::KEY, self::VALUE);
-        $this->assertTrue(TRUE);
+        $this->assertTrue(true);
     }
 
     public function testExists()
     {
         $ns = new NullStorage();
         $ns->save(self::KEY, self::VALUE);
-        $this->assertSame(FALSE, $ns->exists(self::KEY));
+        $this->assertSame(false, $ns->exists(self::KEY));
     }
 
     /**

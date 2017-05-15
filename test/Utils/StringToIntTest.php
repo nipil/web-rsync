@@ -10,7 +10,8 @@ use WRS\Utils\StringToInt;
 
 class StringToIntTest extends TestCase
 {
-    public function providerStringToIntValid() {
+    public function providerStringToIntValid()
+    {
         $data = array(
             "zero" => ["0", 0],
             "zero plus" => ["+0", 0],
@@ -34,35 +35,37 @@ class StringToIntTest extends TestCase
         return $data;
     }
 
-    public function providerStringToIntInvalid() {
+    public function providerStringToIntInvalid()
+    {
         $data = array(
-            "empty" => ["", NULL],
-            "text" => ["text", NULL],
-            "mixed" => ["36mix", NULL],
-            "reverse mixed" => ["mix36", NULL],
-            "non-trimmed" => [" \t 6    \t", NULL],
-            "plus plus" => ["++5", NULL],
-            "minus minus" => ["--5", NULL],
-            "plus minus" => ["+-5", NULL],
-            "minus plus" => ["-+5", NULL],
+            "empty" => ["", null],
+            "text" => ["text", null],
+            "mixed" => ["36mix", null],
+            "reverse mixed" => ["mix36", null],
+            "non-trimmed" => [" \t 6    \t", null],
+            "plus plus" => ["++5", null],
+            "minus minus" => ["--5", null],
+            "plus minus" => ["+-5", null],
+            "minus plus" => ["-+5", null],
         );
         return $data;
     }
 
-    public function providerStringToIntTooLarge() {
+    public function providerStringToIntTooLarge()
+    {
         $data = array(
-            "much too long" => ["-". str_repeat("9", 100), NULL],
+            "much too long" => ["-". str_repeat("9", 100), null],
         );
         if (PHP_INT_SIZE === 4) {
             $data = array_merge($data, array(
-                "int max 32 bits +1" => [ "2147483648", NULL],
-                "int min 32 bits -1" => ["-2147483649", NULL],
+                "int max 32 bits +1" => [ "2147483648", null],
+                "int min 32 bits -1" => ["-2147483649", null],
             ));
         }
         if (PHP_INT_SIZE === 8) {
             $data = array_merge($data, array(
-                "int max 64 bits +1" => [ "9223372036854775808", NULL],
-                "int min 64 bits -1" => ["-9223372036854775809", NULL],
+                "int max 64 bits +1" => [ "9223372036854775808", null],
+                "int min 64 bits -1" => ["-9223372036854775809", null],
             ));
         }
         return $data;
@@ -71,7 +74,8 @@ class StringToIntTest extends TestCase
     /**
      * @dataProvider providerStringToIntValid
      */
-    public function testStringToIntSuccess(string $input, int $expected) {
+    public function testStringToIntSuccess(string $input, int $expected)
+    {
         $value = StringToInt::convert($input);
         $this->assertSame($expected, $value);
     }
@@ -81,7 +85,8 @@ class StringToIntTest extends TestCase
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid integer .*$#
      */
-    public function testStringToIntInvalid(string $input, $null) {
+    public function testStringToIntInvalid(string $input, $null)
+    {
         StringToInt::convert($input);
     }
 
@@ -90,7 +95,8 @@ class StringToIntTest extends TestCase
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Integer too large .+$#
      */
-    public function testStringToIntTooLarge(string $input, $null) {
+    public function testStringToIntTooLarge(string $input, $null)
+    {
         StringToInt::convert($input);
     }
 }

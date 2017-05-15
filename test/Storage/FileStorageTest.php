@@ -6,9 +6,9 @@ namespace WRS\Tests\Storage;
 
 use PHPUnit\Framework\TestCase;
 
-use org\bovigo\vfs\vfsStream,
-    org\bovigo\vfs\vfsStreamWrapper,
-    org\bovigo\vfs\vfsStreamDirectory;
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamWrapper;
+use org\bovigo\vfs\vfsStreamDirectory;
 
 use WRS\Storage\FileStorage;
 

@@ -10,18 +10,20 @@ use WRS\Utils\HexToString;
 
 class UtilsHexToStringTest extends TestCase
 {
-    public function providerInvalidHex() {
+    public function providerInvalidHex()
+    {
         return array(
-            ["toto", NULL],
-            ["1", NULL],
-            ["123", NULL],
-            ["g", NULL],
-            ["a", NULL],
-            ["A", NULL],
+            ["toto", null],
+            ["1", null],
+            ["123", null],
+            ["g", null],
+            ["a", null],
+            ["A", null],
         );
     }
 
-    public function providerValidNoLength() {
+    public function providerValidNoLength()
+    {
         return array(
             ["", ""],
             ["12", chr(0x12)],
@@ -35,36 +37,44 @@ class UtilsHexToStringTest extends TestCase
     /*
      * splice provider set to insert manipulated length
      */
-    public function addLength(array $input, \Closure $length_func) {
-        return array_map(function($item) use ($length_func) {
-            // var_dump($item);
-            $len = strlen($item[0]);
-            if ($len % 2 === 1) {
-                throw new \Exception(sprintf("Invalid length %d for provided hex %s", $len, $item[0]));
-            }
-            array_splice($item, 1, 0, $length_func($len));
-            return $item;
-        }, $input);
+    public function addLength(array $input, \Closure $length_func)
+    {
+        return array_map(
+            function ($item) use ($length_func) {
+                // var_dump($item);
+                $len = strlen($item[0]);
+                if ($len % 2 === 1) {
+                    throw new \Exception(sprintf("Invalid length %d for provided hex %s", $len, $item[0]));
+                }
+                array_splice($item, 1, 0, $length_func($len));
+                return $item;
+            },
+            $input
+        );
     }
 
-    public function providerValidWithLengthPass() {
+    public function providerValidWithLengthPass()
+    {
         return $this->addLength(
             $this->providerValidNoLength(),
-            function($original_length) {
+            function ($original_length) {
                 // req len = bin len = hex len / 2
                 // so that it is valid
                 return $original_length >> 1;
-            });
+            }
+        );
     }
 
-    public function providerValidWithLengthFail() {
+    public function providerValidWithLengthFail()
+    {
         return $this->addLength(
             $this->providerValidNoLength(),
-            function($original_length) {
+            function ($original_length) {
                 // req len = -1
                 // so that it always fails
                 return -1;
-            });
+            }
+        );
     }
 
     /**
@@ -72,14 +82,16 @@ class UtilsHexToStringTest extends TestCase
      * @expectedException Exception
      * @expectedExceptionMessageRegExp /^Invalid hex string .+$/
      */
-    public function testHexToStringInvalid(string $input, $null) {
+    public function testHexToStringInvalid(string $input, $null)
+    {
         HexToString::convert($input);
     }
 
     /**
      * @dataProvider providerValidNoLength
      */
-    public function testHexToStringValidNoLength(string $input, string $expected) {
+    public function testHexToStringValidNoLength(string $input, string $expected)
+    {
         $this->assertSame(bin2hex($expected), bin2hex(HexToString::convert($input)));
     }
 
@@ -88,14 +100,16 @@ class UtilsHexToStringTest extends TestCase
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid length -?\d+ for .*$#
      */
-    public function testHexToStringValidWithLengthFail(string $input, int $length, $unused) {
+    public function testHexToStringValidWithLengthFail(string $input, int $length, $unused)
+    {
         HexToString::convert($input, $length);
     }
 
     /**
      * @dataProvider providerValidWithLengthPass
      */
-    public function testHexToStringValidWithLengthPass(string $input, int $length, string $expected) {
+    public function testHexToStringValidWithLengthPass(string $input, int $length, string $expected)
+    {
         $this->assertSame($expected, HexToString::convert($input, $length));
     }
 }

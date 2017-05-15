@@ -10,7 +10,8 @@ use WRS\Crypto\NativeRandomizer;
 
 class NativeRandomizerTest extends TestCase
 {
-    public function testGetValidLength() {
+    public function testGetValidLength()
+    {
         $nr = new NativeRandomizer();
         $this->assertSame(0, strlen($nr->get(0)));
         $this->assertSame(10, strlen($nr->get(10)));
@@ -20,7 +21,8 @@ class NativeRandomizerTest extends TestCase
      * @expectedException Exception
      * @expectedExceptionMessageRegExp /^Invalid number of bytes requested : -?\d+/
      */
-    public function testGetInvalidLength() {
+    public function testGetInvalidLength()
+    {
         $nr = new NativeRandomizer();
         $nr->get(-1);
     }

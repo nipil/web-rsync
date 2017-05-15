@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace WRS\Crypto\Interfaces;
 
-interface SecretKeeperInterface {
-    public function set_key(string $key);
-    public function set_salt(string $salt);
-    public function get_key();
-    public function get_salt();
+interface SecretKeeperInterface
+{
+    public function setKey(string $key);
+    public function setSalt(string $salt);
+    public function getKey();
+    public function getSalt();
 }

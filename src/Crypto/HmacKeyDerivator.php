@@ -4,29 +4,32 @@ declare(strict_types=1);
 
 namespace WRS\Crypto;
 
-use WRS\Crypto\Interfaces\HashInterface,
-    WRS\Crypto\Interfaces\KeyDerivatorInterface,
-    WRS\Crypto\Interfaces\SecretKeeperInterface;
+use WRS\Crypto\Interfaces\HashInterface;
+use WRS\Crypto\Interfaces\KeyDerivatorInterface;
+use WRS\Crypto\Interfaces\SecretKeeperInterface;
 
-class HmacKeyDerivator implements KeyDerivatorInterface {
-
+class HmacKeyDerivator implements KeyDerivatorInterface
+{
     const MAX_ITERATIONS = 0xFF;
 
     private $secret;
     private $hasher;
     private $prk;
 
-    public function __construct(SecretKeeperInterface $secret, HashInterface $hasher) {
+    public function __construct(SecretKeeperInterface $secret, HashInterface $hasher)
+    {
         $this->secret = $secret;
         $this->hasher = $hasher;
-        $this->prk = NULL;
+        $this->prk = null;
     }
 
-    public function get_prk() {
+    public function getPrk()
+    {
         return $this->prk;
     }
 
-    public function derive_key(int $byte_length, string $info) {
+    public function deriveKey(int $byte_length, string $info)
+    {
 
         // reject negative byte_length
         if ($byte_length < 0) {
@@ -49,8 +52,8 @@ class HmacKeyDerivator implements KeyDerivatorInterface {
          * - secret salt is hmac_key
          */
         $this->prk = $this->hasher->hmac(
-            $this->secret->get_key(),  // hmac_message
-            $this->secret->get_salt()  // hmac_key
+            $this->secret->getKey(),  // hmac_message
+            $this->secret->getSalt()  // hmac_key
         );
 
         /*

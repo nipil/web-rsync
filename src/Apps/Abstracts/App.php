@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace WRS\Apps\Abstracts;
 
-abstract class App {
+abstract class App
+{
 
-    private static $Logger = NULL;
+    private static $Logger = null;
 
-    public static function SetLogger(\Psr\Log\LoggerInterface $logger) {
-        if ($logger === NULL) {
+    public static function setLogger(\Psr\Log\LoggerInterface $logger)
+    {
+        if ($logger === null) {
             throw new \Exception("Invalid logger");
         }
         self::$Logger = $logger;
     }
 
-    public static function GetLogger() {
-        if (self::$Logger === NULL) {
+    public static function getLogger()
+    {
+        if (self::$Logger === null) {
             self::SetLogger(new \Psr\Log\NullLogger());
         }
         return self::$Logger;
@@ -24,11 +27,13 @@ abstract class App {
 
     private $base_path;
 
-    public function __construct(string $base_path) {
+    public function __construct(string $base_path)
+    {
         $this->base_path = $base_path;
     }
 
-    public function get_base_path() {
+    public function getBasePath()
+    {
         return $this->base_path;
     }
 

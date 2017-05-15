@@ -6,8 +6,8 @@ namespace WRS\Tests\KeyValue;
 
 use PHPUnit\Framework\TestCase;
 
-use WRS\KeyValue\CachedKeyValue,
-    WRS\KeyValue\Interfaces\KeyValueInterface;
+use WRS\KeyValue\CachedKeyValue;
+use WRS\KeyValue\Interfaces\KeyValueInterface;
 
 class CachedKeyValueTest extends TestCase
 {
@@ -15,7 +15,8 @@ class CachedKeyValueTest extends TestCase
     const VALUE_INT = 42;
     const VALUE_STRING = "value";
 
-    public function testHasCache() {
+    public function testHasCache()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
 
@@ -23,20 +24,21 @@ class CachedKeyValueTest extends TestCase
         $ckv = new CachedKeyValue($kvi);
 
         // actual test without cache
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
 
         // setup cache
-        $ckv->set_cache_string(self::KEY, self::VALUE_STRING);
+        $ckv->setCacheString(self::KEY, self::VALUE_STRING);
 
         // actual test with cache
-        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
+        $this->assertSame(true, $ckv->hasCache(self::KEY));
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Key not found in cache : .*$#
      */
-    public function testGetCacheEmpty() {
+    public function testGetCacheEmpty()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
 
@@ -44,13 +46,14 @@ class CachedKeyValueTest extends TestCase
         $ckv = new CachedKeyValue($kvi);
 
         // verify cache pre-test
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
 
         // actual test
-        $ckv->get_cache(self::KEY);
+        $ckv->getCache(self::KEY);
     }
 
-    public function testSetGetCacheString() {
+    public function testSetGetCacheString()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
 
@@ -58,19 +61,20 @@ class CachedKeyValueTest extends TestCase
         $ckv = new CachedKeyValue($kvi);
 
         // verify cache pre-test
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
 
         // actual test
-        $ckv->set_cache_string(self::KEY, self::VALUE_STRING);
+        $ckv->setCacheString(self::KEY, self::VALUE_STRING);
 
         // verify cache post-test
-        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
+        $this->assertSame(true, $ckv->hasCache(self::KEY));
 
         // actual test
-        $this->assertSame(self::VALUE_STRING, $ckv->get_cache(self::KEY));
+        $this->assertSame(self::VALUE_STRING, $ckv->getCache(self::KEY));
     }
 
-    public function testSetGetCacheInteger() {
+    public function testSetGetCacheInteger()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
 
@@ -78,23 +82,24 @@ class CachedKeyValueTest extends TestCase
         $ckv = new CachedKeyValue($kvi);
 
         // verify cache pre-test
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
 
         // actual test
-        $ckv->set_cache_integer(self::KEY, self::VALUE_INT);
+        $ckv->setCacheInteger(self::KEY, self::VALUE_INT);
 
         // verify cache post-test
-        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
+        $this->assertSame(true, $ckv->hasCache(self::KEY));
 
         // actual test
-        $this->assertSame(self::VALUE_INT, $ckv->get_cache(self::KEY));
+        $this->assertSame(self::VALUE_INT, $ckv->getCache(self::KEY));
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid type for key: .*$#
      */
-    public function testInvalidCacheAccessFromStringToInteger() {
+    public function testInvalidCacheAccessFromStringToInteger()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
 
@@ -102,20 +107,21 @@ class CachedKeyValueTest extends TestCase
         $ckv = new CachedKeyValue($kvi);
 
         // setup cache pre-test
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
-        $ckv->set_cache_string(self::KEY, self::VALUE_STRING);
-        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
-        $this->assertSame(self::VALUE_STRING, $ckv->get_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
+        $ckv->setCacheString(self::KEY, self::VALUE_STRING);
+        $this->assertSame(true, $ckv->hasCache(self::KEY));
+        $this->assertSame(self::VALUE_STRING, $ckv->getCache(self::KEY));
 
         // actual test
-        $ckv->get_integer(self::KEY);
+        $ckv->getInteger(self::KEY);
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid type for key: .*$#
      */
-    public function testInvalidCacheAccessFromIntegerToString() {
+    public function testInvalidCacheAccessFromIntegerToString()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
 
@@ -123,177 +129,189 @@ class CachedKeyValueTest extends TestCase
         $ckv = new CachedKeyValue($kvi);
 
         // setup cache pre-test
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
-        $ckv->set_cache_integer(self::KEY, self::VALUE_INT);
-        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
-        $this->assertSame(self::VALUE_INT, $ckv->get_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
+        $ckv->setCacheInteger(self::KEY, self::VALUE_INT);
+        $this->assertSame(true, $ckv->hasCache(self::KEY));
+        $this->assertSame(self::VALUE_INT, $ckv->getCache(self::KEY));
 
         // actual test
-        $ckv->get_string(self::KEY);
+        $ckv->getString(self::KEY);
     }
 
-    public function testHasKeyWithoutCache() {
+    public function testHasKeyWithoutCache()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
-        $kvi->method('has_key')
-            ->willReturn(TRUE);
+        $kvi->method('hasKey')
+            ->willReturn(true);
         $kvi->expects($this->once())
-            ->method('has_key')
+            ->method('hasKey')
             ->with($this->identicalTo(self::KEY));
 
         // test
         $ckv = new CachedKeyValue($kvi);
 
         // verify cache pre-test
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
 
         // actual test
-        $this->assertSame(TRUE, $ckv->has_key(self::KEY));
+        $this->assertSame(true, $ckv->hasKey(self::KEY));
     }
 
-    public function testHasKeyWithCache() {
+    public function testHasKeyWithCache()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
         $kvi->expects($this->never())
-            ->method('has_key');
+            ->method('hasKey');
 
         // test
         $ckv = new CachedKeyValue($kvi);
 
         // setup cache
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
-        $ckv->set_cache_string(self::KEY, self::VALUE_STRING);
-        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
+        $ckv->setCacheString(self::KEY, self::VALUE_STRING);
+        $this->assertSame(true, $ckv->hasCache(self::KEY));
 
         // actual test
-        $this->assertSame(TRUE, $ckv->has_key(self::KEY));
+        $this->assertSame(true, $ckv->hasKey(self::KEY));
     }
 
-    public function testGetStringWithoutCache() {
+    public function testGetStringWithoutCache()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
-        $kvi->method('get_string')
+        $kvi->method('getString')
             ->willReturn(self::VALUE_STRING);
         $kvi->expects($this->once())
-            ->method('get_string')
+            ->method('getString')
             ->with($this->identicalTo(self::KEY));
 
         // test
         $ckv = new CachedKeyValue($kvi);
 
         // verify cache pre-test
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
 
         // actual test
-        $this->assertSame(self::VALUE_STRING, $ckv->get_string(self::KEY));
+        $this->assertSame(self::VALUE_STRING, $ckv->getString(self::KEY));
 
         // verify cache post-test
-        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
-        $this->assertSame(self::VALUE_STRING, $ckv->get_cache(self::KEY));
+        $this->assertSame(true, $ckv->hasCache(self::KEY));
+        $this->assertSame(self::VALUE_STRING, $ckv->getCache(self::KEY));
     }
 
-    public function testGetStringWithCache() {
+    public function testGetStringWithCache()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
         $kvi->expects($this->never())
-            ->method('get_string');
+            ->method('getString');
 
         // test
         $ckv = new CachedKeyValue($kvi);
 
         // setup cache pre-test
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
-        $ckv->set_cache_string(self::KEY, self::VALUE_STRING);
-        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
-        $this->assertSame(self::VALUE_STRING, $ckv->get_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
+        $ckv->setCacheString(self::KEY, self::VALUE_STRING);
+        $this->assertSame(true, $ckv->hasCache(self::KEY));
+        $this->assertSame(self::VALUE_STRING, $ckv->getCache(self::KEY));
 
         // actual test
-        $this->assertSame(self::VALUE_STRING, $ckv->get_string(self::KEY));
+        $this->assertSame(self::VALUE_STRING, $ckv->getString(self::KEY));
     }
 
-    public function testSetString() {
+    public function testSetString()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
         $kvi->expects($this->once())
-            ->method('set_string')
-            ->with($this->identicalTo(self::KEY),
-                   $this->identicalTo(self::VALUE_STRING));
+            ->method('setString')
+            ->with(
+                $this->identicalTo(self::KEY),
+                $this->identicalTo(self::VALUE_STRING)
+            );
 
         // test
         $ckv = new CachedKeyValue($kvi);
 
         // verify cache pre-test
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
 
         // actual test
-        $ckv->set_string(self::KEY, self::VALUE_STRING);
+        $ckv->setString(self::KEY, self::VALUE_STRING);
 
         // verify cache post-test
-        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
-        $this->assertSame(self::VALUE_STRING, $ckv->get_cache(self::KEY));
+        $this->assertSame(true, $ckv->hasCache(self::KEY));
+        $this->assertSame(self::VALUE_STRING, $ckv->getCache(self::KEY));
     }
 
-    public function testGetIntegerWithoutCache() {
+    public function testGetIntegerWithoutCache()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
-        $kvi->method('get_integer')
+        $kvi->method('getInteger')
             ->willReturn(self::VALUE_INT);
         $kvi->expects($this->once())
-            ->method('get_integer')
+            ->method('getInteger')
             ->with($this->identicalTo(self::KEY));
 
         // test
         $ckv = new CachedKeyValue($kvi);
 
         // verify cache pre-test
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
 
         // actual test
-        $this->assertSame(self::VALUE_INT, $ckv->get_integer(self::KEY));
+        $this->assertSame(self::VALUE_INT, $ckv->getInteger(self::KEY));
 
         // verify cache post-test
-        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
-        $this->assertSame(self::VALUE_INT, $ckv->get_cache(self::KEY));
+        $this->assertSame(true, $ckv->hasCache(self::KEY));
+        $this->assertSame(self::VALUE_INT, $ckv->getCache(self::KEY));
     }
 
-    public function testGetIntegerWithCache() {
+    public function testGetIntegerWithCache()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
         $kvi->expects($this->never())
-            ->method('get_integer');
+            ->method('getInteger');
 
         // test
         $ckv = new CachedKeyValue($kvi);
 
         // setup cache pre-test
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
-        $ckv->set_cache_integer(self::KEY, self::VALUE_INT);
-        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
-        $this->assertSame(self::VALUE_INT, $ckv->get_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
+        $ckv->setCacheInteger(self::KEY, self::VALUE_INT);
+        $this->assertSame(true, $ckv->hasCache(self::KEY));
+        $this->assertSame(self::VALUE_INT, $ckv->getCache(self::KEY));
 
         // actual test
-        $this->assertSame(self::VALUE_INT, $ckv->get_integer(self::KEY));
+        $this->assertSame(self::VALUE_INT, $ckv->getInteger(self::KEY));
     }
 
-    public function testSetInteger() {
+    public function testSetInteger()
+    {
         // mock
         $kvi = $this->createMock(KeyValueInterface::class);
         $kvi->expects($this->once())
-            ->method('set_integer')
-            ->with($this->identicalTo(self::KEY),
-                   $this->identicalTo(self::VALUE_INT));
+            ->method('setInteger')
+            ->with(
+                $this->identicalTo(self::KEY),
+                $this->identicalTo(self::VALUE_INT)
+            );
 
         // test
         $ckv = new CachedKeyValue($kvi);
 
         // verify cache pre-test
-        $this->assertSame(FALSE, $ckv->has_cache(self::KEY));
+        $this->assertSame(false, $ckv->hasCache(self::KEY));
 
         // actual test
-        $ckv->set_integer(self::KEY, self::VALUE_INT);
+        $ckv->setInteger(self::KEY, self::VALUE_INT);
 
         // verify cache post-test
-        $this->assertSame(TRUE, $ckv->has_cache(self::KEY));
-        $this->assertSame(self::VALUE_INT, $ckv->get_cache(self::KEY));
+        $this->assertSame(true, $ckv->hasCache(self::KEY));
+        $this->assertSame(self::VALUE_INT, $ckv->getCache(self::KEY));
     }
 }

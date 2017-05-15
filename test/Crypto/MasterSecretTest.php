@@ -6,23 +6,25 @@ namespace WRS\Tests\Crypto;
 
 use PHPUnit\Framework\TestCase;
 
-use WRS\Crypto\MasterSecret,
-    WRS\Crypto\Interfaces\RandomDataInterface,
-    WRS\KeyValue\Interfaces\KeyValueInterface;
+use WRS\Crypto\MasterSecret;
+use WRS\Crypto\Interfaces\RandomDataInterface;
+use WRS\KeyValue\Interfaces\KeyValueInterface;
 
 class MasterSecretTest extends TestCase
 {
-    public function testIds() {
+    public function testIds()
+    {
         $randomizer = $this->createMock(RandomDataInterface::class);
         $keyvalue = $this->createMock(KeyValueInterface::class);
 
         $ms = new MasterSecret("master", 15, 10, $keyvalue, $randomizer);
 
-        $this->assertSame("master-key", $ms->get_id_key(),"id key");
-        $this->assertSame("master-salt", $ms->get_id_salt(),"id salt");
+        $this->assertSame("master-key", $ms->getIdKey(), "id key");
+        $this->assertSame("master-salt", $ms->getIdSalt(), "id salt");
     }
 
-    public function testGeneratePass() {
+    public function testGeneratePass()
+    {
         $randomizer = $this->createMock(RandomDataInterface::class);
         $randomizer->method('get')
                    ->willReturn("TEXT");
@@ -30,16 +32,16 @@ class MasterSecretTest extends TestCase
         $keyvalue = $this->createMock(KeyValueInterface::class);
 
         $mastersecret = $this->getMockBuilder(MasterSecret::class)
-                             ->setMethods(["set_key", "set_salt"])
+                             ->setMethods(["setKey", "setSalt"])
                              ->setConstructorArgs(["name", 4, 4, $keyvalue, $randomizer])
                              ->getMock();
 
         $mastersecret->expects($this->once())
-                     ->method("set_key")
+                     ->method("setKey")
                      ->with($this->identicalTo("TEXT"));
 
         $mastersecret->expects($this->once())
-                     ->method("set_salt")
+                     ->method("setSalt")
                      ->with($this->identicalTo("TEXT"));
 
         $mastersecret->generate();
@@ -49,7 +51,8 @@ class MasterSecretTest extends TestCase
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid key length : -?\d+$#
      */
-    public function testGenerateFailKey() {
+    public function testGenerateFailKey()
+    {
         $randomizer = $this->createMock(RandomDataInterface::class);
         $randomizer->method('get')
                    ->willReturn("TEXT");
@@ -64,7 +67,8 @@ class MasterSecretTest extends TestCase
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid salt length : -?\d+$#
      */
-    public function testGenerateFailSalt() {
+    public function testGenerateFailSalt()
+    {
         $randomizer = $this->createMock(RandomDataInterface::class);
         $randomizer->method('get')
                    ->willReturn("TEXT");
@@ -77,105 +81,113 @@ class MasterSecretTest extends TestCase
 
     /**** SecretKeeperInterface ****/
 
-    public function testSetKeyPass() {
+    public function testSetKeyPass()
+    {
         $randomizer = $this->createMock(RandomDataInterface::class);
 
         $keyvalue = $this->createMock(KeyValueInterface::class);
         $keyvalue->expects($this->once())
-                 ->method('set_string')
+                 ->method('setString')
                  ->with($this->identicalTo("name-key"), "KEY");
 
         $mastersecret = new MasterSecret("name", 3, 4, $keyvalue, $randomizer);
-        $mastersecret->set_key("KEY");
+        $mastersecret->setKey("KEY");
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid key length : -?\d+$#
      */
-    public function testSetKeyFail() {
+    public function testSetKeyFail()
+    {
         $randomizer = $this->createMock(RandomDataInterface::class);
 
         $keyvalue = $this->createMock(KeyValueInterface::class);
         $keyvalue->expects($this->never())
-                 ->method('set_string');
+                 ->method('setString');
 
         $mastersecret = new MasterSecret("name", 3, 4, $keyvalue, $randomizer);
-        $mastersecret->set_key("TOOLONG");
+        $mastersecret->setKey("TOOLONG");
     }
 
-    public function testSetSaltPass() {
+    public function testSetSaltPass()
+    {
         $randomizer = $this->createMock(RandomDataInterface::class);
 
         $keyvalue = $this->createMock(KeyValueInterface::class);
         $keyvalue->expects($this->once())
-                 ->method('set_string')
+                 ->method('setString')
                  ->with($this->identicalTo("name-salt"), "SALT");
 
         $mastersecret = new MasterSecret("name", 3, 4, $keyvalue, $randomizer);
-        $mastersecret->set_salt("SALT");
+        $mastersecret->setSalt("SALT");
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid salt length : -?\d+$#
      */
-    public function testSetSaltFail() {
+    public function testSetSaltFail()
+    {
         $randomizer = $this->createMock(RandomDataInterface::class);
 
         $keyvalue = $this->createMock(KeyValueInterface::class);
         $keyvalue->expects($this->never())
-                 ->method('set_string');
+                 ->method('setString');
 
         $mastersecret = new MasterSecret("name", 3, 4, $keyvalue, $randomizer);
-        $mastersecret->set_salt("TOOLONG");
+        $mastersecret->setSalt("TOOLONG");
     }
 
-    public function testGetKeyPass() {
+    public function testGetKeyPass()
+    {
         $randomizer = $this->createMock(RandomDataInterface::class);
 
         $keyvalue = $this->createMock(KeyValueInterface::class);
-        $keyvalue->method('get_string')->willReturn("KEY");
+        $keyvalue->method('getString')->willReturn("KEY");
 
         $mastersecret = new MasterSecret("name", 3, 4, $keyvalue, $randomizer);
-        $this->assertSame("KEY", $mastersecret->get_key());
+        $this->assertSame("KEY", $mastersecret->getKey());
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid key length : -?\d+$#
      */
-    public function testGetKeyFail() {
+    public function testGetKeyFail()
+    {
         $randomizer = $this->createMock(RandomDataInterface::class);
 
         $keyvalue = $this->createMock(KeyValueInterface::class);
-        $keyvalue->method('get_string')->willReturn("TOOLONG");
+        $keyvalue->method('getString')->willReturn("TOOLONG");
 
         $mastersecret = new MasterSecret("name", 3, 4, $keyvalue, $randomizer);
-        $mastersecret->get_key();
+        $mastersecret->getKey();
     }
 
-    public function testGetSaltPass() {
+    public function testGetSaltPass()
+    {
         $randomizer = $this->createMock(RandomDataInterface::class);
 
         $keyvalue = $this->createMock(KeyValueInterface::class);
-        $keyvalue->method('get_string')->willReturn("SALT");
+        $keyvalue->method('getString')->willReturn("SALT");
 
         $mastersecret = new MasterSecret("name", 3, 4, $keyvalue, $randomizer);
-        $this->assertSame("SALT", $mastersecret->get_salt());
+        $this->assertSame("SALT", $mastersecret->getSalt());
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid salt length : -?\d+$#
      */
-    public function testGetSaltFail() {
+    public function testGetSaltFail()
+    {
         $randomizer = $this->createMock(RandomDataInterface::class);
 
         $keyvalue = $this->createMock(KeyValueInterface::class);
-        $keyvalue->method('get_string')->willReturn("TOOLONG");
+        $keyvalue->method('getString')->willReturn("TOOLONG");
 
         $mastersecret = new MasterSecret("name", 3, 4, $keyvalue, $randomizer);
-        $mastersecret->get_salt();
+        $mastersecret->getSalt();
     }
 }

@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace WRS\Apps;
 
-use WRS\Arguments,
-    WRS\Apps\App,
-    WRS\Crypto\KeyManager,
-    WRS\KeyValue\StoredKeyValue,
-    WRS\Storage\FileStorage;
+use WRS\Arguments;
+use WRS\Apps\App;
+use WRS\Crypto\KeyManager;
+use WRS\KeyValue\StoredKeyValue;
+use WRS\Storage\FileStorage;
 
-class ClientApp extends App {
-
+class ClientApp extends App
+{
     private $logger;
     private $args;
     private $key_manager;
 
-    public function __construct(string $base_path) {
+    public function __construct(string $base_path)
+    {
         parent::__construct($base_path);
 
         $this->logger = App::GetLogger();
@@ -27,7 +28,8 @@ class ClientApp extends App {
         $this->key_manager = new KeyManager($this->get_base_path());
     }
 
-    public function run() {
+    public function run()
+    {
         $this->logger->debug(__METHOD__);
         $this->logger->info("Running client");
 
@@ -36,7 +38,7 @@ class ClientApp extends App {
 
         // load configuration
         $config = $this->args->get_config();
-        if ($config === NULL) {
+        if ($config === null) {
             $this->config->load_default_optional();
         } else {
             $this->config->load_custom_required($config);
@@ -44,15 +46,13 @@ class ClientApp extends App {
 
         // get action
         $action_name = $this->args->get_action();
-        if ($action_name === NULL) {
+        if ($action_name === null) {
             throw new \Exception("No action provided");
         }
 
         // act
         if ($action_name == "createkey") {
-            $action_create_key = new ActionCreateKey(
-                $this->args,
-                $this->key_manager);
+            $action_create_key = new ActionCreateKey($this->args, $this->key_manager);
             $action_create_key->run();
         } else {
             throw new \Exception("Unknown action");

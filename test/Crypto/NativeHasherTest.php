@@ -16,33 +16,43 @@ class NativeHasherTest extends TestCase
     const KEY = "key";
     const HMAC = "80070713463e7749b90c2dc24911e275";
 
-    public function providerAlgo() {
-        return array_map(function($algo) { return [$algo, NULL]; }, hash_algos());
+    public function providerAlgo()
+    {
+        return array_map(
+            function ($algo) {
+                return [$algo, null];
+            },
+            hash_algos()
+        );
     }
 
     /**
      * @dataProvider providerAlgo
      */
-    public function testConstructorValid(string $algo, $null) {
+    public function testConstructorValid(string $algo, $null)
+    {
         $nh = new NativeHasher($algo);
-        $this->assertSame($algo, $nh->get_hash_function());
+        $this->assertSame($algo, $nh->getHashFunction());
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessageRegExp #^Invalid hash function : .*$#
      */
-    public function testConstructorInvalid() {
+    public function testConstructorInvalid()
+    {
         $nh = new NativeHasher("this_is_an_invalid_hash_function");
     }
 
-    public function testHash() {
+    public function testHash()
+    {
         $nh = new NativeHasher(self::FUNC);
         $result = $nh->hash(self::MSG);
         $this->assertSame(hex2bin(self::HASH), $result);
     }
 
-    public function testHmac() {
+    public function testHmac()
+    {
         $nh = new NativeHasher(self::FUNC);
         $result = $nh->hmac(self::MSG, self::KEY);
         $this->assertSame(hex2bin(self::HMAC), $result);

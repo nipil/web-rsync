@@ -6,17 +6,18 @@ namespace WRS\Tests\Crypto;
 
 use PHPUnit\Framework\TestCase;
 
-use WRS\Crypto\HmacKeyDerivator,
-    WRS\Crypto\Interfaces\SecretKeeperInterface,
-    WRS\Crypto\Interfaces\HashInterface,
-    WRS\Crypto\NativeHasher;
+use WRS\Crypto\HmacKeyDerivator;
+use WRS\Crypto\Interfaces\SecretKeeperInterface;
+use WRS\Crypto\Interfaces\HashInterface;
+use WRS\Crypto\NativeHasher;
 
 class HmacKeyDerivatorTest extends TestCase
 {
     /**
      * RFC 5869, section A: test cases
      */
-    public function providerCases() {
+    public function providerCases()
+    {
         return array(
             "case 1" => [
                 "func" => "sha256",
@@ -135,21 +136,22 @@ class HmacKeyDerivatorTest extends TestCase
     /**
      * @dataProvider providerCases
      */
-    public function testDeriveKey(string $func,
-                                  string $ikm_hex,
-                                  string $salt_hex,
-                                  string $info_hex,
-                                  int $length,
-                                  string $prk_hex,
-                                  string $okm_hex)
-    {
+    public function testDeriveKey(
+        string $func,
+        string $ikm_hex,
+        string $salt_hex,
+        string $info_hex,
+        int $length,
+        string $prk_hex,
+        string $okm_hex
+    ) {
         // use real hasher implementation otherwise it is too complecated
         $hasher = new NativeHasher($func);
 
         // mock secret keeper to provide ikm and salt
         $secret = $this->createMock(SecretKeeperInterface::class);
-        $secret->method('get_key')->willReturn(hex2bin($ikm_hex));
-        $secret->method('get_salt')->willReturn(hex2bin($salt_hex));
+        $secret->method('getKey')->willReturn(hex2bin($ikm_hex));
+        $secret->method('getSalt')->willReturn(hex2bin($salt_hex));
 
         // transfor convert from hex to string
         $info = hex2bin($info_hex);
@@ -158,8 +160,8 @@ class HmacKeyDerivatorTest extends TestCase
         $hkdf = new HmacKeyDerivator($secret, $hasher);
 
         // test derivation
-        $result_okm = $hkdf->derive_key($length, $info);
-        $result_prk = $hkdf->get_prk();
+        $result_okm = $hkdf->deriveKey($length, $info);
+        $result_prk = $hkdf->getPrk();
 
         // verify result
         $this->assertSame($prk_hex, bin2hex($result_prk), "invalid prk");
@@ -178,12 +180,12 @@ class HmacKeyDerivatorTest extends TestCase
 
         // mock secret keeper to provide ikm and salt
         $secret = $this->createMock(SecretKeeperInterface::class);
-        $secret->method('get_key')->willReturn("");
-        $secret->method('get_salt')->willReturn("");
+        $secret->method('getKey')->willReturn("");
+        $secret->method('getSalt')->willReturn("");
 
         // create SUT and test
         $hkdf = new HmacKeyDerivator($secret, $hasher);
-        $hkdf->derive_key(256, "");
+        $hkdf->deriveKey(256, "");
     }
 
     /**
@@ -200,7 +202,7 @@ class HmacKeyDerivatorTest extends TestCase
 
         // create SUT and test
         $hkdf = new HmacKeyDerivator($secret, $hasher);
-        $hkdf->derive_key(-1, "");
+        $hkdf->deriveKey(-1, "");
     }
 
     public function testZeroLength()
@@ -215,6 +217,6 @@ class HmacKeyDerivatorTest extends TestCase
         $hkdf = new HmacKeyDerivator($secret, $hasher);
 
         // validate
-        $this->assertSame("", $hkdf->derive_key(0, ""));
+        $this->assertSame("", $hkdf->deriveKey(0, ""));
     }
 }

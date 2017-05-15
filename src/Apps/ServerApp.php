@@ -13,7 +13,6 @@ class ServerApp extends App
     public function __construct(LoggerInterface $logger)
     {
         parent::__construct($logger);
-        $this->getLogger()->info("Starting server");
     }
 
     public function run()

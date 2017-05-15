@@ -5,19 +5,16 @@ declare(strict_types=1);
 namespace WRS\KeyValue;
 
 use WRS\Utils;
-use WRS\Apps\Abstracts\App;
 use WRS\KeyValue\Interfaces\KeyValueInterface;
 use WRS\Storage\Interfaces\StorageInterface;
 use WRS\Utils\StringToInt;
 
 class StoredKeyValue implements KeyValueInterface
 {
-    private $logger;
     private $storage;
 
     public function __construct(StorageInterface $storage)
     {
-        $this->logger = App::GetLogger();
         $this->storage = $storage;
     }
 

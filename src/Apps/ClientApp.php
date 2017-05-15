@@ -41,7 +41,7 @@ class ClientApp extends App
         $this->getLogger()->info("Running client");
 
         // parse arguments
-        $this->arguments->parseArgs();
+        $this->arguments->parse();
 
         // get action
         $action_name = $this->arguments->getAction();

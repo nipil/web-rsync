@@ -4,32 +4,26 @@ declare(strict_types=1);
 
 namespace WRS\Actions;
 
-use WRS\Arguments;
-use WRS\Apps\App;
-use WRS\Crypto\KeyManager;
+use Psr\Log\LoggerInterface;
+
+use WRS\Actions\Abstracts\Action;
+use WRS\Crypto\MasterSecret;
 
 class ActionCreateKey extends Action
 {
+    private $master_secret;
 
-    private $logger;
-    private $key_manager;
-
-    public function __construct(Arguments $args, KeyManager $manager)
-    {
-        $this->logger = App::GetLogger();
-        $this->logger->debug(__METHOD__);
-
-        $this->key_manager = $manager;
-
-        if ($this->key_manager === null) {
-            throw new \Exception("No key manager provided");
-        }
+    public function __construct(
+        MasterSecret $master_secret,
+        LoggerInterface $logger
+    ) {
+        parent::__construct($logger);
+        $this->master_secret = $master_secret;
     }
 
     public function run()
     {
-        $this->logger->debug(__METHOD__);
-        $this->key_manager->create_master();
-        $this->key_manager->save();
+        $this->getLogger()->info("Generating master secret");
+        $this->master_secret->generate();
     }
 }

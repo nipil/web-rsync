@@ -10,9 +10,9 @@ use WRS\Apps\Abstracts\App;
 
 class ServerApp extends App
 {
-    public function __construct(string $base_path, LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger)
     {
-        parent::__construct($base_path, $logger);
+        parent::__construct($logger);
         $this->getLogger()->info("Starting server");
     }
 

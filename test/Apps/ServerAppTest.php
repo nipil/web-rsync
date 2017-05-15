@@ -14,10 +14,8 @@ class ServerAppTest extends TestCase
 {
     public function testConstructor()
     {
-        $directory = __DIR__;
         $logger = $this->createMock(LoggerInterface::class);
-        $app = new ServerApp($directory, $logger);
-        $this->assertSame($directory, $app->getBasePath(), "base path");
+        $app = new ServerApp($logger);
         $this->assertSame($logger, $app->getLogger(), "logger");
         return $app;
     }

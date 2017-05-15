@@ -14,13 +14,10 @@ class AppTest extends TestCase
 {
     public function testConstructor()
     {
-        $directory = __DIR__;
         $logger = $this->createMock(LoggerInterface::class);
         $app = $this->getMockBuilder(App::class)
-                    ->setConstructorArgs([$directory, $logger])
+                    ->setConstructorArgs([$logger])
                     ->getMockForAbstractClass();
-
-        $this->assertSame($directory, $app->getBasePath(), "base path");
-        $this->assertSame($logger, $app->getLogger(), "logger");
+        $this->assertSame($logger, $app->getLogger());
     }
 }

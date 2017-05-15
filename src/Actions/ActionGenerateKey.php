@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 use WRS\Actions\Abstracts\Action;
 use WRS\Crypto\MasterSecret;
 
-class ActionCreateKey extends Action
+class ActionGenerateKey extends Action
 {
     private $master_secret;
 

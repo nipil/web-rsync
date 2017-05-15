@@ -10,11 +10,11 @@ use Psr\Log\LoggerInterface;
 
 use WRS\Crypto\MasterSecret;
 
-use WRS\Actions\ActionCreateKey;
+use WRS\Actions\ActionGenerateKey;
 
-class ActionCreateKeyTest extends TestCase
+class ActionGenerateKeyTest extends TestCase
 {
-    public function testCreateKey()
+    public function testGenerateKey()
     {
         $logger = $this->createMock(LoggerInterface::class);
 
@@ -22,7 +22,7 @@ class ActionCreateKeyTest extends TestCase
         $master_secret->expects($this->once())
                       ->method("generate");
 
-        $sut = new ActionCreateKey($master_secret, $logger);
+        $sut = new ActionGenerateKey($master_secret, $logger);
         $sut->run();
     }
 }

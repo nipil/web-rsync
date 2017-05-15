@@ -4,24 +4,20 @@ declare(strict_types=1);
 
 namespace WRS\Apps;
 
+use Psr\Log\LoggerInterface;
+
+use WRS\Apps\Abstracts\App;
+
 class ServerApp extends App
 {
-    private $logger;
-    private $base_path;
-
-    public function __construct(string $base_path)
+    public function __construct(string $base_path, LoggerInterface $logger)
     {
-        parent::__construct($base_path);
-
-        $this->logger = App::GetLogger();
-        $this->logger->debug(__METHOD__);
-
-        $this->logger->info("Starting server");
+        parent::__construct($base_path, $logger);
+        $this->getLogger()->info("Starting server");
     }
 
     public function run()
     {
-        $this->logger->debug(__METHOD__);
-        $this->logger->info("Running server");
+        $this->getLogger()->info("Starting server");
     }
 }

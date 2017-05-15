@@ -4,58 +4,60 @@ declare(strict_types=1);
 
 namespace WRS\Apps;
 
+use Psr\Log\LoggerInterface;
+
+use WRS\Apps\Abstracts\App;
+
+use WRS\Actions\ActionGenerateKey;
+
+use WRS\Crypto\Interfaces\HashInterface;
+use WRS\Crypto\Interfaces\RandomDataInterface;
+use WRS\Crypto\Interfaces\KeyDerivatorInterface;
+
+use WRS\Crypto\MasterSecret;
+
+use WRS\KeyValue\Interfaces\KeyValueInterface;
+
 use WRS\Arguments;
-use WRS\Apps\App;
-use WRS\Crypto\KeyManager;
-use WRS\KeyValue\StoredKeyValue;
-use WRS\Storage\FileStorage;
 
 class ClientApp extends App
 {
-    private $logger;
-    private $args;
-    private $key_manager;
+    private $arguments;
+    private $master_secret;
 
-    public function __construct(string $base_path)
-    {
-        parent::__construct($base_path);
+    public function __construct(
+        Arguments $arguments,
+        MasterSecret $master_secret,
+        LoggerInterface $logger
+    ) {
+        parent::__construct($logger);
 
-        $this->logger = App::GetLogger();
-        $this->logger->debug(__METHOD__, func_get_args());
-
-        $this->args = new Arguments();
-        $this->config = new StoredKeyValue($this->get_base_path());
-        $this->key_manager = new KeyManager($this->get_base_path());
+        $this->arguments = $arguments;
+        $this->master_secret = $master_secret;
     }
 
     public function run()
     {
-        $this->logger->debug(__METHOD__);
-        $this->logger->info("Running client");
+        $this->getLogger()->info("Running client");
 
         // parse arguments
-        $this->args->parse_args();
-
-        // load configuration
-        $config = $this->args->get_config();
-        if ($config === null) {
-            $this->config->load_default_optional();
-        } else {
-            $this->config->load_custom_required($config);
-        }
+        $this->arguments->parseArgs();
 
         // get action
-        $action_name = $this->args->get_action();
+        $action_name = $this->arguments->getAction();
         if ($action_name === null) {
             throw new \Exception("No action provided");
         }
 
         // act
-        if ($action_name == "createkey") {
-            $action_create_key = new ActionCreateKey($this->args, $this->key_manager);
-            $action_create_key->run();
+        if ($action_name == "generate-key") {
+            $action = new ActionGenerateKey(
+                $this->master_secret,
+                $this->getLogger()
+            );
+            $action->run();
         } else {
-            throw new \Exception("Unknown action");
+            throw new \Exception(sprintf("Unknown action : %s", $action_name));
         }
 
         return 0;

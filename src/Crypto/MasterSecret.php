@@ -46,8 +46,10 @@ class MasterSecret extends VariableLengthAbstractSecret
     public function generate()
     {
         $key = $this->randomizer->get($this->getKeyLength());
-        $this->setKey($key);
         $salt = $this->randomizer->get($this->getSaltLength());
+        $this->validateKey($key);
+        $this->validateSalt($salt);
+        $this->setKey($key);
         $this->setSalt($salt);
     }
 

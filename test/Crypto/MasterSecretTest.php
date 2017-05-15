@@ -58,6 +58,8 @@ class MasterSecretTest extends TestCase
                    ->willReturn("TEXT");
 
         $keyvalue = $this->createMock(KeyValueInterface::class);
+        $keyvalue->expects($this->never())
+                 ->method('setString');
 
         $mastersecret = new MasterSecret("name", 1, 4, $keyvalue, $randomizer);
         $mastersecret->generate();
@@ -74,6 +76,8 @@ class MasterSecretTest extends TestCase
                    ->willReturn("TEXT");
 
         $keyvalue = $this->createMock(KeyValueInterface::class);
+        $keyvalue->expects($this->never())
+                 ->method('setString');
 
         $mastersecret = new MasterSecret("name", 4, 1, $keyvalue, $randomizer);
         $mastersecret->generate();

@@ -10,9 +10,11 @@ class Arguments
 {
     private $parser;
     private $result;
+    private $constructor_argv;
 
-    public function __construct()
+    public function __construct(array $constructor_argv = null)
     {
+        $this->constructor_argv = $constructor_argv;
         $this->result = null;
         $this->parser = new Console_CommandLine();
 
@@ -48,17 +50,24 @@ class Arguments
         );
     }
 
-    public function parse(array $custom_argv = null)
+    public function parse(array $local_argv = null)
     {
-        $custom_argc = null;
+        $final_argc = null;
+        $final_argv = null;
 
-        if ($custom_argv !== null) {
-            // prepend a program name
-            array_unshift($custom_argv, "program_name");
-            $custom_argc = count($custom_argv);
+        if ($local_argv !== null) {
+            $final_argv = $local_argv;
+            $final_argc = count($local_argv);
+        } elseif ($this->constructor_argv !== null) {
+            $final_argv = $this->constructor_argv;
+            $final_argc = count($this->constructor_argv);
         }
 
-        $this->result = $this->parser->parse($custom_argc, $custom_argv);
+        if ($final_argv !== null && $final_argc == 0) {
+            throw new \Exception("Argument list must start with program name");
+        }
+
+        $this->result = $this->parser->parse($final_argc, $final_argv);
     }
 
     public function validateResult()

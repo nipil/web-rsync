@@ -8,7 +8,7 @@ use Psr\Log\LoggerInterface;
 
 use WRS\Apps\Abstracts\App;
 
-use WRS\Actions\ActionGenerateKey;
+use WRS\Actions\ActionGenerateSecret;
 
 use WRS\Crypto\Interfaces\HashInterface;
 use WRS\Crypto\Interfaces\RandomDataInterface;
@@ -18,7 +18,7 @@ use WRS\Crypto\MasterSecret;
 
 use WRS\KeyValue\Interfaces\KeyValueInterface;
 
-use WRS\Arguments;
+use WRS\Utils\Arguments;
 
 class ClientApp extends App
 {
@@ -43,21 +43,22 @@ class ClientApp extends App
         // parse arguments
         $this->arguments->parse();
 
-        // get action
-        $action_name = $this->arguments->getAction();
-        if ($action_name === null) {
-            throw new \Exception("No action provided");
+        // get command name
+        $command_name = $this->arguments->getCommand();
+        if ($command_name === null) {
+            throw new \Exception("No command provided");
         }
 
         // act
-        if ($action_name == "generate-key") {
-            $action = new ActionGenerateKey(
+        if ($command_name == "generate-secret") {
+            $action = new ActionGenerateSecret(
+                $this->arguments,
                 $this->master_secret,
                 $this->getLogger()
             );
             $action->run();
         } else {
-            throw new \Exception(sprintf("Unknown action : %s", $action_name));
+            throw new \Exception(sprintf("Unknown command : %s", $command_name));
         }
 
         return 0;

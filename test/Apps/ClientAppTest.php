@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 use Psr\Log\LoggerInterface;
 
-use WRS\Arguments;
+use WRS\Utils\Arguments;
 use WRS\Apps\ClientApp;
 use WRS\Crypto\MasterSecret;
 
@@ -27,7 +27,7 @@ class ClientAppTest extends TestCase
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessageRegExp #^No action provided$#
+     * @expectedExceptionMessageRegExp #^No command provided$#
      */
     public function testRunNoAction()
     {
@@ -41,11 +41,11 @@ class ClientAppTest extends TestCase
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessageRegExp #^Unknown action : .*$#
+     * @expectedExceptionMessageRegExp #^Unknown command : .*$#
      */
     public function testRunUnknownAction()
     {
-        $this->arguments->method("getAction")
+        $this->arguments->method("getCommand")
                         ->willReturn("this_is_an_unknown_action");
 
         $app = new ClientApp(
@@ -56,16 +56,31 @@ class ClientAppTest extends TestCase
         $app->run();
     }
 
-    public function testRunActionGenerateKey()
+    public function testRunActionGenerateSecret()
     {
-        $this->arguments->method("getAction")
-                        ->willReturn("generate-key");
+        // This tests "too far"
+        // But i cannot test new AGK()->run()
+
+        $arguments = new Arguments(
+            array(
+                "program_name",
+                "generate-secret",
+                "-k",
+                12,
+                "-s",
+                24
+            )
+        );
 
         $this->master_secret->expects($this->once())
-                            ->method("generate");
+            ->method("generate")
+            ->with(
+                $this->identicalTo(12),
+                $this->identicalTo(24)
+            );
 
         $app = new ClientApp(
-            $this->arguments,
+            $arguments,
             $this->master_secret,
             $this->logger
         );

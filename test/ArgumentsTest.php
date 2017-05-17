@@ -12,48 +12,68 @@ use WRS\Arguments;
 
 class ArgumentsTest extends TestCase
 {
-    public function testConstructor()
+    public function setUp()
     {
-        $args = new Arguments();
-        $this->assertSame(array(), $args->getArguments());
+        $this->args = new Arguments();
     }
 
-    public function testSetGetArguments()
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp /^Arguments not yet parsed$/
+     */
+    public function testNotParsed()
     {
-        $args = new Arguments();
-        $val = array("toto" => "titi", "tata" => 42);
-        $args->setArguments($val);
-
-        $this->assertSame($val, $args->getArguments($val));
+        $this->args->getCommand();
     }
 
-    public function testGetParam()
+    public function testParseEmpty()
     {
-        $args = new Arguments();
-        $val = array("toto" => "titi", "tata" => 42);
-        $args->setArguments($val);
-
-        $this->assertSame("titi", $args->getParam("toto"));
-        $this->assertSame(42, $args->getParam("tata"));
-        $this->assertSame(null, $args->getParam("tutu"));
+        $this->args->parse(array());
+        $this->assertSame(null, $this->args->getCommand());
     }
 
-    public function testGetAction()
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp /^No command provided$/
+     */
+    public function testParseGenSecretOptionFailed()
     {
-        $args = new Arguments();
-
-        $this->assertSame(null, $args->getAction());
-
-        $val = array("action" => "dosomething!");
-        $args->setArguments($val);
-
-        $this->assertSame("dosomething!", $args->getAction());
+        $this->args->parse(array());
+        $this->args->getCommandOption("key_length");
     }
 
-    public function testParse()
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp /^Command option .* is not defined$/
+     */
+    public function testParseGenSecretOptionUnknown()
     {
-        $args = new Arguments();
-        $args->parse();
-        $this->assertInternalType("array", $args->getArguments());
+        $this->args->parse(array("generate-secret"));
+        $this->assertSame("generate-secret", $this->args->getCommand());
+        $this->args->getCommandOption("this_option_does not exist");
+    }
+
+    public function testParseGenSecretDefault()
+    {
+        $this->args->parse(array("generate-secret"));
+        $this->assertSame("generate-secret", $this->args->getCommand());
+        $this->assertSame(1024, $this->args->getCommandOption("key_length"));
+        $this->assertSame(16, $this->args->getCommandOption("salt_length"));
+    }
+
+    public function testParseGenSecretShort()
+    {
+        $this->args->parse(array("generate-secret", "-k", "123", "-s-456"));
+        $this->assertSame("generate-secret", $this->args->getCommand());
+        $this->assertSame(123, $this->args->getCommandOption("key_length"));
+        $this->assertSame(-456, $this->args->getCommandOption("salt_length"));
+    }
+
+    public function testParseGenSecretLong()
+    {
+        $this->args->parse(array("generate-secret","--key-length=-78","--salt-length","90"));
+        $this->assertSame("generate-secret", $this->args->getCommand());
+        $this->assertSame(-78, $this->args->getCommandOption("key_length"));
+        $this->assertSame(90, $this->args->getCommandOption("salt_length"));
     }
 }

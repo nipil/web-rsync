@@ -17,17 +17,17 @@ class StoredKeyValueTest extends TestCase
     const VALUE_INT = 42;
 
     /**
-     * mock StorageInterface::load to throw exceptions
+     * Factor code to have StorageInterface::load throw exceptions
      */
     public function setupMockedStorageLoadException(string $key)
     {
         $storage = $this->createMock(StorageInterface::class);
         $storage->method('load')
-                ->will(
-                    $this->throwException(
-                        new \Exception(sprintf("Cannot load key %s", $key))
-                    )
-                );
+            ->will(
+                $this->throwException(
+                    new \Exception(sprintf("Cannot load key %s", $key))
+                )
+            );
         return $storage;
     }
 
@@ -37,7 +37,7 @@ class StoredKeyValueTest extends TestCase
         $storage = $this->createMock(StorageInterface::class);
         $map = [[self::KEY, true], [self::ABSENT, false]];
         $storage->method('exists')
-                ->will($this->returnValueMap($map));
+            ->will($this->returnValueMap($map));
 
         // test with mock object
         $config = new StoredKeyValue($storage);
@@ -50,11 +50,11 @@ class StoredKeyValueTest extends TestCase
         // mock StorageInterface to verify that save is called once
         $storage = $this->createMock(StorageInterface::class);
         $storage->expects($this->once())
-                ->method('save')
-                ->with(
-                    $this->identicalTo(self::KEY),
-                    $this->identicalTo(self::VALUE_STRING)
-                );
+            ->method('save')
+            ->with(
+                $this->identicalTo(self::KEY),
+                $this->identicalTo(self::VALUE_STRING)
+            );
 
         // test with mock object
         $config = new StoredKeyValue($storage);
@@ -67,7 +67,7 @@ class StoredKeyValueTest extends TestCase
         $storage = $this->createMock(StorageInterface::class);
         $map = [[self::KEY, self::VALUE_STRING], ];
         $storage->method('load')
-                ->will($this->returnValueMap($map));
+            ->will($this->returnValueMap($map));
 
         // test with mock object
         $config = new StoredKeyValue($storage);
@@ -94,11 +94,11 @@ class StoredKeyValueTest extends TestCase
         // mock StorageInterface to verify that save is called once
         $storage = $this->createMock(StorageInterface::class);
         $storage->expects($this->once())
-                ->method('save')
-                ->with(
-                    $this->identicalTo(self::KEY),
-                    $this->identicalTo($textual_value_int)
-                );
+            ->method('save')
+            ->with(
+                $this->identicalTo(self::KEY),
+                $this->identicalTo($textual_value_int)
+            );
 
         // test with mock object
         $config = new StoredKeyValue($storage);
@@ -113,7 +113,7 @@ class StoredKeyValueTest extends TestCase
         // mock StorageInterface::load to return textual representation of numbers
         $storage = $this->createMock(StorageInterface::class);
         $storage->method('load')
-                ->willReturn($textual_value_int);
+            ->willReturn($textual_value_int);
 
         // test with mock object
         $config = new StoredKeyValue($storage);
@@ -142,7 +142,7 @@ class StoredKeyValueTest extends TestCase
         $storage = $this->createMock(StorageInterface::class);
         $map = [[self::KEY, self::VALUE_STRING], ];
         $storage->method('load')
-                ->will($this->returnValueMap($map));
+            ->will($this->returnValueMap($map));
 
         // test with mock object
         $config = new StoredKeyValue($storage);

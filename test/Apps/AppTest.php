@@ -16,8 +16,8 @@ class AppTest extends TestCase
     {
         $logger = $this->createMock(LoggerInterface::class);
         $app = $this->getMockBuilder(App::class)
-                    ->setConstructorArgs([$logger])
-                    ->getMockForAbstractClass();
+            ->setConstructorArgs([$logger])
+            ->getMockForAbstractClass();
         $this->assertSame($logger, $app->getLogger());
     }
 }

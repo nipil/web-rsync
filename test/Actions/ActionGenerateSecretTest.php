@@ -33,10 +33,12 @@ class ActionGenerateSecretTest extends TestCase
                 ["key_length"],
                 ["salt_length"]
             )
-            ->will($this->onConsecutiveCalls(
-                20,
-                10
-            ));
+            ->will(
+                $this->onConsecutiveCalls(
+                    20,
+                    10
+                )
+            );
 
         $this->secret->expects($this->once())
             ->method("generate")

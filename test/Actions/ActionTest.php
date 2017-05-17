@@ -16,8 +16,8 @@ class ActionTest extends TestCase
     {
         $logger = $this->createMock(LoggerInterface::class);
         $action = $this->getMockBuilder(Action::class)
-                       ->setConstructorArgs([$logger])
-                       ->getMockForAbstractClass();
+            ->setConstructorArgs([$logger])
+            ->getMockForAbstractClass();
         $this->assertSame($logger, $action->getLogger());
     }
 }

@@ -21,16 +21,22 @@ class StringToIntTest extends TestCase
             "five" => ["5", 5],
         );
         if (PHP_INT_SIZE === 4) {
-            $data = array_merge($data, array(
-                "int max 32 bits" => [ "2147483647",  2147483647],
-                "int min 32 bits" => ["-2147483648", -2147483648],
-            ));
+            $data = array_merge(
+                $data,
+                array(
+                    "int max 32 bits" => [ "2147483647",  2147483647],
+                    "int min 32 bits" => ["-2147483648", -2147483648],
+                )
+            );
         }
         if (PHP_INT_SIZE === 8) {
-            $data = array_merge($data, array(
-                "int max 64 bits" => [ "9223372036854775807",  9223372036854775807],
-                "int min 64 bits" => ["-9223372036854775808", -9223372036854775808],
-            ));
+            $data = array_merge(
+                $data,
+                array(
+                    "int max 64 bits" => [ "9223372036854775807",  9223372036854775807],
+                    "int min 64 bits" => ["-9223372036854775808", -9223372036854775808],
+                )
+            );
         }
         return $data;
     }
@@ -57,16 +63,22 @@ class StringToIntTest extends TestCase
             "much too long" => ["-". str_repeat("9", 100), null],
         );
         if (PHP_INT_SIZE === 4) {
-            $data = array_merge($data, array(
-                "int max 32 bits +1" => [ "2147483648", null],
-                "int min 32 bits -1" => ["-2147483649", null],
-            ));
+            $data = array_merge(
+                $data,
+                array(
+                    "int max 32 bits +1" => [ "2147483648", null],
+                    "int min 32 bits -1" => ["-2147483649", null],
+                )
+            );
         }
         if (PHP_INT_SIZE === 8) {
-            $data = array_merge($data, array(
-                "int max 64 bits +1" => [ "9223372036854775808", null],
-                "int min 64 bits -1" => ["-9223372036854775809", null],
-            ));
+            $data = array_merge(
+                $data,
+                array(
+                    "int max 64 bits +1" => [ "9223372036854775808", null],
+                    "int min 64 bits -1" => ["-9223372036854775809", null],
+                )
+            );
         }
         return $data;
     }

@@ -46,7 +46,7 @@ class ClientAppTest extends TestCase
     public function testRunUnknownAction()
     {
         $this->arguments->method("getCommand")
-                        ->willReturn("this_is_an_unknown_action");
+            ->willReturn("this_is_an_unknown_action");
 
         $app = new ClientApp(
             $this->arguments,

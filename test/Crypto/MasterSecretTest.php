@@ -44,10 +44,12 @@ class MasterSecretTest extends TestCase
                 [3],
                 [4]
             )
-            ->will($this->onConsecutiveCalls(
-                "KEY",
-                "SALT"
-            ));
+            ->will(
+                $this->onConsecutiveCalls(
+                    "KEY",
+                    "SALT"
+                )
+            );
 
         $this->keyvalue->expects($this->exactly(2))
             ->method('setString')
@@ -82,7 +84,7 @@ class MasterSecretTest extends TestCase
         $mastersecret->generate(1, $input);
     }
 
-    /* MasterKeyInterface */
+    // MasterKeyInterface
 
     public function testSetGetKey()
     {

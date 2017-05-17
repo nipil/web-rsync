@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace WRS\Crypto;
 
-use WRS\Crypto\Abstracts\VariableLengthAbstractSecret;
+use WRS\Crypto\Interfaces\MasterSecretInterface;
 use WRS\Crypto\Interfaces\RandomDataInterface;
 use WRS\KeyValue\Interfaces\KeyValueInterface;
 
-class MasterSecret extends VariableLengthAbstractSecret
+class MasterSecret implements MasterSecretInterface
 {
     const ID_KEY = "key";
     const ID_SALT = "salt";
@@ -21,17 +21,21 @@ class MasterSecret extends VariableLengthAbstractSecret
 
     public function __construct(
         string $name,
-        int $key_length,
-        int $salt_length,
         KeyValueInterface $keyvalue,
         RandomDataInterface $randomizer
     ) {
-        parent::__construct($name, $key_length, $salt_length);
+        $this->name = $name;
         $this->full_id_key = sprintf("%s-%s", $this->getName(), self::ID_KEY);
         $this->full_id_salt = sprintf("%s-%s", $this->getName(), self::ID_SALT);
         $this->keyvalue = $keyvalue;
         $this->randomizer = $randomizer;
     }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
 
     public function getIdKey()
     {
@@ -43,41 +47,53 @@ class MasterSecret extends VariableLengthAbstractSecret
         return $this->full_id_salt;
     }
 
-    public function generate()
+    /* MasterSecretInterface */
+
+    public function generate(int $key_length, int $salt_length)
     {
-        $key = $this->randomizer->get($this->getKeyLength());
-        $salt = $this->randomizer->get($this->getSaltLength());
-        $this->validateKey($key);
-        $this->validateSalt($salt);
+        if ($key_length <= 0) {
+            throw new \Exception(sprintf("Invalid key length : %d", $key_length));
+        }
+        if ($salt_length <= 0) {
+            throw new \Exception(sprintf("Invalid salt length : %d", $salt_length));
+        }
+        $key = $this->randomizer->get($key_length);
+        $salt = $this->randomizer->get($salt_length);
         $this->setKey($key);
         $this->setSalt($salt);
     }
 
-    /**** SecretKeeperInterface ****/
-
     public function setKey(string $key)
     {
-        $this->validateKey($key);
+        if (strlen($key) === 0) {
+            throw new \Exception("Key cannot be empty");
+        }
         $this->keyvalue->setString($this->full_id_key, $key);
     }
 
     public function setSalt(string $salt)
     {
-        $this->validateSalt($salt);
+        if (strlen($salt) === 0) {
+            throw new \Exception("Salt cannot be empty");
+        }
         $this->keyvalue->setString($this->full_id_salt, $salt);
     }
 
     public function getKey()
     {
         $key = $this->keyvalue->getString($this->full_id_key);
-        $this->validateKey($key);
+        if (strlen($key) === 0) {
+            throw new \Exception("Key cannot be empty");
+        }
         return $key;
     }
 
     public function getSalt()
     {
         $salt = $this->keyvalue->getString($this->full_id_salt);
-        $this->validateSalt($salt);
+        if (strlen($salt) === 0) {
+            throw new \Exception("Salt cannot be empty");
+        }
         return $salt;
     }
 }

@@ -17,7 +17,7 @@ use WRS\KeyValue\StoredKeyValue;
 
 use WRS\Storage\FileStorage;
 
-use WRS\Arguments;
+use WRS\Utils\Arguments;
 
 try {
 
@@ -37,8 +37,6 @@ try {
 
     $master_secret = new MasterSecret(
         "master",
-        1024, // key length in bytes
-        16,   // salt length in bytes
         $config,
         $randomizer
     );
@@ -72,5 +70,5 @@ try {
     }
 
 } catch (\Exception $e) {
-    trigger_error($e);
+    trigger_error($e, E_USER_ERROR);
 }

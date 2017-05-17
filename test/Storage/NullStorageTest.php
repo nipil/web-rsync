@@ -28,8 +28,8 @@ class NullStorageTest extends TestCase
     }
 
     /**
-     * @expectedException        Exception
-     * @expectedExceptionMessage Cannot load key test
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Cannot load key .*$#
      */
     public function testLoad()
     {

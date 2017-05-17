@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace WRS;
+namespace WRS\Utils;
 
 use \Console_CommandLine;
 

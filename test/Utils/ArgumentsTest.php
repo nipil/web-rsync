@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace WRS\Tests\Apps;
+namespace WRS\Tests\Utils;
 
 use PHPUnit\Framework\TestCase;
 
 use Psr\Log\LoggerInterface;
 
-use WRS\Arguments;
+use WRS\Utils\Arguments;
 
 class ArgumentsTest extends TestCase
 {

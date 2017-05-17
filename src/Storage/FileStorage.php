@@ -20,6 +20,21 @@ class FileStorage implements StorageInterface
         return $this->directory . DIRECTORY_SEPARATOR . $name;
     }
 
+    public function createDirectoryIfNotExists()
+    {
+        if (file_exists($this->directory)) {
+            if (is_dir($this->directory)) {
+                return false;
+            }
+            throw new \Exception(sprintf("Path is not a directory : %s", $this->directory));
+        }
+        $result = mkdir($this->directory, 0750, true);
+        if ($result === false) {
+            throw new \Exception(sprintf("Could not create directory : %s", $this->directory));
+        }
+        return true;
+    }
+
     public function save(string $name, string $content)
     {
         $filepath = $this->getPath($name);

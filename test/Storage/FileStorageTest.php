@@ -9,111 +9,159 @@ use PHPUnit\Framework\TestCase;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
 use org\bovigo\vfs\vfsStreamDirectory;
+use org\bovigo\vfs\visitor\vfsStreamStructureVisitor;
 
 use WRS\Storage\FileStorage;
 
 class FileStorageTest extends TestCase
 {
-    const DIR = "baseDirectory";
-    const ABS = "abs";
-    const FILE = "file";
-    const CONTENT = "content";
+    const DIR = "rootdir";
+
+    private $vfsroot;
+
+    public static function setUpBeforeClass()
+    {
+        vfsStreamWrapper::register();
+    }
 
     public function setUp()
     {
-        vfsStreamWrapper::register();
-        vfsStreamWrapper::setRoot(new vfsStreamDirectory(self::DIR));
+        $this->vfsroot = vfsStream::setup(self::DIR);
+    }
+
+    protected function vfs(... $segments)
+    {
+        array_unshift($segments, self::DIR);
+        return vfsStream::url(join(DIRECTORY_SEPARATOR, $segments));
     }
 
     public function testCreateDirectoryIfNotExistsSuccessCreate()
     {
-        $fs = new FileStorage(vfsStream::url(self::DIR.DIRECTORY_SEPARATOR.self::ABS));
-        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild(self::ABS), "Directory present");
+        $this->assertFalse($this->vfsroot->hasChild("abs"), "Directory should be absent");
+
+        $fs = new FileStorage($this->vfs("abs"));
         $fs->createDirectoryIfNotExists();
-        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild(self::ABS), "Directory absent");
+
+        $this->assertTrue($this->vfsroot->hasChild("abs"), "Directory should be present");
     }
 
     public function testCreateDirectoryIfNotExistsSuccessExists()
     {
-        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild(self::ABS), "Directory present");
-        mkdir(vfsStream::url(self::DIR.DIRECTORY_SEPARATOR.self::ABS));
-        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild(self::ABS), "Directory absent");
-        $fs = new FileStorage(vfsStream::url(self::DIR.DIRECTORY_SEPARATOR.self::ABS));
-        $this->assertSame(false, $fs->createDirectoryIfNotExists(), "Return value");
+        vfsStream::create(["dir"=>[]]);
+        $this->assertTrue($this->vfsroot->hasChild("dir"), "Directory should be present");
+
+        $fs = new FileStorage($this->vfs("dir"));
+        $this->assertSame(false, $fs->createDirectoryIfNotExists(), "Incorrect return value");
     }
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessageRegExp #^Path is not a directory : .*#
+     * @expectedExceptionMessageRegExp #^Path is not a directory : .*$#
      */
     public function testCreateDirectoryIfNotExistsFailExistNotDirectory()
     {
-        $fs = new FileStorage(vfsStream::url(self::DIR));
-        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild(self::ABS), "File present");
-        $fs->save(self::ABS, self::CONTENT);
-        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild(self::ABS), "File absent");
-        $fs = new FileStorage(vfsStream::url(self::DIR.DIRECTORY_SEPARATOR.self::ABS));
-        $this->assertSame(false, $fs->createDirectoryIfNotExists(), "Return value");
+        vfsStream::create(["is_a_file"=>"file_content"]);
+        $this->assertTrue($this->vfsroot->hasChild("is_a_file"), "File should be present");
+
+        $fs = new FileStorage($this->vfs("is_a_file"));
+        $fs->createDirectoryIfNotExists();
     }
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessageRegExp #^Could not create directory : .*#
+     * @expectedExceptionMessageRegExp #^Could not create directory : .*$#
      */
     public function testCreateDirectoryIfNotExistsFailCreateFailed()
     {
-        $fs = new FileStorage(vfsStream::url(self::DIR.DIRECTORY_SEPARATOR.self::ABS.DIRECTORY_SEPARATOR.self::ABS));
-        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild(self::ABS), "Directory present");
-        mkdir(vfsStream::url(self::DIR.DIRECTORY_SEPARATOR.self::ABS));
-        chmod(vfsStream::url(self::DIR.DIRECTORY_SEPARATOR.self::ABS), 0000);
-        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild(self::ABS), "Directory absent");
-        $this->assertSame(false, $fs->createDirectoryIfNotExists(), "Return value");
+        $this->vfsroot->chmod(0000);
+        $this->vfsroot->chown(vfsStream::OWNER_ROOT);
+        $this->vfsroot->chgrp(vfsStream::GROUP_ROOT);
+        $this->assertFalse($this->vfsroot->hasChild("forbidden"), "Directory should be absent");
+
+        $fs = new FileStorage($this->vfs("forbidden"));
+        $fs->createDirectoryIfNotExists();
     }
 
     public function testSaveSuccess()
     {
-        $fs = new FileStorage(vfsStream::url(self::DIR));
-        $fs->save(self::FILE, self::CONTENT);
-        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild(self::FILE), "File absent");
-        $this->assertSame(self::CONTENT, file_get_contents(vfsStream::url(self::DIR.DIRECTORY_SEPARATOR.self::FILE)));
+        $this->assertFalse($this->vfsroot->hasChild("saved_file"), "File should be absent");
+
+        $fs = new FileStorage($this->vfs());
+        $fs->save("saved_file", "content");
+
+        $this->assertSame(
+            [self::DIR => ["saved_file" => "content"]],
+            vfsStream::inspect(new vfsStreamStructureVisitor())->getStructure()
+        );
     }
 
     public function testLoadSuccess()
     {
-        $fs = new FileStorage(vfsStream::url(self::DIR));
-        file_put_contents(vfsStream::url(self::DIR.DIRECTORY_SEPARATOR.self::FILE), self::CONTENT);
-        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild(self::FILE), "File absent");
-        $content = $fs->load(self::FILE);
-        $this->assertSame(self::CONTENT, $content);
+        vfsStream::create(["file_to_load"=>"content"]);
+        $this->assertTrue($this->vfsroot->hasChild("file_to_load"), "File should be present");
+
+        $fs = new FileStorage($this->vfs());
+        $this->assertSame("content", $fs->load("file_to_load"));
     }
 
     public function testExists()
     {
-        $fs = new FileStorage(vfsStream::url(self::DIR));
-        file_put_contents(vfsStream::url(self::DIR.DIRECTORY_SEPARATOR.self::FILE), self::CONTENT);
-        $this->assertTrue(vfsStreamWrapper::getRoot()->hasChild(self::FILE), "File should be present");
-        $this->assertFalse(vfsStreamWrapper::getRoot()->hasChild(self::ABS), "File should be absent");
-        $this->assertTrue($fs->exists(self::FILE), "Absent but should be present");
-        $this->assertFalse($fs->exists(self::ABS), "Present but should be absent");
+        vfsStream::create(["file_present"=>"content"]);
+        $this->assertTrue($this->vfsroot->hasChild("file_present"), "File should be present");
+        $this->assertFalse($this->vfsroot->hasChild("file_absent"), "File should be absent");
+
+        $fs = new FileStorage($this->vfs());
+        $this->assertSame(true, $fs->exists("file_present"), "Absent but should be present");
+        $this->assertSame(false, $fs->exists("file_absent"), "Present but should be absent");
     }
 
     /**
-     * @expectedException        Exception
-     * @expectedExceptionMessage Cannot save data to file vfs://baseDirectory/abs/file
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Cannot save data to file .*$#
      */
-    public function testSaveFail()
+    public function testSaveFailInexistantPath()
     {
-        $fs = new FileStorage(vfsStream::url(self::DIR . DIRECTORY_SEPARATOR . self::ABS));
-        $fs->save(self::FILE, self::CONTENT);
+        $this->assertFalse($this->vfsroot->hasChild("abs"), "Directory should be absent");
+
+        $fs = new FileStorage($this->vfs("abs"));
+        $fs->save("file", "content");
     }
 
     /**
-     * @expectedException        Exception
-     * @expectedExceptionMessage Cannot get content of file vfs://baseDirectory/abs/file
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Cannot get content of file .*$#
      */
-    public function testLoadFail()
+    public function testLoadFailInexistantPath()
     {
-        $fs = new FileStorage(vfsStream::url(self::DIR . DIRECTORY_SEPARATOR . self::ABS));
-        $fs->load(self::FILE);
+        $this->assertFalse($this->vfsroot->hasChild("abs"), "Directory should be absent");
+
+        $fs = new FileStorage($this->vfs("abs"));
+        $fs->load("file");
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Cannot save data to file .*$#
+     */
+    public function testSaveFailIsADirectory()
+    {
+        vfsStream::create(["this_is_a_directory"=>[]]);
+        $this->assertTrue($this->vfsroot->hasChild("this_is_a_directory"), "Directory should be present");
+
+        $fs = new FileStorage($this->vfs());
+        $fs->save("this_is_a_directory", "content");
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Cannot get content of file .*$#
+     */
+    public function testLoadFailIsADirectory()
+    {
+        vfsStream::create(["this_is_a_directory"=>[]]);
+        $this->assertTrue($this->vfsroot->hasChild("this_is_a_directory"), "Directory should be present");
+
+        $fs = new FileStorage($this->vfs());
+        $fs->load("this_is_a_directory");
     }
 }

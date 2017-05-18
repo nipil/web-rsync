@@ -19,7 +19,7 @@ class HexToString
             throw new \InvalidArgumentException(sprintf("Invalid required length %d", $req_len));
         }
         if (strlen($bin) !== $req_len) {
-            throw new \LengthException(sprintf("String does not validate required length %d", $req_len));
+            throw new \LengthException(sprintf("Input hex does not validate required length %d", $req_len));
         }
         return $bin;
     }

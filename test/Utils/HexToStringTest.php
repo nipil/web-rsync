@@ -65,14 +65,26 @@ class HexToStringTest extends TestCase
         );
     }
 
-    public function providerValidWithLengthFail()
+    public function providerValidWithInvalidLengthFail()
     {
         return $this->addLength(
             $this->providerValidNoLength(),
             function ($original_length) {
                 // req len = -1
-                // so that it always fails
+                // so that it is invalid
                 return -1;
+            }
+        );
+    }
+
+    public function providerValidWithLengthFail()
+    {
+        return $this->addLength(
+            $this->providerValidNoLength(),
+            function ($original_length) {
+                // req len = hex len +1
+                // so that it always fails
+                return $original_length + 1;
             }
         );
     }
@@ -96,9 +108,19 @@ class HexToStringTest extends TestCase
     }
 
     /**
+     * @dataProvider providerValidWithInvalidLengthFail
+     * @expectedException Exception
+     * @expectedExceptionMessageRegExp #^Invalid required length -?\d+$#
+     */
+    public function testHexToStringValidWithInvalidLengthFail(string $input, int $length, $unused)
+    {
+        HexToString::convert($input, $length);
+    }
+
+    /**
      * @dataProvider providerValidWithLengthFail
      * @expectedException Exception
-     * @expectedExceptionMessageRegExp #^Invalid length -?\d+ for .*$#
+     * @expectedExceptionMessageRegExp #^Input hex does not validate required length -?\d+$#
      */
     public function testHexToStringValidWithLengthFail(string $input, int $length, $unused)
     {

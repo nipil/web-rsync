@@ -52,10 +52,10 @@ class MasterSecret implements MasterSecretInterface
     public function generate(int $key_length, int $salt_length)
     {
         if ($key_length <= 0) {
-            throw new \OutOfBoundsException(sprintf("Invalid key length : %d", $key_length));
+            throw new \InvalidArgumentException(sprintf("Invalid key length : %d", $key_length));
         }
         if ($salt_length <= 0) {
-            throw new \OutOfBoundsException(sprintf("Invalid salt length : %d", $salt_length));
+            throw new \InvalidArgumentException(sprintf("Invalid salt length : %d", $salt_length));
         }
         $key = $this->randomizer->get($key_length);
         $salt = $this->randomizer->get($salt_length);

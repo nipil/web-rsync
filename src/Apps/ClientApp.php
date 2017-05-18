@@ -16,6 +16,8 @@ use WRS\Crypto\Interfaces\KeyDerivatorInterface;
 
 use WRS\Crypto\MasterSecret;
 
+use WRS\Exceptions\WrsException;
+
 use WRS\KeyValue\Interfaces\KeyValueInterface;
 
 use WRS\Utils\Arguments;
@@ -46,7 +48,7 @@ class ClientApp extends App
         // get command name
         $command_name = $this->arguments->getCommand();
         if ($command_name === null) {
-            throw new \Exception("No command provided");
+            throw new WrsException("No command provided");
         }
 
         // act
@@ -58,7 +60,7 @@ class ClientApp extends App
             );
             $action->run();
         } else {
-            throw new \Exception(sprintf("Unknown command : %s", $command_name));
+            throw new WrsException(sprintf("Unknown command : %s", $command_name));
         }
 
         return 0;

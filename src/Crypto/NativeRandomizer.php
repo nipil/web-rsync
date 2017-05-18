@@ -11,7 +11,7 @@ class NativeRandomizer implements RandomDataInterface
     public function get(int $length)
     {
         if ($length < 0) {
-            throw new \Exception(sprintf("Invalid number of bytes requested : %d", $length));
+            throw new \InvalidArgumentException(sprintf("Invalid number of bytes requested : %d", $length));
         }
         if ($length === 0) {
             // random_bytes ERRORs with length 0

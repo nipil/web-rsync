@@ -64,7 +64,7 @@ class Arguments
         }
 
         if ($final_argv !== null && $final_argc == 0) {
-            throw new \Exception("Argument list must start with program name");
+            throw new \LogicException("Argument list must start with program name");
         }
 
         $this->result = $this->parser->parse($final_argc, $final_argv);
@@ -73,7 +73,7 @@ class Arguments
     public function validateResult()
     {
         if ($this->result === null) {
-            throw new \Exception("Arguments not yet parsed");
+            throw new \LogicException("Arguments not yet parsed");
         }
     }
 
@@ -90,7 +90,7 @@ class Arguments
     {
         $this->validateResult();
         if ($this->getCommand() === null) {
-            throw new \Exception("No command provided");
+            throw new \RuntimeException("No command provided");
         }
     }
 
@@ -98,7 +98,7 @@ class Arguments
     {
         $this->validateCommand();
         if (!array_key_exists($name, $this->result->command->options)) {
-            throw new \Exception(sprintf("Command option %s is not defined", $name));
+            throw new \LogicException(sprintf("Command option %s is not defined", $name));
         }
         return $this->result->command->options[$name];
     }

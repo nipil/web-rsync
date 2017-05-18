@@ -13,7 +13,7 @@ class NativeHasher implements HashInterface
     public function __construct(string $hash_function)
     {
         if (!in_array($hash_function, hash_algos(), true)) {
-            throw new \Exception(sprintf("Invalid hash function : %s", $hash_function));
+            throw new \UnexpectedValueException(sprintf("Invalid hash function : %s", $hash_function));
         }
         $this->hash_function = $hash_function;
     }

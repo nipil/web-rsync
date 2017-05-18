@@ -10,13 +10,16 @@ class HexToString
     {
         $bin = @hex2bin($hex_str);
         if ($bin === false) {
-            throw new \Exception(sprintf("Invalid hex string %s", $hex_str));
+            throw new \InvalidArgumentException(sprintf("Invalid hex string %s", $hex_str));
         }
         if ($req_len === null) {
             return $bin;
         }
+        if ($req_len < 0) {
+            throw new \InvalidArgumentException(sprintf("Invalid required length %d", $req_len));
+        }
         if (strlen($bin) !== $req_len) {
-            throw new \Exception(sprintf("Invalid length %d for %s", $req_len, $hex_str));
+            throw new \LengthException(sprintf("String does not validate required length %d", $req_len));
         }
         return $bin;
     }

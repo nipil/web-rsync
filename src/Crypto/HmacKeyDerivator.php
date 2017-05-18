@@ -33,7 +33,7 @@ class HmacKeyDerivator implements KeyDerivatorInterface
 
         // reject negative byte_length
         if ($byte_length < 0) {
-            throw new \Exception(sprintf("Invalid key length : %d", $byte_length));
+            throw new \InvalidArgumentException(sprintf("Invalid key length : %d", $byte_length));
         }
 
         // quickly return on simple edge case
@@ -67,7 +67,7 @@ class HmacKeyDerivator implements KeyDerivatorInterface
          * counter is a single byte, thus we check for it
          */
         if ($iterations > self::MAX_ITERATIONS) {
-            throw new \Exception(sprintf("Too many iterations required : %d", $iterations));
+            throw new \OverflowException(sprintf("Too many iterations required : %d", $iterations));
         }
 
         /*

@@ -52,10 +52,10 @@ class MasterSecret implements MasterSecretInterface
     public function generate(int $key_length, int $salt_length)
     {
         if ($key_length <= 0) {
-            throw new \Exception(sprintf("Invalid key length : %d", $key_length));
+            throw new \OutOfBoundsException(sprintf("Invalid key length : %d", $key_length));
         }
         if ($salt_length <= 0) {
-            throw new \Exception(sprintf("Invalid salt length : %d", $salt_length));
+            throw new \OutOfBoundsException(sprintf("Invalid salt length : %d", $salt_length));
         }
         $key = $this->randomizer->get($key_length);
         $salt = $this->randomizer->get($salt_length);
@@ -66,7 +66,7 @@ class MasterSecret implements MasterSecretInterface
     public function setKey(string $key)
     {
         if (strlen($key) === 0) {
-            throw new \Exception("Key cannot be empty");
+            throw new \InvalidArgumentException("Key cannot be empty");
         }
         $this->keyvalue->setString($this->full_id_key, $key);
     }
@@ -74,7 +74,7 @@ class MasterSecret implements MasterSecretInterface
     public function setSalt(string $salt)
     {
         if (strlen($salt) === 0) {
-            throw new \Exception("Salt cannot be empty");
+            throw new \InvalidArgumentException("Salt cannot be empty");
         }
         $this->keyvalue->setString($this->full_id_salt, $salt);
     }
@@ -83,7 +83,7 @@ class MasterSecret implements MasterSecretInterface
     {
         $key = $this->keyvalue->getString($this->full_id_key);
         if (strlen($key) === 0) {
-            throw new \Exception("Key cannot be empty");
+            throw new \InvalidArgumentException("Key cannot be empty");
         }
         return $key;
     }
@@ -92,7 +92,7 @@ class MasterSecret implements MasterSecretInterface
     {
         $salt = $this->keyvalue->getString($this->full_id_salt);
         if (strlen($salt) === 0) {
-            throw new \Exception("Salt cannot be empty");
+            throw new \InvalidArgumentException("Salt cannot be empty");
         }
         return $salt;
     }

@@ -26,11 +26,11 @@ class FileStorage implements StorageInterface
             if (is_dir($this->directory)) {
                 return false;
             }
-            throw new \Exception(sprintf("Path is not a directory : %s", $this->directory));
+            throw new \RuntimeException(sprintf("Path is not a directory : %s", $this->directory));
         }
         $result = mkdir($this->directory, 0750, true);
         if ($result === false) {
-            throw new \Exception(sprintf("Could not create directory : %s", $this->directory));
+            throw new \RuntimeException(sprintf("Could not create directory : %s", $this->directory));
         }
         return true;
     }
@@ -40,7 +40,7 @@ class FileStorage implements StorageInterface
         $filepath = $this->getPath($name);
         $result = @file_put_contents($filepath, $content);
         if ($result === false) {
-            throw new \Exception(sprintf("Cannot save data to file %s", $filepath));
+            throw new \RuntimeException(sprintf("Cannot save data to file %s", $filepath));
         }
     }
 
@@ -49,7 +49,7 @@ class FileStorage implements StorageInterface
         $filepath = $this->getPath($name);
         $result = @file_get_contents($filepath);
         if ($result === false) {
-            throw new \Exception(sprintf("Cannot get content of file %s", $filepath));
+            throw new \RuntimeException(sprintf("Cannot get content of file %s", $filepath));
         }
         return $result;
     }

@@ -26,7 +26,7 @@ class CachedKeyValue implements KeyValueInterface
     public function getCache(string $key)
     {
         if (!$this->hasCache($key)) {
-            throw new \Exception(sprintf("Key not found in cache : %s", $key));
+            throw new \RuntimeException(sprintf("Key not found in cache : %s", $key));
         }
         return $this->cache[$key];
     }
@@ -54,7 +54,7 @@ class CachedKeyValue implements KeyValueInterface
         if ($this->hasCache($key)) {
             $value = $this->cache[$key];
             if (!is_string($value)) {
-                throw new \Exception(sprintf("Invalid type for key: %s", $key));
+                throw new \DomainException(sprintf("Invalid type for key: %s", $key));
             }
             return $value;
         } else {
@@ -75,7 +75,7 @@ class CachedKeyValue implements KeyValueInterface
         if ($this->hasCache($key)) {
             $value = $this->cache[$key];
             if (!is_int($value)) {
-                throw new \Exception(sprintf("Invalid type for key: %s", $key));
+                throw new \DomainException(sprintf("Invalid type for key: %s", $key));
             }
             return $value;
         } else {

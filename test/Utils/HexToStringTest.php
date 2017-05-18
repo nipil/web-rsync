@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 use WRS\Utils\HexToString;
 
-class UtilsHexToStringTest extends TestCase
+class HexToStringTest extends TestCase
 {
     public function providerInvalidHex()
     {

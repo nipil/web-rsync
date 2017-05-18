@@ -94,7 +94,7 @@ class StringToIntTest extends TestCase
 
     /**
      * @dataProvider providerStringToIntInvalid
-     * @expectedException Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp #^Invalid integer .*$#
      */
     public function testStringToIntInvalid(string $input, $null)
@@ -104,7 +104,7 @@ class StringToIntTest extends TestCase
 
     /**
      * @dataProvider providerStringToIntTooLarge
-     * @expectedException Exception
+     * @expectedException RangeException
      * @expectedExceptionMessageRegExp #^Integer too large .+$#
      */
     public function testStringToIntTooLarge(string $input, $null)

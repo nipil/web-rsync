@@ -55,7 +55,7 @@ class FileStorageTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException RuntimeException
      * @expectedExceptionMessageRegExp #^Path is not a directory : .*$#
      */
     public function testCreateDirectoryIfNotExistsFailExistNotDirectory()
@@ -68,7 +68,7 @@ class FileStorageTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException RuntimeException
      * @expectedExceptionMessageRegExp #^Could not create directory : .*$#
      */
     public function testCreateDirectoryIfNotExistsFailCreateFailed()
@@ -116,7 +116,7 @@ class FileStorageTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException RuntimeException
      * @expectedExceptionMessageRegExp #^Cannot save data to file .*$#
      */
     public function testSaveFailInexistantPath()
@@ -128,7 +128,7 @@ class FileStorageTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException RuntimeException
      * @expectedExceptionMessageRegExp #^Cannot get content of file .*$#
      */
     public function testLoadFailInexistantPath()

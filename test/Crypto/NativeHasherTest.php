@@ -36,7 +36,7 @@ class NativeHasherTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException UnexpectedValueException
      * @expectedExceptionMessageRegExp #^Invalid hash function : .*$#
      */
     public function testConstructorInvalid()

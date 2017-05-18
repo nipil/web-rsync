@@ -169,7 +169,7 @@ class HmacKeyDerivatorTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException OverflowException
      * @expectedExceptionMessageRegExp #^Too many iterations required : \d+$#
      */
     public function testTooManyIterations()
@@ -189,7 +189,7 @@ class HmacKeyDerivatorTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp #^Invalid key length : -?\d+$#
      */
     public function testNegativeLength()

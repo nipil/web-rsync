@@ -64,7 +64,7 @@ class MasterSecretTest extends TestCase
 
     /**
      * @dataProvider providerInvalidLength
-     * @expectedException Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp #^Invalid key length : -?\d+$#
      */
     public function testGenerateFailKey(int $input, $null)
@@ -75,7 +75,7 @@ class MasterSecretTest extends TestCase
 
     /**
      * @dataProvider providerInvalidLength
-     * @expectedException Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp #^Invalid salt length : -?\d+$#
      */
     public function testGenerateFailSalt(int $input, $null)
@@ -103,7 +103,7 @@ class MasterSecretTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp #^Key cannot be empty$#
      */
     public function testSetKeyFail()
@@ -127,7 +127,7 @@ class MasterSecretTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp #^Salt cannot be empty$#
      */
     public function testSetSaltFail()
@@ -148,7 +148,7 @@ class MasterSecretTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp #^Key cannot be empty$#
      */
     public function testGetKeyFailEmpty()
@@ -174,7 +174,7 @@ class MasterSecretTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp #^Salt cannot be empty$#
      */
     public function testGetSaltFailEmpty()

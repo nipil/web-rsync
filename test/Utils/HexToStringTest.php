@@ -91,7 +91,7 @@ class HexToStringTest extends TestCase
 
     /**
      * @dataProvider providerInvalidHex
-     * @expectedException Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp /^Invalid hex string .+$/
      */
     public function testHexToStringInvalid(string $input, $null)
@@ -109,7 +109,7 @@ class HexToStringTest extends TestCase
 
     /**
      * @dataProvider providerValidWithInvalidLengthFail
-     * @expectedException Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp #^Invalid required length -?\d+$#
      */
     public function testHexToStringValidWithInvalidLengthFail(string $input, int $length, $unused)
@@ -119,7 +119,7 @@ class HexToStringTest extends TestCase
 
     /**
      * @dataProvider providerValidWithLengthFail
-     * @expectedException Exception
+     * @expectedException LengthException
      * @expectedExceptionMessageRegExp #^Input hex does not validate required length -?\d+$#
      */
     public function testHexToStringValidWithLengthFail(string $input, int $length, $unused)

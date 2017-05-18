@@ -34,7 +34,7 @@ class CachedKeyValueTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException RuntimeException
      * @expectedExceptionMessageRegExp #^Key not found in cache : .*$#
      */
     public function testGetCacheEmpty()
@@ -95,7 +95,7 @@ class CachedKeyValueTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException DomainException
      * @expectedExceptionMessageRegExp #^Invalid type for key: .*$#
      */
     public function testInvalidCacheAccessFromStringToInteger()
@@ -117,7 +117,7 @@ class CachedKeyValueTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException DomainException
      * @expectedExceptionMessageRegExp #^Invalid type for key: .*$#
      */
     public function testInvalidCacheAccessFromIntegerToString()

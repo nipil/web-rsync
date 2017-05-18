@@ -18,7 +18,7 @@ class NativeRandomizerTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessageRegExp /^Invalid number of bytes requested : -?\d+$/
      */
     public function testGetInvalidLength()

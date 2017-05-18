@@ -56,7 +56,7 @@ class ArgumentsTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException LogicException
      * @expectedExceptionMessageRegExp /^Arguments not yet parsed$/
      */
     public function testNotParsed()
@@ -65,7 +65,7 @@ class ArgumentsTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException LogicException
      * @expectedExceptionMessageRegExp /^Argument list must start with program name$/
      */
     public function testParseLocalEmpty()
@@ -81,7 +81,7 @@ class ArgumentsTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException RuntimeException
      * @expectedExceptionMessageRegExp /^No command provided$/
      */
     public function testParseLocalGenSecretOptionFailed()
@@ -91,7 +91,7 @@ class ArgumentsTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException LogicException
      * @expectedExceptionMessageRegExp /^Command option .* is not defined$/
      */
     public function testParseLocalGenSecretOptionUnknown()

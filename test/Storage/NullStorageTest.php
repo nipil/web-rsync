@@ -28,7 +28,7 @@ class NullStorageTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException UnderflowException
      * @expectedExceptionMessageRegExp #^Cannot load key .*$#
      */
     public function testLoad()

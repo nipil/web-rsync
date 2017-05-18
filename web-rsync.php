@@ -27,13 +27,10 @@ try {
 
     $randomizer = new NativeRandomizer();
 
-    $config = new CachedKeyValue(
-        new StoredKeyValue(
-            new FileStorage(
-                __DIR__ . DIRECTORY_SEPARATOR . "conf"
-            )
-        )
-    );
+    $config_storage = new FileStorage(__DIR__ . DIRECTORY_SEPARATOR . "conf");
+    $config_storage->createDirectoryIfNotExists();
+
+    $config = new CachedKeyValue(new StoredKeyValue($config_storage));
 
     $master_secret = new MasterSecret(
         "master",

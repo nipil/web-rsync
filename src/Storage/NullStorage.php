@@ -10,7 +10,7 @@ class NullStorage implements StorageInterface
 {
     public function save(string $name, string $content)
     {
-        return;
+        return true;
     }
 
     public function load(string $name)

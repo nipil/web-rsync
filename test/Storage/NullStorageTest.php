@@ -10,21 +10,16 @@ use WRS\Storage\NullStorage;
 
 class NullStorageTest extends TestCase
 {
-    const KEY = "test";
-    const VALUE = "value";
-
     public function testSave()
     {
         $ns = new NullStorage();
-        $ns->save(self::KEY, self::VALUE);
-        $this->assertTrue(true);
+        $this->assertSame(true, $ns->save("key", "value"));
     }
 
     public function testExists()
     {
         $ns = new NullStorage();
-        $ns->save(self::KEY, self::VALUE);
-        $this->assertSame(false, $ns->exists(self::KEY));
+        $this->assertSame(false, $ns->exists("anything"));
     }
 
     /**
@@ -34,6 +29,6 @@ class NullStorageTest extends TestCase
     public function testLoad()
     {
         $ns = new NullStorage();
-        $result = $ns->load(self::KEY);
+        $result = $ns->load("key");
     }
 }

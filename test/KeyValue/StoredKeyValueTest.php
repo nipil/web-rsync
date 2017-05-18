@@ -11,141 +11,90 @@ use WRS\Storage\Interfaces\StorageInterface;
 
 class StoredKeyValueTest extends TestCase
 {
-    const KEY = "test";
-    const ABSENT = "absent";
-    const VALUE_STRING = "value";
-    const VALUE_INT = 42;
+    private $storage;
 
-    /**
-     * Factor code to have StorageInterface::load throw exceptions
-     */
-    public function setupMockedStorageLoadException(string $key)
+    public function setUp()
     {
-        $storage = $this->createMock(StorageInterface::class);
-        $storage->method('load')
-            ->will(
-                $this->throwException(
-                    new \Exception(sprintf("Cannot load key %s", $key))
-                )
-            );
-        return $storage;
+        $this->storage = $this->createMock(StorageInterface::class);
     }
 
     public function testHasKey()
     {
-        // mock StorageInterface::exists to return specific values
-        $storage = $this->createMock(StorageInterface::class);
-        $map = [[self::KEY, true], [self::ABSENT, false]];
-        $storage->method('exists')
+        $map = [
+            ["present", true],
+            ["absent", false]
+        ];
+
+        $this->storage
+            ->expects($this->exactly(2))
+            ->method("exists")
             ->will($this->returnValueMap($map));
 
-        // test with mock object
-        $config = new StoredKeyValue($storage);
-        $this->assertFalse($config->hasKey(self::ABSENT), "key should not exist");
-        $this->assertTrue($config->hasKey(self::KEY), "key should exist");
+        $config = new StoredKeyValue($this->storage);
+
+        $this->assertSame(false, $config->hasKey("absent"), "key should not exist");
+        $this->assertSame(true, $config->hasKey("present"), "key should exist");
     }
 
     public function testSetString()
     {
-        // mock StorageInterface to verify that save is called once
-        $storage = $this->createMock(StorageInterface::class);
-        $storage->expects($this->once())
-            ->method('save')
+        $this->storage
+            ->expects($this->once())
+            ->method("save")
             ->with(
-                $this->identicalTo(self::KEY),
-                $this->identicalTo(self::VALUE_STRING)
+                $this->identicalTo("key"),
+                $this->identicalTo("string")
             );
 
-        // test with mock object
-        $config = new StoredKeyValue($storage);
-        $config->setString(self::KEY, self::VALUE_STRING);
+        $config = new StoredKeyValue($this->storage);
+
+        $config->setString("key", "string");
     }
 
     public function testGetString()
     {
-        // mock StorageInterface::exists to return specific values
-        $storage = $this->createMock(StorageInterface::class);
-        $map = [[self::KEY, self::VALUE_STRING], ];
-        $storage->method('load')
+        $map = [
+            ["key", "string"],
+        ];
+
+        $this->storage
+            ->expects($this->once())
+            ->method("load")
             ->will($this->returnValueMap($map));
 
-        // test with mock object
-        $config = new StoredKeyValue($storage);
-        $text = $config->getString(self::KEY);
-        $this->assertSame(self::VALUE_STRING, $text);
-    }
+        $config = new StoredKeyValue($this->storage);
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp #^Cannot load key .*$#
-     */
-    public function testGetStringMissing()
-    {
-        $storage = $this->setupMockedStorageLoadException(self::ABSENT);
-        $config = new StoredKeyValue($storage);
-        $config->getString(self::ABSENT);
+        $this->assertSame("string", $config->getString("key"));
     }
 
     public function testSetInteger()
     {
-        // storage receives textual data
-        $textual_value_int = sprintf("%d", self::VALUE_INT);
-
-        // mock StorageInterface to verify that save is called once
-        $storage = $this->createMock(StorageInterface::class);
-        $storage->expects($this->once())
-            ->method('save')
+        $this->storage
+            ->expects($this->once())
+            ->method("save")
             ->with(
-                $this->identicalTo(self::KEY),
-                $this->identicalTo($textual_value_int)
+                $this->identicalTo("key"),
+                $this->identicalTo("1664")
             );
 
-        // test with mock object
-        $config = new StoredKeyValue($storage);
-        $config->setInteger(self::KEY, self::VALUE_INT);
+        $config = new StoredKeyValue($this->storage);
+
+        $config->setInteger("key", 1664);
     }
 
     public function testGetInteger()
     {
-        // storage receives textual data
-        $textual_value_int = sprintf("%d", self::VALUE_INT);
+        $map = [
+            ["key", "1664"],
+        ];
 
-        // mock StorageInterface::load to return textual representation of numbers
-        $storage = $this->createMock(StorageInterface::class);
-        $storage->method('load')
-            ->willReturn($textual_value_int);
-
-        // test with mock object
-        $config = new StoredKeyValue($storage);
-        $int = $config->getInteger(self::KEY);
-        $this->assertSame(self::VALUE_INT, $int);
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp #^Cannot load key .*$#
-     */
-    public function testGetIntegerMissing()
-    {
-        $storage = $this->setupMockedStorageLoadException(self::ABSENT);
-        $config = new StoredKeyValue($storage);
-        $config->getInteger(self::ABSENT);
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp #^Invalid integer .*$#
-     */
-    public function testGetIntegerInvalid()
-    {
-        // mock StorageInterface::load to return a non-integer
-        $storage = $this->createMock(StorageInterface::class);
-        $map = [[self::KEY, self::VALUE_STRING], ];
-        $storage->method('load')
+        $this->storage
+            ->expects($this->once())
+            ->method("load")
             ->will($this->returnValueMap($map));
 
-        // test with mock object
-        $config = new StoredKeyValue($storage);
-        $config->getInteger(self::KEY);
+        $config = new StoredKeyValue($this->storage);
+
+        $this->assertSame(1664, $config->getInteger("key"));
     }
 }

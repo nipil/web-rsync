@@ -18,5 +18,7 @@ class ServerApp extends App
     public function run()
     {
         $this->getLogger()->info("Starting server");
+
+        return 0;
     }
 }

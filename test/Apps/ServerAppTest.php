@@ -12,20 +12,16 @@ use WRS\Apps\ServerApp;
 
 class ServerAppTest extends TestCase
 {
-    public function testConstructor()
+    private $logger;
+
+    public function setUp()
     {
-        $logger = $this->createMock(LoggerInterface::class);
-        $app = new ServerApp($logger);
-        $this->assertSame($logger, $app->getLogger(), "logger");
-        return $app;
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
-    /**
-     * @depends testConstructor
-     */
-    public function testRun($app)
+    public function testRun()
     {
-        $app->run();
-        $this->assertTrue(true);
+        $app = new ServerApp($this->logger);
+        $this->assertSame(0, $app->run());
     }
 }

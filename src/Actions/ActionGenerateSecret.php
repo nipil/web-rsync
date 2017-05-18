@@ -31,5 +31,7 @@ class ActionGenerateSecret extends Action
         $key_length = $this->arguments->getCommandOption("key_length");
         $salt_length = $this->arguments->getCommandOption("salt_length");
         $this->master_secret->generate($key_length, $salt_length);
+        $this->getLogger()->info("Generated master secret of length", array($key_length));
+        $this->getLogger()->info("Generated master salt of length", array($salt_length));
     }
 }

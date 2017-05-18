@@ -1,5 +1,4 @@
 composer.phar
 /vendor/
-
-# private key, don't commit it
 build
+conf

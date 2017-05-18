@@ -12,12 +12,19 @@ use WRS\Apps\Abstracts\App;
 
 class AppTest extends TestCase
 {
+    private $logger;
+
+    public function setUp()
+    {
+        $this->logger = $this->createMock(LoggerInterface::class);
+    }
+
     public function testConstructor()
     {
-        $logger = $this->createMock(LoggerInterface::class);
         $app = $this->getMockBuilder(App::class)
-            ->setConstructorArgs([$logger])
+            ->setConstructorArgs([$this->logger])
             ->getMockForAbstractClass();
-        $this->assertSame($logger, $app->getLogger());
+
+        $this->assertSame($this->logger, $app->getLogger());
     }
 }
